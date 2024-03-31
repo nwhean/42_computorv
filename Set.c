@@ -1,60 +1,29 @@
 #include <assert.h>
-#include <stddef.h>
+#include <stdlib.h>
 
-#if !defined MANY || MANY < 1
-# define MANY	10
-#endif
-
-static int	g_heap[MANY];
-
-void	*new(const void *type, ...)
-{
-	int	*p;
-
-	(void)type;
-	p = g_heap + 1;
-	while (p < g_heap + MANY)
-	{
-		if (!*p)
-			break ;
-		++p;
-	}
-	assert(p < g_heap + MANY);
-	*p = MANY;
-	return (p);
-}
-
-void	delete(void *_item)
-{
-	int	*item;
-
-	item = _item;
-	if (item)
-	{
-		assert(item > g_heap && item < g_heap + MANY);
-		*item = 0;
-	}
-}
+#include "Set.h"
+#include "Object.h"
 
 /*
- * If an `element` contains MANY, it can be added to the `set`,
- * otherwise, it should already be in the `set` because we do not permit
- * an object to belong to more than one `set`.
+ * Increments the element's reference counter and the number of elements
+ * in the set.
  */
 void	*add(void *_set, const void *_element)
 {
-	int			*set;
-	const int	*element = _element;
+	struct s_Set	*set;
+	struct s_Object	*element;
 
 	set = _set;
-	assert(set > g_heap && set < g_heap + MANY);
-	assert(*set == MANY);
-	assert(element > g_heap && element < g_heap + MANY);
-	if (*element == MANY)
-		*(int *)element = set - g_heap;
+	element = (void *)_element;
+	assert(set);
+	assert(element);
+	if (!element->in)
+		element->in = set;
 	else
-		assert(*element == set - g_heap);
-	return ((void *)element);
+		assert(element->in == set);
+	++element->count;
+	++set->count;
+	return (element);
 }
 
 /*
@@ -62,15 +31,11 @@ void	*add(void *_set, const void *_element)
  */
 void	*find(const void *_set, const void *_element)
 {
-	const int	*set;
-	const int	*element = _element;
+	const struct s_Object	*element = _element;
 
-	set = _set;
-	assert(set > g_heap && set < g_heap + MANY);
-	assert(*set == MANY);
-	assert(element > g_heap && element < g_heap + MANY);
-	assert(*element);
-	if (*element == set - g_heap)
+	assert(_set);
+	assert(element);
+	if (element->in == _set)
 		return ((void *)element);
 	else
 		return (NULL);
@@ -81,11 +46,17 @@ void	*find(const void *_set, const void *_element)
  */
 void	*drop(void *_set, const void *_element)
 {
-	int	*element;
+	struct s_Set	*set;
+	struct s_Object	*element;
 
-	element = find(_set, _element);
+	set = _set;
+	element = find(set, _element);
 	if (element)
-		*element = MANY;
+	{
+		if (--element->count == 0)
+			element->in = 0;
+		--set->count;
+	}
 	return (element);
 }
 
