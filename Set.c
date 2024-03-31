@@ -1,8 +1,8 @@
 #include <assert.h>
 #include <stdlib.h>
 
+#include "new.r"
 #include "Set.h"
-#include "Object.h"
 
 /*
  * Increments the element's reference counter and the number of elements

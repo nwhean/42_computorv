@@ -4,30 +4,22 @@
 #include "Object.h"
 #include "Set.h"
 
-int	main(void)
-{
-	static const size_t	_Set = sizeof(struct s_Set);
-	static const size_t	_Object = sizeof(struct s_Object);
-	const void			*Set = &_Set;
-	const void			*Object = &_Object;
-	void				*s;
-	void				*a;
-	void				*b;
-	void				*c;
+#include "String.h"
+#include "new.h"
 
-	s = new(Set);
-	a = add(s, new(Object));
-	b = add(s, new(Object));
-	c = new(Object);
-	if (contains(s, a) && contains(s, b))
+int main ()
+{
+	void *a = new(String, "a");
+	void *aa = clone(a);
+	void *b = new(String, "b");
+
+	printf("sizeOf(a) == %lu\n", sizeOf(a));
+	if (differ(a, b))
 		puts("ok");
-	if (contains(s, c))
-		puts("contains?");
-	if (differ(a, add(s, a)))
-		puts("differs?");
-	delete(drop(s, a));
-	delete(drop(s, b));
-	delete(c);
-	delete(s);
+	if (differ(a, aa))
+		puts("differ?");
+	if (a == aa)
+		puts("clone?");
+	delete(a), delete(aa), delete(b);
 	return (0);
 }
