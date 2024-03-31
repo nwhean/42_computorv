@@ -7,12 +7,15 @@
 #include "String.h"
 #include "new.h"
 
-int main ()
+int	main(void)
 {
-	void *a = new(String, "a");
-	void *aa = clone(a);
-	void *b = new(String, "b");
+	void	*a;
+	void	*aa;
+	void	*b;
 
+	a = new(String, "a");
+	aa = clone(a);
+	b = new(String, "b");
 	printf("sizeOf(a) == %lu\n", sizeOf(a));
 	if (differ(a, b))
 		puts("ok");
@@ -20,6 +23,8 @@ int main ()
 		puts("differ?");
 	if (a == aa)
 		puts("clone?");
-	delete(a), delete(aa), delete(b);
+	delete(a);
+	delete(aa);
+	delete(b);
 	return (0);
 }

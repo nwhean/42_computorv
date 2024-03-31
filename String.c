@@ -6,12 +6,34 @@
 #include "new.r"
 #include "String.h"
 
+static struct s_String		*ring;
+
 static void	*String_ctor(void *_self, va_list *app)
 {
 	struct s_String	*self;
 	const char		*text = va_arg(*app, const char *);
+	struct s_String	*p;
 
 	self = _self;
+	if (ring)
+	{
+		p = ring;
+		do
+		{
+			if (strcmp(p->text, text) == 0)
+			{
+				++p->count;
+				free(self);
+				return (p);
+			}
+		}
+		while ((p = p->next) != ring);
+	}
+	else
+		ring = self;
+	self->next = ring->next;
+	ring->next = self;
+	self->count = 1;
 	self->text = malloc(strlen(text) + 1);
 	assert(self->text);
 	strcpy(self->text, text);
@@ -21,8 +43,26 @@ static void	*String_ctor(void *_self, va_list *app)
 static void	*String_dtor(void *_self)
 {
 	struct s_String	*self;
+	struct s_String	*p;
 
 	self = _self;
+	if (--self->count > 0)
+		return (NULL);
+	assert(ring);
+	if (ring == self)
+		ring = self->next;
+	if (ring == self)
+		ring = NULL;
+	else
+	{
+		p = ring;
+		while (p->next != self)
+		{
+			p = p->next;
+			assert(p != ring);
+		}
+		p->next = self->next;
+	}
 	free(self->text);
 	self->text = 0;
 	return (self);
@@ -30,9 +70,10 @@ static void	*String_dtor(void *_self)
 
 static void	*String_clone(const void *_self)
 {
-	const struct s_String	*self = _self;
+	struct s_String	*self = (void *)_self;
 
-	return (new(String, self->text));
+	++self->count;
+	return (self);
 }
 
 static int	String_differ(const void *_self, const void *_b)

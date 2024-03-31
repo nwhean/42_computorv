@@ -16,8 +16,10 @@ struct s_Class
 };
 
 struct s_String {
-	const void	*class;
-	char		*text;
+	const void		*class;
+	char			*text;
+	struct s_String	*next;
+	unsigned int	count;
 };
 
 struct s_Set {
