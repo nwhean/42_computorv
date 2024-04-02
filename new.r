@@ -1,4 +1,5 @@
 #include <stdarg.h>
+#include <stdlib.h>
 
 struct s_Object
 {
@@ -11,15 +12,7 @@ struct s_Class
 	size_t	size;
 	void	*(*ctor)(void *self, va_list *app);
 	void	*(*dtor)(void *self);
-	void	*(*clone)(const void *self);
-	int		(*differ)(const void *self, const void *b);
-};
-
-struct s_String {
-	const void		*class;
-	char			*text;
-	struct s_String	*next;
-	unsigned int	count;
+	void	(*draw)(const void *self);
 };
 
 struct s_Set {

@@ -1,10 +1,11 @@
 #ifndef NEW_H
 # define NEW_H
 
+# include <stdlib.h>
+
 void	*new(const void *_class, ...);
 void	delete(void *self);
-void	*clone(const void *self);
-int		differ(const void *self, const void *b);
+void	draw(const void *self);
 size_t	sizeOf(const void *self);
 
 #endif

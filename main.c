@@ -1,30 +1,25 @@
-#include <stdio.h>
-
-#include "new.h"
-#include "Object.h"
-#include "Set.h"
-
-#include "String.h"
+#include "Point.h"
 #include "new.h"
 
-int	main(void)
+int	main(int argc, char **argv)
 {
-	void	*a;
-	void	*aa;
-	void	*b;
+	void *p;
 
-	a = new(String, "a");
-	aa = clone(a);
-	b = new(String, "b");
-	printf("sizeOf(a) == %lu\n", sizeOf(a));
-	if (differ(a, b))
-		puts("ok");
-	if (differ(a, aa))
-		puts("differ?");
-	if (a == aa)
-		puts("clone?");
-	delete(a);
-	delete(aa);
-	delete(b);
+	(void) argc;
+	while (*++argv)
+	{
+		switch (**argv)
+		{
+			case 'p':
+				p = new(Point, 1, 2);
+				break;
+			default:
+				continue;
+		}
+		draw(p);
+		move(p, 10, 20);
+		draw(p);
+		delete(p);
+	}
 	return (0);
 }
