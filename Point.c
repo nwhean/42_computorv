@@ -1,13 +1,7 @@
 #include <stdio.h>
 
 #include "new.r"
-
-struct s_Point
-{
-	const void	*class;
-	int			x;
-	int			y;
-};
+#include "Point.r"
 
 static void	*Point_ctor(void *_self, va_list *app)
 {
@@ -33,7 +27,7 @@ static const struct s_Class	_Point = {
 	Point_draw
 };
 
-const void	*Point = &_Point;
+const void					*Point = &_Point;
 
 void	move(void *_self, int dx, int dy)
 {
