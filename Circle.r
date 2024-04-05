@@ -3,7 +3,7 @@
 
 #include "Point.r"
 
-struct s_Circle
+struct s_Circle		// Circle: Point
 {
 	const struct s_Point	_;
 	int						rad;

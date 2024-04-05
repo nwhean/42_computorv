@@ -3,7 +3,7 @@
 
 # include "Object.r"
 
-struct s_Point
+struct s_Point			// Point: Object
 {
 	const struct s_Object	_;
 	int						x;
@@ -15,7 +15,7 @@ struct s_Point
 
 void	super_draw(const void *class, const void *self);
 
-struct	s_PointClass
+struct	s_PointClass	// PointClass: Class
 {
 	const struct s_Class	_;
 	void					(*draw)(const void *self);

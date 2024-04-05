@@ -29,6 +29,7 @@ void	move(void *_self, int dx, int dy)
 	self->y += dy;
 }
 
+/* Point constructor method. */
 static void	*Point_ctor(void *_self, va_list *app)
 {
 	struct s_Point	*self;
@@ -39,6 +40,7 @@ static void	*Point_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* Point draw method. */
 static void	Point_draw(const void *_self)
 {
 	const struct s_Point	*self = _self;
@@ -46,6 +48,7 @@ static void	Point_draw(const void *_self)
 	printf("\".\" at %d,%d\n", self->x, self->y);
 }
 
+/* PointClass constructor method. */
 static void	*PointClass_ctor(void *_self, va_list *app)
 {
 	typedef void		(*voidf)();

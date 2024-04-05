@@ -3,6 +3,7 @@
 #include "Circle.h"
 #include "Circle.r"
 
+/* Circle constructor method. */
 static void	*Circle_ctor(void *_self, va_list *app)
 {
 	struct s_Circle	*self;
@@ -12,6 +13,7 @@ static void	*Circle_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* Circle draw method. */
 static void	Circle_draw(const void *_self)
 {
 	const struct s_Circle	*self = _self;
