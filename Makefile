@@ -1,47 +1,16 @@
-# Implicit variables
-CC		=	gcc
-CFLAGS	=	-Wall -Werror $(INCLUDE) -g3 -fsanitize=address
-INCLUDE	=	-Iinclude
-FDFLAGS	=	-L.
-FDLIBS	=	-loop
+LIBOOP_PATH	= ./liboop
 
-# source and object files
+all: $(LIBOOP_PATH)/liboop.a
 
-SRCDIR	=	src
-SRCS	=	Object.c \
-			Circle.c \
-			Point.c
-
-OBJDIR	=	obj
-OBJS	=	$(addprefix $(OBJDIR)/, $(SRCS:%.c=%.o))
-OBJS_ROOT	=
-
-# targets
-MAIN	=	main.c
-NAME	=	main.out
-LIBOBJ	=	liboop.a
-
-all: $(NAME)
-
-$(NAME):  $(LIBOBJ) $(MAIN)
-	$(CC) $(CFLAGS) -o $(NAME) $(MAIN) $(FDFLAGS) $(FDLIBS)
-
-$(LIBOBJ): $(OBJS)
-	$(AR) -rcs $(LIBOBJ) $?
-
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@mkdir -p $(@D)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c -o $@ $<
-
-test: all
-	./$(NAME) p c
+$(LIBOOP_PATH)/liboop.a:
+	$(MAKE) -C $(LIBOOP_PATH) -s
 
 clean:
-	$(RM) -r $(OBJDIR)
+	$(MAKE) clean -C $(LIBOOP_PATH) -s
 
 fclean: clean
-	$(RM) $(NAME)
+	$(MAKE) fclean -C $(LIBOOP_PATH) -s
 
 re: fclean all
 
-.PHONY: clean test
+.PHONY: clean
