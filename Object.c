@@ -45,6 +45,22 @@ void	*dtor(void *_self)
 	return (class->dtor(_self));
 }
 
+void	*super_ctor(const void *_class, void *_self, va_list *app)
+{
+	const struct s_Class	*superclass = super(_class);
+
+	assert(_self && superclass->ctor);
+	return (superclass->ctor(_self, app));
+}
+
+void	*super_dtor(const void *_class, void *_self)
+{
+	const struct s_Class	*superclass = super(_class);
+
+	assert(_self && superclass->dtor);
+	return (superclass->dtor(_self));
+}
+
 void	*new(const void *_class, ...)
 {
 	const struct s_Class	*class = _class;

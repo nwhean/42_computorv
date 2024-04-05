@@ -1,6 +1,9 @@
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
+#ifndef OBJECT_R
+# define OBJECT_R
+
+# include <stdarg.h>
+# include <stdlib.h>
+# include <stdio.h>
 
 struct s_Object
 {
@@ -18,3 +21,8 @@ struct s_Class
 	int						(*differ)(const void *self, const void *b);
 	int						(*puto)(const void *self, FILE *fp);
 };
+
+void	*super_ctor(const void *_class, void *_self, va_list *app);
+void	*super_dtor (const void *_class, void *_self);
+
+#endif
