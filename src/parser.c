@@ -12,17 +12,17 @@ static void	report(char *s)
 	exit(-1);
 }
 
-/* <expr>	::=	<term> <rest> */
+/* <expr>	::=	<term> <expr_tail> */
 void	expr(void)
 {
 	term();
-	rest();
+	expr_tail();
 }
 
 /*
- * <rest>	::=	+ <term> <rest> | - <term> <rest> | epsilon
+ * <expr_tail>	::=	+ <term> <expr_tail> | - <term> <expr_tail> | epsilon
  */
-void	rest(void)
+void	expr_tail(void)
 {
 	while (1)
 	{
@@ -45,10 +45,51 @@ void	rest(void)
 	}
 }
 
-/* <term>	:==	0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 */
+/*
+ * <term>	:== <factor> <term_tail>
+ */
 void	term(void)
 {
-	if (isdigit(*lookahead))
+	factor();
+	term_tail();
+}
+
+/*
+ * <term_tail>	:== * <factor> <term_tail> | / <factor> <term_tail> | epsilon
+ */
+void	term_tail()
+{
+	while (1)
+	{
+		if (*lookahead == '*')
+		{
+			match('*');
+			factor();
+			printf("*");
+			continue ;
+		}
+		else if (*lookahead == '/')
+		{
+			match('/');
+			factor();
+			printf("/");
+			continue ;
+		}
+		else
+			return ;
+	}
+}
+
+/* <factor>	:==	(expr) | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 */
+void	factor(void)
+{
+	if (*lookahead == '(')
+	{
+		match('(');
+		expr();
+		match(')');
+	}
+	else if (isdigit(*lookahead))
 	{
 		printf("%c", *lookahead);
 		match(*lookahead);
