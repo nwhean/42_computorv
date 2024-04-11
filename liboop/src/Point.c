@@ -4,22 +4,6 @@
 #include "Point.r"
 #include "Point.h"
 
-void	draw(const void *self)
-{
-	const struct s_PointClass *const	*cp = self;
-
-	assert(self && *cp && (*cp)->draw);
-	(*cp)->draw(self);
-}
-
-void	super_draw(const void *_class, const void *_self)
-{
-	const struct s_PointClass	*superclass = super(_class);
-
-	assert(_self && superclass->draw);
-	superclass->draw(_self);
-}
-
 void	move(void *_self, int dx, int dy)
 {
 	struct s_Point	*self;
@@ -38,6 +22,22 @@ static void	*Point_ctor(void *_self, va_list *app)
 	self->x = va_arg(*app, int);
 	self->y = va_arg(*app, int);
 	return (self);
+}
+
+void	draw(const void *self)
+{
+	const struct s_PointClass *const	*cp = self;
+
+	assert(self && *cp && (*cp)->draw);
+	(*cp)->draw(self);
+}
+
+void	super_draw(const void *_class, const void *_self)
+{
+	const struct s_PointClass	*superclass = super(_class);
+
+	assert(_self && superclass->draw);
+	superclass->draw(_self);
 }
 
 /* Point draw method. */
