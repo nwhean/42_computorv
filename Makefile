@@ -12,7 +12,7 @@ PARSER_DIR	=	parser/
 
 SRCDIR	=	src
 SRCS	=	$(addprefix $(LEXER_DIR), \
-				lexer.c \
+				Lexer.c \
 				Num.c \
 				Token.c \
 			) \

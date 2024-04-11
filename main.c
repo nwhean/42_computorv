@@ -1,27 +1,26 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "lexer.h"
+#include "Lexer.h"
 #include "Token.h"
 #include "Num.h"
 #include "Parser.h"
 
-char	*lookahead = NULL;
-
-int	main(int argc, char **args)
+int	main(void)
 {
+	void	*lexer;
 	void	*parser;
 
+	initLexer();
 	initToken();
 	initNum();
 	initParser();
 
-	if (argc == 1)
-		return (0);
-	lookahead = *++args;
-	parser = new(Parser, NULL);
+	lexer = new(Lexer);
+	parser = new(Parser, lexer);
 	program(parser);
 	printf("\n");
 	delete(parser);
+	delete(lexer);
 	return (0);
 }

@@ -3,13 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "lexer.h"
+#include "Lexer.h"
 #include "Token.h"
 #include "Num.h"
 #include "Parser.h"
 #include "Parser.r"
-
-extern char	*lookahead;
 
 static void	move(void *_self);
 static void	expr(void *_self);
@@ -36,7 +34,7 @@ static void	move(void *_self)
 	struct s_Parser	*self = _self;
 
 	delete(self->look);
-	self->look = scan();
+	self->look = scan(self->lexer);
 }
 
 void	program(void *self)
