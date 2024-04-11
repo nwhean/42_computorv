@@ -4,18 +4,25 @@
 #include "Lexer.h"
 #include "Token.h"
 #include "Num.h"
+#include "Real.h"
 #include "Parser.h"
+
+// initialise all classes
+void	init(void)
+{
+	initLexer();
+	initToken();
+	initNum();
+	initReal();
+	initParser();
+}
 
 int	main(void)
 {
 	void	*lexer;
 	void	*parser;
 
-	initLexer();
-	initToken();
-	initNum();
-	initParser();
-
+	init();
 	lexer = new(Lexer);
 	parser = new(Parser, lexer);
 	program(parser);

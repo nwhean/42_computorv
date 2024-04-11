@@ -4,8 +4,11 @@
 # include "Object.h"
 # include "Object.r"
 
-# define NUM 256
-# define ID 257
+enum e_Tag {
+	NUM = 256,
+	REAL,
+	ID,
+};
 
 // all members are public
 struct s_Token			// Token: Object

@@ -14,6 +14,7 @@ SRCDIR	=	src
 SRCS	=	$(addprefix $(LEXER_DIR), \
 				Lexer.c \
 				Num.c \
+				Real.c \
 				Token.c \
 			) \
 			$(addprefix $(PARSER_DIR), \

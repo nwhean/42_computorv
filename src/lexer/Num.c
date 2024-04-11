@@ -1,4 +1,9 @@
+#include <stdlib.h>
+#include <string.h>
+
 #include "Num.h"
+
+const void	*Num;
 
 /* Num constructor method. */
 static void	*Num_ctor(void *_self, va_list *app)
@@ -10,16 +15,26 @@ static void	*Num_ctor(void *_self, va_list *app)
 	return (self);
 }
 
-const void	*Num;
+/* Return string representing the Num. */
+static const char	*Num_to_string(const void *_self)
+{
+	const struct s_Num	*self = _self;
+	const int			len = snprintf(NULL, 0, "%d", self->value);
+	char				*retval = malloc(len + 1);
+
+	snprintf(retval, len + 1, "%d", self->value);
+	return (retval);
+}
 
 void	initNum(void)
 {
 	if (!Num)
 	{
 		initToken();
-		Num = new(Class, "Num",
+		Num = new(TokenClass, "Num",
 				Token, sizeof(struct s_Num),
 				ctor, Num_ctor,
+				token_to_string, Num_to_string,
 				0);
 	}
 }

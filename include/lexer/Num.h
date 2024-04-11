@@ -10,7 +10,7 @@ struct s_Num		// Num: Token
 	int						value;
 };
 
-extern const void	*Num;	// new(Point, ...);
+extern const void	*Num;	// new(Num, NUM, value);
 
 void	initNum(void);
 

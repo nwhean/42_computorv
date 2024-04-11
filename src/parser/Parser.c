@@ -6,6 +6,7 @@
 #include "Lexer.h"
 #include "Token.h"
 #include "Num.h"
+#include "Real.h"
 #include "Parser.h"
 #include "Parser.r"
 
@@ -166,6 +167,13 @@ void	factor(void *_self)
 		struct s_Num	*look = (struct s_Num *)self->look;
 
 		printf("%d ", look->value);
+		match(_self, self->look->tag);
+	}
+	else if (self->look->tag == REAL)
+	{
+		struct s_Real	*look = (struct s_Real *)self->look;
+
+		printf("%f ", look->value);
 		match(_self, self->look->tag);
 	}
 	else

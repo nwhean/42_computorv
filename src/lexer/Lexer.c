@@ -4,6 +4,7 @@
 
 #include "Token.h"
 #include "Num.h"
+#include "Real.h"
 #include "Lexer.h"
 #include "Lexer.r"
 
@@ -65,7 +66,19 @@ static struct s_Token	*Lexer_scan(void *_self)
 			val = 10 * val + self->peek - '0';
 			readch(_self);
 		} while (isdigit(self->peek));
-		return new(Num, NUM, val);
+		if (self->peek != '.')
+			return new(Num, NUM, val);
+		double	x = val;
+		double	d = 10;
+		while (true)
+		{
+			readch(_self);
+			if (!isdigit(self->peek))
+				break ;
+			x += (self->peek - '0') / d;
+			d *= 10;
+		}
+		return new(Real, REAL, x);
 	}
 
 	// other tokens
