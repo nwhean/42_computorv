@@ -5,8 +5,10 @@
 # include "Object.r"
 
 enum e_Tag {
-	NUM = 256,
+	BASIC = 256,
+	NUM,
 	REAL,
+	WORD,
 	ID,
 };
 
@@ -17,8 +19,17 @@ struct s_Token			// Token: Object
 	int						tag;
 };
 
-extern const void	*Token;			// new(Token, );
+extern const void	*Token;			// new(Token, tag);
 
-void	initToken(void);
+struct	s_TokenClass	// TokenClass: Class
+{
+	const struct s_Class	_;
+	const char				*(*to_string)(const void *self);
+};
+
+extern const void	*TokenClass;
+const char	*token_to_string(const void *self);
+
+void		initToken(void);
 
 #endif

@@ -80,7 +80,7 @@ void	*new(const void *_class, ...)
 void	delete(void *_self)
 {
 	if (_self)
-		free(_self);
+		free(dtor(_self));
 }
 
 int	differ(const void *self, const void *b)

@@ -1,20 +1,59 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+// inter
+#include "Arith.h"
+#include "Expr.h"
+#include "Node.h"
+#include "Op.h"
+
+// lexer
 #include "Lexer.h"
-#include "Token.h"
 #include "Num.h"
 #include "Real.h"
+#include "Token.h"
+#include "Word.h"
+
+// parser
 #include "Parser.h"
+
+// symbols
+#include "Type.h"
+
+void	init_inter(void)
+{
+	initArith();
+	initExpr();
+	initNode();
+	initOp();
+}
+
+void	init_lexer(void)
+{
+	initLexer();
+	initNum();
+	initReal();
+	initToken();
+	initWord();
+}
+
+void	init_parser(void)
+{
+	initParser();
+}
+
+void	init_symbols(void)
+{
+	initType();
+}
 
 // initialise all classes
 void	init(void)
 {
-	initLexer();
-	initToken();
-	initNum();
-	initReal();
-	initParser();
+	init_inter();
+	init_lexer();
+	init_parser();
+	init_symbols();
 }
 
 int	main(void)

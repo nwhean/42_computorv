@@ -1,5 +1,10 @@
 CFLAGS	=	-Wall -Werror $(INCLUDE) -fsanitize=address -g
-INCLUDE	=	-Iinclude -Iinclude/lexer -Iinclude/parser -Iliboop/include
+INCLUDE	=	-Iinclude \
+			-Iinclude/inter \
+			-Iinclude/lexer \
+			-Iinclude/parser \
+			-Iinclude/symbols \
+			-Iliboop/include
 LDFLAGS	=	-L. -Lliboop
 LDLIBS	=	-lcomputorv -loop
 MAIN	=	main.c
@@ -7,18 +12,30 @@ NAME	=	a.out
 LIBCOMP	=	libcomputorv.a
 
 # source and object files
+INTER_DIR	=	inter/
 LEXER_DIR	=	lexer/
 PARSER_DIR	=	parser/
+SYMBOLS_DIR	=	symbols/
 
 SRCDIR	=	src
-SRCS	=	$(addprefix $(LEXER_DIR), \
+SRCS	=	$(addprefix $(INTER_DIR), \
+				Arith.c \
+				Expr.c \
+				Node.c \
+				Op.c \
+			) \
+			$(addprefix $(LEXER_DIR), \
 				Lexer.c \
 				Num.c \
 				Real.c \
 				Token.c \
+				Word.c \
 			) \
 			$(addprefix $(PARSER_DIR), \
 				Parser.c \
+			) \
+			$(addprefix $(SYMBOLS_DIR), \
+				Type.c \
 			)
 OBJDIR	=	obj
 OBJS	=	$(addprefix $(OBJDIR)/, $(SRCS:%.c=%.o))
