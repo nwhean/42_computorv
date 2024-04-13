@@ -4,6 +4,7 @@
 // inter
 #include "Arith.h"
 #include "Expr.h"
+#include "Constant.h"
 #include "Node.h"
 #include "Op.h"
 
@@ -24,6 +25,7 @@ void	init_inter(void)
 {
 	initArith();
 	initExpr();
+	initConstant();
 	initNode();
 	initOp();
 }

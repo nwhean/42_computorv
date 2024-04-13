@@ -20,6 +20,7 @@ SYMBOLS_DIR	=	symbols/
 SRCDIR	=	src
 SRCS	=	$(addprefix $(INTER_DIR), \
 				Arith.c \
+				Constant.c \
 				Expr.c \
 				Node.c \
 				Op.c \
