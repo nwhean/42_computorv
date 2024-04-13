@@ -2,9 +2,9 @@
 #include "Word.h"
 #include "Type.h"
 
-const void	*Type;
-const void	*Type_Int;
-const void	*Type_Real;
+const struct s_Type	*Type;
+const struct s_Type	*Type_Int;
+const struct s_Type	*Type_Real;
 
 /* Type constructor method. */
 static void	*Type_ctor(void *_self, va_list *app)
@@ -13,15 +13,6 @@ static void	*Type_ctor(void *_self, va_list *app)
 
 	self = super_ctor(Type, _self, app);
 	self->width = va_arg(*app, int);
-	return (self);
-}
-
-/* Type destructor method. */
-static void	*Type_dtor(void *_self)
-{
-	struct s_Word	*self;
-
-	self = super_dtor(Type, _self);
 	return (self);
 }
 
@@ -35,7 +26,7 @@ static const char	*Type_to_string(const void *_self)
 }
 
 /* Return true if p is a numeric type, false otherwise. */
-bool			type_numeric(struct s_Type *p)
+bool			type_numeric(const struct s_Type *p)
 {
 	if (p == Type_Int || p == Type_Real)
 		return true;
@@ -43,7 +34,7 @@ bool			type_numeric(struct s_Type *p)
 }
 
 /* Return the larger type of p1 and p2. */
-const struct s_Type	*type_max(struct s_Type *p1, struct s_Type *p2)
+const struct s_Type	*type_max(const struct s_Type *p1, const struct s_Type *p2)
 {
 	if (!type_numeric(p1) || !type_numeric(p2))
 		return NULL;
@@ -60,7 +51,6 @@ void	initType(void)
 		Type = new(TokenClass, "Type",
 				Word, sizeof(struct s_Type),
 				ctor, Type_ctor,
-				dtor, Type_dtor,
 				token_to_string, Type_to_string,
 				0);
 		Type_Int = new(Type, BASIC, "int", sizeof(int));

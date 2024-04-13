@@ -2,7 +2,8 @@
 
 #include "Word.h"
 
-const void	*Word;
+const struct s_Word		*Word;
+const struct s_Word		*Word_minus;
 
 /* Word constructor method. */
 static void	*Word_ctor(void *_self, va_list *app)
@@ -17,8 +18,16 @@ static void	*Word_ctor(void *_self, va_list *app)
 /* Word destructor method. */
 static void	*Word_dtor(void *_self, va_list *app)
 {
-	struct s_Word	*self = _self;
+	struct s_Word		*self = _self;
+	const struct s_Word	*reserved[] = {Word_minus};
+	size_t				len = sizeof(reserved) / sizeof(struct s_Word *);
 
+	// avoid destructing some reserved Words
+	for (size_t i = 0; i < len; ++i)
+	{
+		if (self == reserved[i])
+			return (NULL);
+	}
 	free(self->lexeme);
 	return (super_dtor(Word, _self));
 }
@@ -28,7 +37,7 @@ static const char	*Word_to_string(const void *_self)
 {
 	const struct s_Word	*self = _self;
 
-	return strdup(self->lexeme);
+	return (strdup(self->lexeme));
 }
 
 void	initWord(void)
@@ -42,5 +51,6 @@ void	initWord(void)
 				dtor, Word_dtor,
 				token_to_string, Word_to_string,
 				0);
+		Word_minus = new(Word, MINUS, "minus");
 	}
 }

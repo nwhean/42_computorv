@@ -6,6 +6,7 @@
 
 enum e_Tag {
 	BASIC = 256,
+	MINUS,
 	NUM,
 	REAL,
 	WORD,

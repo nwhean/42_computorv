@@ -7,6 +7,7 @@
 #include "Constant.h"
 #include "Node.h"
 #include "Op.h"
+#include "Unary.h"
 
 // lexer
 #include "Lexer.h"
@@ -28,6 +29,7 @@ void	init_inter(void)
 	initConstant();
 	initNode();
 	initOp();
+	initUnary();
 }
 
 void	init_lexer(void)
@@ -67,7 +69,6 @@ int	main(void)
 	lexer = new(Lexer);
 	parser = new(Parser, lexer);
 	program(parser);
-	printf("\n");
 	delete(parser);
 	delete(lexer);
 	return (0);

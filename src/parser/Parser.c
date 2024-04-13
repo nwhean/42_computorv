@@ -7,12 +7,14 @@
 #include "Arith.h"
 #include "Constant.h"
 #include "Expr.h"
+#include "Unary.h"
 
 // lexer
 #include "Lexer.h"
-#include "Token.h"
 #include "Num.h"
 #include "Real.h"
+#include "Token.h"
+#include "Word.h"
 
 // parser
 #include "Parser.h"
@@ -25,6 +27,7 @@ static void				move(void *_self);
 static struct s_Expr	*expr(void *_self);
 static struct s_Expr	*term(void *_self);
 static struct s_Expr	*factor(void *_self);
+static struct s_Expr	*unary(void *_self);
 
 /* Parser constructor method. */
 static void	*Parser_ctor(void *_self, va_list *app)
@@ -79,7 +82,7 @@ static void	Parser_program(void *_self)
 	void			*x = expr(self);
 	const char		*s = to_string(x);
 
-	printf("%s", s);
+	printf("%s\n", s);
 	free((char *)s);
 	delete(x);
 }
@@ -119,21 +122,37 @@ static struct s_Expr	*expr(void *_self)
 }
 
 /*
- * <term>	:== <factor> <term_tail>
- * <term_tail>	:== * <factor> <term_tail> | / <factor> <term_tail> | epsilon
+ * <term>		:== <unary> <term_tail>
+ * <term_tail>	:== '*' <unary> <term_tail> | '/' <unary> <term_tail> | epsilon
  */
 static struct s_Expr	*term(void *_self)
 {
 	struct s_Parser	*self = _self;
-	struct s_Expr	*x = factor(self);
+	struct s_Expr	*x = unary(self);
 
 	while (self->look->tag == '*' || self->look->tag == '/')
 	{
 		struct s_Token	*tok = new(Token, self->look->tag);
 		move(self);
-		x = new(Arith, tok, NULL, x, factor(self));
+		x = new(Arith, tok, NULL, x, unary(self));
 	}
 	return (x);
+}
+
+/*
+ * <unary>		:== '-' <unary> | <factor>
+ */
+static struct s_Expr	*unary(void *_self)
+{
+	struct s_Parser	*self = _self;
+
+	if (self->look->tag == '-')
+	{
+		move(self);
+		return new(Unary, Word_minus, NULL, unary(self));
+	}
+	else
+		return (factor(self));
 }
 
 /* <factor>	:==	(expr) | Num | Real */

@@ -24,6 +24,7 @@ SRCS	=	$(addprefix $(INTER_DIR), \
 				Expr.c \
 				Node.c \
 				Op.c \
+				Unary.c \
 			) \
 			$(addprefix $(LEXER_DIR), \
 				Lexer.c \
