@@ -2,4 +2,4 @@
 <expr_tail>	:== '+' <term> <expr_tail> | '-' <term> <expr_tail> | epsilon
 <term>		:== <factor> <term_tail>
 <term_tail>	:== '*' <factor> <term_tail> | '/' <factor> <term_tail> | epsilon
-<factor>	:== (<expr>) | Num
+<factor>	:== (<expr>) | Num | Real

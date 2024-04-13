@@ -3,19 +3,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// inter
+#include "Arith.h"
+#include "Constant.h"
+#include "Expr.h"
+
+// lexer
 #include "Lexer.h"
 #include "Token.h"
 #include "Num.h"
 #include "Real.h"
+
+// parser
 #include "Parser.h"
 #include "Parser.r"
 
-static void	move(void *_self);
-static void	expr(void *_self);
-static void	expr_tail(void *_self);
-static void	term(void *_self);
-static void	term_tail(void *_self);
-static void	factor(void *_self);
+// symbols
+#include "Type.h"
+
+static void				move(void *_self);
+static struct s_Expr	*expr(void *_self);
+static struct s_Expr	*term(void *_self);
+static struct s_Expr	*factor(void *_self);
 
 /* Parser constructor method. */
 static void	*Parser_ctor(void *_self, va_list *app)
@@ -29,7 +38,16 @@ static void	*Parser_ctor(void *_self, va_list *app)
 	return (self);
 }
 
-/* Parser move method */
+/* Parser destructor method. */
+static void	*Parser_dtor(void *_self)
+{
+	struct s_Parser	*self = _self;
+
+	delete(self->look);
+	return (super_dtor(Parser, _self));
+}
+
+/* Advaces the lookahead symbol to the next input. */
 static void	move(void *_self)
 {
 	struct s_Parser	*self = _self;
@@ -58,9 +76,12 @@ void	super_program(const void *_class, void *_self)
 static void	Parser_program(void *_self)
 {
 	struct s_Parser	*self = _self;
+	void			*x = expr(self);
+	const char		*s = to_string(x);
 
-	expr(self);
-	delete(self->look);
+	printf("%s", s);
+	free((char *)s);
+	delete(x);
 }
 
 static void	error(char *s)
@@ -69,6 +90,7 @@ static void	error(char *s)
 	exit(1);
 }
 
+/* Compares 't' with the lookahead symbol, and advances to the next input. */
 static void	match(void *_self, int t)
 {
 	struct s_Parser	*self = _self;
@@ -79,105 +101,69 @@ static void	match(void *_self, int t)
 		error("match Syntax Error");
 }
 
-/* <expr>	::=	<term> <expr_tail> */
-static void	expr(void *_self)
-{
-	term(_self);
-	expr_tail(_self);
-}
-
-/*
+/* <expr>	::=	<term> <expr_tail>
  * <expr_tail>	::=	+ <term> <expr_tail> | - <term> <expr_tail> | epsilon
  */
-void	expr_tail(void *_self)
+static struct s_Expr	*expr(void *_self)
 {
 	struct s_Parser	*self = _self;
+	struct s_Expr	*x = term(self);
 
-	while (1)
+	while (self->look->tag == '+' || self->look->tag == '-')
 	{
-		if (self->look->tag == '+')
-		{
-			match(_self, '+');
-			term(_self);
-			printf("+ ");
-			continue ;
-		}
-		else if (self->look->tag == '-')
-		{
-			match(_self, '-');
-			term(_self);
-			printf("- ");
-			continue ;
-		}
-		else
-			return ;
+		struct s_Token	*tok = new(Token, self->look->tag);
+		move(self);
+		x = new(Arith, tok, NULL, x, term(self));
 	}
+	return (x);
 }
 
 /*
  * <term>	:== <factor> <term_tail>
- */
-void	term(void *_self)
-{
-	factor(_self);
-	term_tail(_self);
-}
-
-/*
  * <term_tail>	:== * <factor> <term_tail> | / <factor> <term_tail> | epsilon
  */
-void	term_tail(void *_self)
+static struct s_Expr	*term(void *_self)
 {
 	struct s_Parser	*self = _self;
+	struct s_Expr	*x = factor(self);
 
-	while (1)
+	while (self->look->tag == '*' || self->look->tag == '/')
 	{
-		if (self->look->tag == '*')
-		{
-			match(_self, '*');
-			factor(_self);
-			printf("* ");
-			continue ;
-		}
-		else if (self->look->tag == '/')
-		{
-			match(_self, '/');
-			factor(_self);
-			printf("/ ");
-			continue ;
-		}
-		else
-			return ;
+		struct s_Token	*tok = new(Token, self->look->tag);
+		move(self);
+		x = new(Arith, tok, NULL, x, factor(self));
 	}
+	return (x);
 }
 
-/* <factor>	:==	(expr) | Num */
-void	factor(void *_self)
+/* <factor>	:==	(expr) | Num | Real */
+static struct s_Expr	*factor(void *_self)
 {
 	struct s_Parser	*self = _self;
+	struct s_Expr	*x = NULL;
+	struct s_Token	*tok;
 
-	if (self->look->tag == '(')
+	switch (self->look->tag)
 	{
-		match(_self, '(');
-		expr(_self);
-		match(_self, ')');
+		case '(':
+			move(self);
+			x = expr(self);
+			match(self, ')');
+			return (x);
+		case NUM:
+			tok = new(Num, NUM, ((struct s_Num *)self->look)->value);
+			x = new(Constant, tok, Type_Int);
+			move(self);
+			return (x);
+		case REAL:
+			tok = new(Real, REAL, ((struct s_Real *)self->look)->value);
+			x = new(Constant, tok, Type_Real);
+			move(self);
+			return (x);
+		default:
+			error("factor Syntax Error");
+			return (x);
 	}
-	else if (self->look->tag == NUM)
-	{
-		struct s_Num	*look = (struct s_Num *)self->look;
-
-		printf("%d ", look->value);
-		match(_self, self->look->tag);
-	}
-	else if (self->look->tag == REAL)
-	{
-		struct s_Real	*look = (struct s_Real *)self->look;
-
-		printf("%f ", look->value);
-		match(_self, self->look->tag);
-	}
-	else
-		error("factor Syntax Error");
 }
 
 /* ParserClass constructor method. */
@@ -215,6 +201,7 @@ void	initParser(void)
 		Parser = new(ParserClass, "Parser",
 				Object, sizeof(struct s_Parser),
 				ctor, Parser_ctor,
+				dtor, Parser_dtor,
 				program, Parser_program,
 				0);
 }
