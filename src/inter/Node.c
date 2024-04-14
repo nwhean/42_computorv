@@ -22,7 +22,11 @@ static void	*NodeClass_ctor(void *_self, va_list *app)
 	va_list				ap;
 
 	self = super_ctor(NodeClass, _self, app);
-	va_copy(ap, *app);
+	#ifdef va_copy
+		va_copy(ap, *app);
+	#else
+		*ap = **app;
+	#endif
 	while ((selector = va_arg(ap, voidf)))
 	{
 		voidf	method;

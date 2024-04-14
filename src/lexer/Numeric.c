@@ -95,11 +95,16 @@ static void	*NumericClass_ctor(void *_self, va_list *app)
 	va_list				ap;
 
 	self = super_ctor(NumericClass, _self, app);
-	va_copy(ap, *app);
+	#ifdef va_copy
+		va_copy(ap, *app);
+	#else
+		*ap = **app;
+	#endif
 	while ((selector = va_arg(ap, voidf)))
 	{
 		voidf	method;
 
+		#pragma GCC diagnostic ignored "-Wcast-function-type"
 		method = va_arg(ap, voidf);
 		if (selector == (voidf)numeric_add)
 			*(voidf *)&self->add = method;
@@ -117,6 +122,7 @@ static void	*NumericClass_ctor(void *_self, va_list *app)
 			*(voidf *)&self->neg = method;
 		else if (selector == (voidf)numeric_pow)
 			*(voidf *)&self->pow = method;
+		#pragma GCC diagnostic pop
 	}
 	return (self);
 }

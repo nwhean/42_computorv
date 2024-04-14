@@ -1,3 +1,4 @@
+#include <float.h>
 #include <math.h>
 #include <stdio.h>
 
@@ -28,10 +29,9 @@ static struct s_Real	*Real_copy(const void *_self)
 static const char	*Real_to_string(const void *_self)
 {
 	const struct s_Real	*self = _self;
-	const int			len = snprintf(NULL, 0, "%f", self->value);
-	char				*retval = malloc(len + 1);
+	char				*retval = malloc(DBL_MAX_10_EXP + 3);
 
-	snprintf(retval, len + 1, "%f", self->value);
+	sprintf(retval, "%f", self->value);
 	return (retval);
 }
 

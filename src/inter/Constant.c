@@ -17,7 +17,7 @@ static void	*Constant_ctor(void *_self, va_list *app)
 }
 
 /* Constant destructor method. */
-static void	*Constant_dtor(void *_self, va_list *app)
+static void	*Constant_dtor(void *_self)
 {
 	struct s_Constant	*self;
 

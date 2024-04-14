@@ -23,7 +23,7 @@ static void	*Arith_ctor(void *_self, va_list *app)
 }
 
 /* Arith destructor method. */
-static void	*Arith_dtor(void *_self, va_list *app)
+static void	*Arith_dtor(void *_self)
 {
 	struct s_Arith	*self = _self;
 
@@ -79,7 +79,6 @@ static const char	*Arith_to_string(const void *_self)
 /* Evaluate the arithmetic expression. */
 static const struct s_Token	*Arith_eval(const void *_self)
 {
-	// const struct s_ExprClass	*class = classOf(_self);
 	const struct s_Arith	*self = _self;
 	const struct s_Token	*op = get_op(self);
 	const struct s_Token	*expr1 = eval(self->expr1);

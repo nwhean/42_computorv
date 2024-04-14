@@ -23,7 +23,7 @@ static void	*Unary_ctor(void *_self, va_list *app)
 }
 
 /* Unary destructor method. */
-static void	*Unary_dtor(void *_self, va_list *app)
+static void	*Unary_dtor(void *_self)
 {
 	struct s_Unary	*self = _self;
 

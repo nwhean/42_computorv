@@ -1,6 +1,7 @@
+#include <limits.h>
 #include <math.h>
 #include <stdlib.h>
-#include <string.h>
+#include <stdio.h>
 
 #include "Num.h"
 #include "Real.h"
@@ -29,10 +30,10 @@ static struct s_Num	*Num_copy(const void *_self)
 static const char	*Num_to_string(const void *_self)
 {
 	const struct s_Num	*self = _self;
-	const int			len = snprintf(NULL, 0, "%d", self->value);
-	char				*retval = malloc(len + 1);
+	const int			len = ceil(log10(INT_MAX));
+	char				*retval = malloc(len + 2);
 
-	snprintf(retval, len + 1, "%d", self->value);
+	sprintf(retval, "%d", self->value);
 	return (retval);
 }
 

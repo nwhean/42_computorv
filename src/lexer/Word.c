@@ -6,6 +6,15 @@ const struct s_Word		*Word;
 const struct s_Word		*Word_plus;
 const struct s_Word		*Word_minus;
 
+static char *strdup(const char *s)
+{
+	size_t	len = strlen(s);
+	char	*retval = malloc(len + 1);
+
+	memcpy(retval, s, len + 1);
+	return (retval);
+}
+
 /* Word constructor method. */
 static void	*Word_ctor(void *_self, va_list *app)
 {
@@ -17,14 +26,19 @@ static void	*Word_ctor(void *_self, va_list *app)
 }
 
 /* Word destructor method. */
-static void	*Word_dtor(void *_self, va_list *app)
+static void	*Word_dtor(void *_self)
 {
 	struct s_Word		*self = _self;
-	const struct s_Word	*reserved[] = {Word_plus, Word_minus};
-	size_t				len = sizeof(reserved) / sizeof(struct s_Word *);
+	const struct s_Word	*reserved[2];
+	size_t				len;
+	size_t				i;
 
-	// avoid destructing some reserved Words
-	for (size_t i = 0; i < len; ++i)
+	reserved[0] = Word_plus;
+	reserved[1] = Word_minus;
+	len = sizeof(reserved) / sizeof(struct s_Word *);
+
+	/* avoid destructing some reserved Words */
+	for (i = 0; i < len; ++i)
 	{
 		if (self == reserved[i])
 			return (NULL);

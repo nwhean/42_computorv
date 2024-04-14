@@ -18,7 +18,7 @@ static void	*Expr_ctor(void *_self, va_list *app)
 }
 
 /* Expr destructor method. */
-static void	*Expr_dtor(void *_self, va_list *app)
+static void	*Expr_dtor(void *_self)
 {
 	struct s_Expr	*self = _self;
 
@@ -149,11 +149,16 @@ static void	*ExprClass_ctor(void *_self, va_list *app)
 	va_list				ap;
 
 	self = super_ctor(ExprClass, _self, app);
-	va_copy(ap, *app);
+	#ifdef va_copy
+		va_copy(ap, *app);
+	#else
+		*ap = **app;
+	#endif
 	while ((selector = va_arg(ap, voidf)))
 	{
 		voidf	method;
 
+		#pragma GCC diagnostic ignored "-Wcast-function-type"
 		method = va_arg(ap, voidf);
 		if (selector == (voidf)gen)
 			*(voidf *)&self->gen = method;
@@ -163,6 +168,7 @@ static void	*ExprClass_ctor(void *_self, va_list *app)
 			*(voidf *)&self->to_string = method;
 		else if (selector == (voidf)eval)
 			*(voidf *)&self->eval = method;
+		#pragma GCC diagnostic pop
 	}
 	return (self);
 }

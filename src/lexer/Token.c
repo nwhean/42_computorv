@@ -87,16 +87,22 @@ static void	*TokenClass_ctor(void *_self, va_list *app)
 	va_list				ap;
 
 	self = super_ctor(TokenClass, _self, app);
-	va_copy(ap, *app);
+	#ifdef va_copy
+		va_copy(ap, *app);
+	#else
+		*ap = **app;
+	#endif
 	while ((selector = va_arg(ap, voidf)))
 	{
 		voidf	method;
 
+		#pragma GCC diagnostic ignored "-Wcast-function-type"
 		method = va_arg(ap, voidf);
 		if (selector == (voidf)token_copy)
 			*(voidf *)&self->copy = method;
 		else if (selector == (voidf)token_to_string)
 			*(voidf *)&self->to_string = method;
+		#pragma GCC diagnostic pop
 	}
 	return (self);
 }

@@ -1,4 +1,4 @@
-CFLAGS	=	-Wall -Werror $(INCLUDE) -fsanitize=address -g
+CFLAGS	=	-Wall -Wextra -Werror -pedantic -std=c90 $(INCLUDE) -fsanitize=address -g
 INCLUDE	=	-Iinclude \
 			-Iinclude/inter \
 			-Iinclude/lexer \

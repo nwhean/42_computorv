@@ -48,6 +48,7 @@ struct s_Token	*super_scan(const void *_class, void *_self)
 static struct s_Token	*Lexer_scan(void *_self)
 {
 	struct s_Lexer	*self = _self;
+	struct s_Token	*token;
 
 	for (; ; readch(_self))
 	{
@@ -57,10 +58,12 @@ static struct s_Token	*Lexer_scan(void *_self)
 			break ;
 	}
 
-	// handle numbers
+	/* handle numbers */
 	if (isdigit(self->peek))
 	{
-		int	val = 0;
+		double	x;
+		double	d;
+		int		val = 0;
 		do
 		{
 			val = 10 * val + self->peek - '0';
@@ -68,8 +71,8 @@ static struct s_Token	*Lexer_scan(void *_self)
 		} while (isdigit(self->peek));
 		if (self->peek != '.')
 			return new(Num, NUM, val);
-		double	x = val;
-		double	d = 10;
+		x = val;
+		d = 10;
 		while (true)
 		{
 			readch(_self);
@@ -81,8 +84,8 @@ static struct s_Token	*Lexer_scan(void *_self)
 		return new(Real, REAL, x);
 	}
 
-	// other tokens
-	struct s_Token	*token = new(Token, self->peek);
+	/* other tokens */
+	token = new(Token, self->peek);
 	self->peek = ' ';
 	return token;
 }
@@ -96,14 +99,20 @@ static void	*LexerClass_ctor(void *_self, va_list *app)
 	va_list				ap;
 
 	self = super_ctor(LexerClass, _self, app);
-	va_copy(ap, *app);
+	#ifdef va_copy
+		va_copy(ap, *app);
+	#else
+		*ap = **app;
+	#endif
 	while ((selector = va_arg(ap, voidf)))
 	{
 		voidf	method;
 
+		#pragma GCC diagnostic ignored "-Wcast-function-type"
 		method = va_arg(ap, voidf);
 		if (selector == (voidf)scan)
 			*(voidf *)&self->scan = method;
+		#pragma GCC diagnostic pop
 	}
 	return (self);
 }

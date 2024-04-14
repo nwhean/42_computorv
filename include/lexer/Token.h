@@ -10,19 +10,19 @@ enum e_Tag {
 	NUM,
 	REAL,
 	WORD,
-	ID,
+	ID
 };
 
-// all members are public
-struct s_Token			// Token: Object
+/* all members are public */
+struct s_Token	/* Token: Object */
 {
 	const struct s_Object	_;
 	int						tag;
 };
 
-extern const void	*Token;			// new(Token, tag);
+extern const void	*Token;	/* new(Token, tag); */
 
-struct	s_TokenClass	// TokenClass: Class
+struct	s_TokenClass	/* TokenClass: Class */
 {
 	const struct s_Class	_;
 	struct s_Token			*(*copy)(const void *self);

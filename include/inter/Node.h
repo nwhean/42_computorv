@@ -3,7 +3,7 @@
 
 # include "Object.h"
 
-extern const void	*Node;			// new(Node);
+extern const void	*Node;	/* new(Node); */
 
 extern const void	*NodeClass;
 

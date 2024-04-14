@@ -6,15 +6,15 @@
 # include "Token.h"
 # include "Token.r"
 
-// all members are public
-struct s_Numeric			// Numeric: Token
+/* all members are public */
+struct s_Numeric	/* Numeric: Token */
 {
 	const struct s_Token	_;
 };
 
-extern const void	*Numeric;			// new(Numeric, NULL);
+extern const void	*Numeric;	/* new(Numeric, NULL); */
 
-struct	s_NumericClass	// NumericClass: TokenClass
+struct	s_NumericClass	/* NumericClass: TokenClass */
 {
 	const struct s_TokenClass	_;
 	struct s_Numeric			*(*add)(const void *self, const void *other);

@@ -57,14 +57,20 @@ static void	*PointClass_ctor(void *_self, va_list *app)
 	va_list				ap;
 
 	self = super_ctor(PointClass, _self, app);
-	va_copy(ap, *app);
+	#ifdef va_copy
+		va_copy(ap, *app);
+	#else
+		*ap = **app;
+	#endif
 	while ((selector = va_arg(ap, voidf)))
 	{
 		voidf	method;
 
+		#pragma GCC diagnostic ignored "-Wcast-function-type"
 		method = va_arg(ap, voidf);
 		if (selector == (voidf)draw)
 			*(voidf *)&self->draw = method;
+		#pragma GCC diagnostic pop
 	}
 	return (self);
 }

@@ -1,6 +1,6 @@
 # Implicit variables
 CC		=	gcc
-CFLAGS	=	-Wall -Werror $(INCLUDE) -g3 -fsanitize=address
+CFLAGS	=	-Wall -Wextra -Werror -pedantic -std=c90 $(INCLUDE) -g3 -fsanitize=address
 INCLUDE	=	-Iinclude
 FDFLAGS	=	-L.
 FDLIBS	=	-loop

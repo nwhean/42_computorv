@@ -3,7 +3,7 @@
 
 # include "Point.h"
 
-extern const void	*Circle;	// new(Point, x, y);
+extern const void	*Circle;	/* new(Point, x, y); */
 
 void	initCircle(void);
 

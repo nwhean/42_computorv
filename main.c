@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-// inter
+/* inter */
 #include "Arith.h"
 #include "Expr.h"
 #include "Constant.h"
@@ -9,14 +9,14 @@
 #include "Op.h"
 #include "Unary.h"
 
-// lexer
+/* lexer */
 #include "Lexer.h"
 #include "Num.h"
 #include "Real.h"
 #include "Token.h"
 #include "Word.h"
 
-// parser
+/* parser */
 #include "Parser.h"
 
 void	init_inter(void)
@@ -43,7 +43,7 @@ void	init_parser(void)
 	initParser();
 }
 
-// initialise all classes
+/* initialise all classes */
 void	init(void)
 {
 	init_inter();

@@ -17,7 +17,7 @@ static void	*Op_ctor(void *_self, va_list *app)
 }
 
 /* Op destructor method. */
-static void	*Op_dtor(void *_self, va_list *app)
+static void	*Op_dtor(void *_self)
 {
 	struct s_Op	*self;
 

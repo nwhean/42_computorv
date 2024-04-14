@@ -2,20 +2,20 @@
 #include <ctype.h>
 #include <stdio.h>
 
-// inter
+/* inter */
 #include "Arith.h"
 #include "Constant.h"
 #include "Expr.h"
 #include "Unary.h"
 
-// lexer
+/* lexer */
 #include "Lexer.h"
 #include "Num.h"
 #include "Real.h"
 #include "Token.h"
 #include "Word.h"
 
-// parser
+/* parser */
 #include "Parser.h"
 #include "Parser.r"
 
@@ -77,15 +77,17 @@ static void	Parser_program(void *_self)
 {
 	struct s_Parser			*self = _self;
 	void					*x = expr(self);
+	const char				*s;
+	const struct s_Token	*token;
 
 	if (!x)
 		return ;
 
-	const char	*s = to_string(x);
+	s = to_string(x);
 	printf("%s\n", s);
 	free((char *)s);
 
-	const struct s_Token	*token = eval(x);
+	token = eval(x);
 	if (token)
 	{
 		const char	*result = token_to_string(token);
@@ -124,9 +126,11 @@ static struct s_Expr	*expr(void *_self)
 		return (NULL);
 	while (self->look->tag == '+' || self->look->tag == '-')
 	{
+		struct s_Expr	*rhs;
 		enum e_Tag		tag_bak = self->look->tag;
+
 		move(self);
-		struct s_Expr	*rhs = term(self);
+		rhs = term(self);
 		if (!rhs)
 		{
 			delete(x);
@@ -157,9 +161,11 @@ static struct s_Expr	*term(void *_self)
 		return (NULL);
 	while (tag == '*' || tag == '/' || tag == '%')
 	{
+		struct s_Expr	*rhs;
 		enum e_Tag		tag_bak = self->look->tag;
+
 		move(self);
-		struct s_Expr	*rhs = unary(self);
+		rhs = unary(self);
 		if (!rhs)
 		{
 			delete(x);
@@ -179,8 +185,10 @@ static struct s_Expr	*unary(void *_self)
 
 	if (tag == '+' || tag == '-')
 	{
+		struct s_Expr	*rhs;
+
 		move(self);
-		struct s_Expr	*rhs = unary(self);
+		rhs = unary(self);
 		if (rhs)
 			return new(Unary, tag == '+' ? Word_plus: Word_minus, 0, rhs);
 		return (NULL);
@@ -201,9 +209,11 @@ static struct s_Expr	*factor(void *_self)
 		return (NULL);
 	while (self->look->tag == '^')
 	{
+		struct s_Expr	*rhs;
 		enum e_Tag		tag_bak = self->look->tag;
+
 		move(self);
-		struct s_Expr	*rhs = factor(self);
+		rhs = factor(self);
 		if (!rhs)
 		{
 			delete(x);
@@ -253,7 +263,11 @@ static void	*ParserClass_ctor(void *_self, va_list *app)
 	va_list					ap;
 
 	self = super_ctor(ParserClass, _self, app);
-	va_copy(ap, *app);
+	#ifdef va_copy
+		va_copy(ap, *app);
+	#else
+		*ap = **app;
+	#endif
 	while ((selector = va_arg(ap, voidf)))
 	{
 		voidf	method;

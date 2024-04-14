@@ -143,10 +143,17 @@ static void	*Class_ctor(void *_self, va_list *app)
 		voidf			selector;
 		va_list			ap;
 
-		va_copy(ap, *app);
+		#ifdef va_copy
+			va_copy(ap, *app);
+		#else
+			*ap = **app;
+		#endif
 		while ((selector = va_arg(ap, voidf)))
 		{
-			voidf	method = va_arg(ap, voidf);
+			voidf	method;
+
+			#pragma GCC diagnostic ignored "-Wcast-function-type"
+			method = va_arg(ap, voidf);
 			if (selector == (voidf)ctor)
 				*(voidf *)&self->ctor = method;
 			else if (selector == (voidf)dtor)
@@ -155,6 +162,7 @@ static void	*Class_ctor(void *_self, va_list *app)
 				*(voidf *)&self->differ = method;
 			else if (selector == (voidf)puto)
 				*(voidf *)&self->puto = method;
+			#pragma GCC diagnostic pop
 		}
 		return (self);
 	}

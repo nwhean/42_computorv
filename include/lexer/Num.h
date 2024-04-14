@@ -3,14 +3,14 @@
 
 # include "Numeric.h"
 
-// all members are public
-struct s_Num		// Num: Numeric
+/* all members are public */
+struct s_Num	/* Num: Numeric */
 {
 	const struct s_Numeric	_;
 	int						value;
 };
 
-extern const void	*Num;	// new(Num, NUM, value);
+extern const void	*Num;	/* new(Num, NUM, value); */
 
 void	initNum(void);
 
