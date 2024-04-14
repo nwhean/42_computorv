@@ -134,12 +134,14 @@ static struct s_Expr	*term(void *_self)
 {
 	struct s_Parser	*self = _self;
 	struct s_Expr	*x = unary(self);
+	int				tag = self->look->tag;
 
-	while (self->look->tag == '*' || self->look->tag == '/')
+	while (tag == '*' || tag == '/' || tag == '%')
 	{
 		struct s_Token	*tok = new(Token, self->look->tag);
 		move(self);
 		x = new(Arith, tok, NULL, x, unary(self));
+		tag = self->look->tag;
 	}
 	return (x);
 }

@@ -1,3 +1,4 @@
+#include <math.h>
 #include <stdio.h>
 
 #include "Num.h"
@@ -108,6 +109,25 @@ static struct s_Numeric	*Real_div(const void *_self, const void *_other)
 	};
 }
 
+/* Return remainder from the division of one Numeric from another. */
+static struct s_Numeric	*Real_mod(const void *_self, const void *_other)
+{
+	const struct s_Real		*self = _self;
+	const struct s_Token	*other = _other;
+
+	switch (other->tag)
+	{
+		case NUM:
+			return (new(Real, REAL,
+						fmod(self->value, ((struct s_Num *)other)->value)));
+		case REAL:
+			return (new(Real, REAL,
+						fmod(self->value, ((struct s_Real *)other)->value)));
+		default:
+			return (NULL);
+	};
+}
+
 /* Return a copy of the Real with its value negated. */
 static struct s_Real	*Real_neg(const void *_self)
 {
@@ -132,6 +152,7 @@ void	initReal(void)
 				numeric_sub, Real_sub,
 				numeric_mul, Real_mul,
 				numeric_div, Real_div,
+				numeric_mod, Real_mod,
 				numeric_pos, Real_copy,
 				numeric_neg, Real_neg,
 				0);

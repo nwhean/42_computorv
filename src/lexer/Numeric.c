@@ -50,6 +50,15 @@ void	*numeric_div(const void *self, const void *other)
 	return ((*cp)->div(self, other));
 }
 
+/* Return the remainder from the division of one Numeric from another. */
+void	*numeric_mod(const void *self, const void *other)
+{
+	const struct s_NumericClass *const	*cp = self;
+
+	assert(self && *cp && (*cp)->mod);
+	return ((*cp)->mod(self, other));
+}
+
 /* Return a copy of the Numeric with its value negated. */
 void	*numeric_pos(const void *self)
 {
@@ -91,6 +100,8 @@ static void	*NumericClass_ctor(void *_self, va_list *app)
 			*(voidf *)&self->mul = method;
 		else if (selector == (voidf)numeric_div)
 			*(voidf *)&self->div = method;
+		else if (selector == (voidf)numeric_mod)
+			*(voidf *)&self->mod = method;
 		else if (selector == (voidf)numeric_pos)
 			*(voidf *)&self->pos = method;
 		else if (selector == (voidf)numeric_neg)

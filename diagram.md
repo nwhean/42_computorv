@@ -56,6 +56,7 @@ classDiagram
 		+sub(Numeric) Numeric*
 		+mul(Numeric) Numeric*
 		+div(Numeric) Numeric*
+		+mod(Numeric) Numeric*
 		+pos() Numeric*
 		+neg() Numeric*
 	}
