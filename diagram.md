@@ -26,7 +26,7 @@ classDiagram
 
 	Object <|-- Node
 	Expr <|-- Op
-	Expr <|-- Unary
+	Op <|-- Unary
 
 	class Unary {
 		Expr expr;
