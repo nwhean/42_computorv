@@ -1,7 +1,6 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
 
 // inter
 #include "Arith.h"
@@ -78,6 +77,10 @@ static void	Parser_program(void *_self)
 {
 	struct s_Parser			*self = _self;
 	void					*x = expr(self);
+
+	if (!x)
+		return ;
+
 	const char				*s = to_string(x);
 	const struct s_Token	*token = eval(x);
 	const char				*result = token_to_string(token);
@@ -90,10 +93,9 @@ static void	Parser_program(void *_self)
 	delete(x);
 }
 
-static void	error(char *s)
+static void	Parser_error(char *s)
 {
 	fprintf(stderr, "%s\n", s);
-	exit(1);
 }
 
 /* Compares 't' with the lookahead symbol, and advances to the next input. */
@@ -104,7 +106,7 @@ static void	match(void *_self, int t)
 	if (self->look->tag == t)
 		move(self);
 	else
-		error("match Syntax Error");
+		Parser_error("match: Syntax Error");
 }
 
 /* <expr>		::= <term> <expr_tail>
@@ -115,11 +117,25 @@ static struct s_Expr	*expr(void *_self)
 	struct s_Parser	*self = _self;
 	struct s_Expr	*x = term(self);
 
+	if (!x)
+		return (NULL);
 	while (self->look->tag == '+' || self->look->tag == '-')
 	{
-		struct s_Token	*tok = new(Token, self->look->tag);
+		enum e_Tag		tag_bak = self->look->tag;
 		move(self);
-		x = new(Arith, tok, 0, x, term(self));
+		struct s_Expr	*rhs = term(self);
+		if (!rhs)
+		{
+			delete(x);
+			return (NULL);
+		}
+		x = new(Arith, new(Token, tag_bak), 0, x, rhs);
+	}
+	if (numeric_is(self->look->tag))
+	{
+		Parser_error("term: Syntax Error");
+		delete(x);
+		return (NULL);
 	}
 	return (x);
 }
@@ -134,11 +150,19 @@ static struct s_Expr	*term(void *_self)
 	struct s_Expr	*x = unary(self);
 	enum e_Tag		tag = self->look->tag;
 
+	if (!x)
+		return (NULL);
 	while (tag == '*' || tag == '/' || tag == '%')
 	{
-		struct s_Token	*tok = new(Token, tag);
+		enum e_Tag		tag_bak = self->look->tag;
 		move(self);
-		x = new(Arith, tok, 0, x, unary(self));
+		struct s_Expr	*rhs = unary(self);
+		if (!rhs)
+		{
+			delete(x);
+			return (NULL);
+		}
+		x = new(Arith, new(Token, tag_bak), 0, x, rhs);
 		tag = self->look->tag;
 	}
 	return (x);
@@ -148,19 +172,17 @@ static struct s_Expr	*term(void *_self)
 static struct s_Expr	*unary(void *_self)
 {
 	struct s_Parser	*self = _self;
+	enum e_Tag		tag = self->look->tag;
 
-	if (self->look->tag == '+')
+	if (tag == '+' || tag == '-')
 	{
 		move(self);
-		return new(Unary, Word_plus, 0, unary(self));
+		struct s_Expr	*rhs = unary(self);
+		if (rhs)
+			return new(Unary, tag == '+' ? Word_plus: Word_minus, 0, rhs);
+		return (NULL);
 	}
-	else if (self->look->tag == '-')
-	{
-		move(self);
-		return new(Unary, Word_minus, 0, unary(self));
-	}
-	else
-		return (factor(self));
+	return (factor(self));
 }
 
 /*
@@ -172,11 +194,19 @@ static struct s_Expr	*factor(void *_self)
 	struct s_Parser	*self = _self;
 	struct s_Expr	*x = base(self);
 
+	if (!x)
+		return (NULL);
 	while (self->look->tag == '^')
 	{
-		struct s_Token	*tok = new(Token, self->look->tag);
+		enum e_Tag		tag_bak = self->look->tag;
 		move(self);
-		x = new(Arith, tok, 0, x, factor(self));
+		struct s_Expr	*rhs = factor(self);
+		if (!rhs)
+		{
+			delete(x);
+			return (NULL);
+		}
+		x = new(Arith, new(Token, tag_bak), 0, x, rhs);
 	}
 	return (x);
 }
@@ -206,9 +236,9 @@ static struct s_Expr	*base(void *_self)
 			move(self);
 			return (x);
 		default:
-			error("factor Syntax Error");
-			return (x);
+			Parser_error("base: Syntax Error");
 	}
+	return (x);
 }
 
 /* ParserClass constructor method. */
