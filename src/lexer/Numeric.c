@@ -51,12 +51,21 @@ void	*numeric_div(const void *self, const void *other)
 }
 
 /* Return a copy of the Numeric with its value negated. */
-void	*numeric_unary(const void *self)
+void	*numeric_pos(const void *self)
 {
 	const struct s_NumericClass *const	*cp = self;
 
-	assert(self && *cp && (*cp)->unary);
-	return ((*cp)->unary(self));
+	assert(self && *cp && (*cp)->pos);
+	return ((*cp)->pos(self));
+}
+
+/* Return a copy of the Numeric with its value negated. */
+void	*numeric_neg(const void *self)
+{
+	const struct s_NumericClass *const	*cp = self;
+
+	assert(self && *cp && (*cp)->neg);
+	return ((*cp)->neg(self));
 }
 
 /* NumericClass constructor method. */
@@ -82,8 +91,10 @@ static void	*NumericClass_ctor(void *_self, va_list *app)
 			*(voidf *)&self->mul = method;
 		else if (selector == (voidf)numeric_div)
 			*(voidf *)&self->div = method;
-		else if (selector == (voidf)numeric_unary)
-			*(voidf *)&self->unary = method;
+		else if (selector == (voidf)numeric_pos)
+			*(voidf *)&self->pos = method;
+		else if (selector == (voidf)numeric_neg)
+			*(voidf *)&self->neg = method;
 	}
 	return (self);
 }

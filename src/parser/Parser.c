@@ -109,8 +109,8 @@ static void	match(void *_self, int t)
 		error("match Syntax Error");
 }
 
-/* <expr>	::=	<term> <expr_tail>
- * <expr_tail>	::=	+ <term> <expr_tail> | - <term> <expr_tail> | epsilon
+/* <expr>		::= <term> <expr_tail>
+ * <expr_tail>	::= + <term> <expr_tail> | - <term> <expr_tail> | epsilon
  */
 static struct s_Expr	*expr(void *_self)
 {
@@ -144,14 +144,17 @@ static struct s_Expr	*term(void *_self)
 	return (x);
 }
 
-/*
- * <unary>		:== '-' <unary> | <factor>
- */
+/* <unary>		:== '+' <unary> | '-' <unary> | <factor> */
 static struct s_Expr	*unary(void *_self)
 {
 	struct s_Parser	*self = _self;
 
-	if (self->look->tag == '-')
+	if (self->look->tag == '+')
+	{
+		move(self);
+		return new(Unary, Word_plus, NULL, unary(self));
+	}
+	else if (self->look->tag == '-')
 	{
 		move(self);
 		return new(Unary, Word_minus, NULL, unary(self));
@@ -160,7 +163,7 @@ static struct s_Expr	*unary(void *_self)
 		return (factor(self));
 }
 
-/* <factor>	:==	(expr) | Num | Real */
+/* <factor>	:== '(' <expr> ')' | Num | Real */
 static struct s_Expr	*factor(void *_self)
 {
 	struct s_Parser	*self = _self;

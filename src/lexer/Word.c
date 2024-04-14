@@ -3,6 +3,7 @@
 #include "Word.h"
 
 const struct s_Word		*Word;
+const struct s_Word		*Word_plus;
 const struct s_Word		*Word_minus;
 
 /* Word constructor method. */
@@ -19,7 +20,7 @@ static void	*Word_ctor(void *_self, va_list *app)
 static void	*Word_dtor(void *_self, va_list *app)
 {
 	struct s_Word		*self = _self;
-	const struct s_Word	*reserved[] = {Word_minus};
+	const struct s_Word	*reserved[] = {Word_plus, Word_minus};
 	size_t				len = sizeof(reserved) / sizeof(struct s_Word *);
 
 	// avoid destructing some reserved Words
@@ -60,6 +61,7 @@ void	initWord(void)
 				token_copy, Word_copy,
 				token_to_string, Word_to_string,
 				0);
+		Word_plus = new(Word, PLUS, "plus");
 		Word_minus = new(Word, MINUS, "minus");
 	}
 }

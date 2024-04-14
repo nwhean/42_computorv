@@ -109,7 +109,7 @@ static struct s_Numeric	*Real_div(const void *_self, const void *_other)
 }
 
 /* Return a copy of the Real with its value negated. */
-static struct s_Real	*Real_unary(const void *_self)
+static struct s_Real	*Real_neg(const void *_self)
 {
 	const struct s_Real	*self = _self;
 	struct s_Real		*retval = token_copy(self);
@@ -132,7 +132,8 @@ void	initReal(void)
 				numeric_sub, Real_sub,
 				numeric_mul, Real_mul,
 				numeric_div, Real_div,
-				numeric_unary, Real_unary,
+				numeric_pos, Real_copy,
+				numeric_neg, Real_neg,
 				0);
 	}
 }

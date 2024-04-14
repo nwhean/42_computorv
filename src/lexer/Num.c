@@ -112,7 +112,7 @@ static struct s_Numeric	*Num_div(const void *_self, const void *_other)
 }
 
 /* Return a copy of the Num with its value negated. */
-static struct s_Num	*Num_unary(const void *_self)
+static struct s_Num	*Num_neg(const void *_self)
 {
 	const struct s_Num	*self = _self;
 	struct s_Num		*retval = (struct s_Num *)token_copy(self);
@@ -135,7 +135,8 @@ void	initNum(void)
 				numeric_sub, Num_sub,
 				numeric_mul, Num_mul,
 				numeric_div, Num_div,
-				numeric_unary, Num_unary,
+				numeric_pos, Num_copy,
+				numeric_neg, Num_neg,
 				0);
 	}
 }

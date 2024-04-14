@@ -56,7 +56,8 @@ classDiagram
 		+sub(Numeric) Numeric*
 		+mul(Numeric) Numeric*
 		+div(Numeric) Numeric*
-		+unary() Numeric*
+		+pos() Numeric*
+		+neg() Numeric*
 	}
 
 	Numeric <|-- Real

@@ -73,8 +73,12 @@ static const struct s_Token	*Unary_eval(const void *_self)
 {
 	const struct s_Unary		*self = _self;
 	const struct s_Token		*expr = eval(self->expr);
-	const struct s_Token		*retval = numeric_unary(expr);
+	struct s_Token		*retval;
 
+	if (get_op(self) == (struct s_Token *)Word_plus)
+		retval = numeric_pos(expr);
+	else
+		retval = numeric_neg(expr);
 	delete((void *)expr);
 	return (retval);
 }

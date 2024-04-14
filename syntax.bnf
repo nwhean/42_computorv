@@ -1,6 +1,6 @@
-<expr>		:==	<term> <expr_tail>
+<expr>		:== <term> <expr_tail>
 <expr_tail>	:== '+' <term> <expr_tail> | '-' <term> <expr_tail> | epsilon
 <term>		:== <unary> <term_tail>
 <term_tail>	:== '*' <unary> <term_tail> | '/' <unary> <term_tail> | epsilon
-<unary>		:== '-' <unary> | <factor>
-<factor>	:== (<expr>) | Num | Real
+<unary>		:== '+' <unary> | '-' <unary> | <factor>
+<factor>	:== '(' <expr> ')' | Num | Real

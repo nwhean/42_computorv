@@ -12,6 +12,7 @@ struct s_Word		// Word: Token
 };
 
 extern const struct s_Word	*Word;			// new(Word, tag, lexeme);
+extern const struct s_Word	*Word_plus;
 extern const struct s_Word	*Word_minus;
 
 void	initWord(void);
