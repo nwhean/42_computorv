@@ -77,6 +77,15 @@ void	*numeric_neg(const void *self)
 	return ((*cp)->neg(self));
 }
 
+/* Return the exponentiation of one Numeric to another. */
+void	*numeric_pow(const void *self, const void *other)
+{
+	const struct s_NumericClass *const	*cp = self;
+
+	assert(self && *cp && (*cp)->pow);
+	return ((*cp)->pow(self, other));
+}
+
 /* NumericClass constructor method. */
 static void	*NumericClass_ctor(void *_self, va_list *app)
 {
@@ -106,6 +115,8 @@ static void	*NumericClass_ctor(void *_self, va_list *app)
 			*(voidf *)&self->pos = method;
 		else if (selector == (voidf)numeric_neg)
 			*(voidf *)&self->neg = method;
+		else if (selector == (voidf)numeric_pow)
+			*(voidf *)&self->pow = method;
 	}
 	return (self);
 }

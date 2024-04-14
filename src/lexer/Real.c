@@ -138,6 +138,25 @@ static struct s_Real	*Real_neg(const void *_self)
 	return (retval);
 }
 
+/* Return the exponentiation of one Numeric to another. */
+static struct s_Numeric	*Real_pow(const void *_self, const void *_other)
+{
+	const struct s_Real		*self = _self;
+	const struct s_Token	*other = _other;
+
+	switch (other->tag)
+	{
+		case NUM:
+			return (new(Real, REAL,
+						pow(self->value, ((struct s_Num *)other)->value)));
+		case REAL:
+			return (new(Real, REAL,
+						pow(self->value, ((struct s_Real *)other)->value)));
+		default:
+			return (NULL);
+	};
+}
+
 void	initReal(void)
 {
 	if (!Real)
@@ -155,6 +174,7 @@ void	initReal(void)
 				numeric_mod, Real_mod,
 				numeric_pos, Real_copy,
 				numeric_neg, Real_neg,
+				numeric_pow, Real_pow,
 				0);
 	}
 }

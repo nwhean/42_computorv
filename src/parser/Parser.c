@@ -26,8 +26,9 @@
 static void				move(void *_self);
 static struct s_Expr	*expr(void *_self);
 static struct s_Expr	*term(void *_self);
-static struct s_Expr	*factor(void *_self);
 static struct s_Expr	*unary(void *_self);
+static struct s_Expr	*factor(void *_self);
+static struct s_Expr	*base(void *_self);
 
 /* Parser constructor method. */
 static void	*Parser_ctor(void *_self, va_list *app)
@@ -138,7 +139,7 @@ static struct s_Expr	*term(void *_self)
 
 	while (tag == '*' || tag == '/' || tag == '%')
 	{
-		struct s_Token	*tok = new(Token, self->look->tag);
+		struct s_Token	*tok = new(Token, tag);
 		move(self);
 		x = new(Arith, tok, NULL, x, unary(self));
 		tag = self->look->tag;
@@ -165,8 +166,26 @@ static struct s_Expr	*unary(void *_self)
 		return (factor(self));
 }
 
-/* <factor>	:== '(' <expr> ')' | Num | Real */
+/*
+ * <factor>			:== <base> <factor_tail> | <base>
+ * <factor_tail>	:== '^' <factor>
+ */
 static struct s_Expr	*factor(void *_self)
+{
+	struct s_Parser	*self = _self;
+	struct s_Expr	*x = base(self);
+
+	while (self->look->tag == '^')
+	{
+		struct s_Token	*tok = new(Token, self->look->tag);
+		move(self);
+		x = new(Arith, tok, NULL, x, factor(self));
+	}
+	return (x);
+}
+
+/* <base>	:== '(' <expr> ')' | Num | Real */
+static struct s_Expr	*base(void *_self)
 {
 	struct s_Parser	*self = _self;
 	struct s_Expr	*x = NULL;

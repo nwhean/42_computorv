@@ -104,6 +104,9 @@ static const struct s_Token	*Arith_eval(const void *_self)
 		case '%':
 			retval = numeric_mod(expr1, expr2);
 			break ;
+		case '^':
+			retval = numeric_pow(expr1, expr2);
+			break ;
 	}
 	delete((void *)expr1);
 	delete((void *)expr2);
