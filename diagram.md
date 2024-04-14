@@ -53,6 +53,9 @@ classDiagram
 	class Numeric {
 		<<abstract>>
 		+add(Numeric) Numeric*
+		+sub(Numeric) Numeric*
+		+mul(Numeric) Numeric*
+		+div(Numeric) Numeric*
 		+unary() Numeric*
 	}
 

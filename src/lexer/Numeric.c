@@ -14,13 +14,40 @@ static void	*Numeric_ctor(void *_self, va_list *app)
 	return (self);
 }
 
-/* Return a copy of the Numeric with its value negated. */
+/* Return the addition of two Numerics. */
 void	*numeric_add(const void *self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = self;
 
 	assert(self && *cp && (*cp)->add);
 	return ((*cp)->add(self, other));
+}
+
+/* Return the subtraction of one Numeric from aother. */
+void	*numeric_sub(const void *self, const void *other)
+{
+	const struct s_NumericClass *const	*cp = self;
+
+	assert(self && *cp && (*cp)->sub);
+	return ((*cp)->sub(self, other));
+}
+
+/* Return the multiplication of two Numerics. */
+void	*numeric_mul(const void *self, const void *other)
+{
+	const struct s_NumericClass *const	*cp = self;
+
+	assert(self && *cp && (*cp)->mul);
+	return ((*cp)->mul(self, other));
+}
+
+/* Return the division of one Numeric from another. */
+void	*numeric_div(const void *self, const void *other)
+{
+	const struct s_NumericClass *const	*cp = self;
+
+	assert(self && *cp && (*cp)->div);
+	return ((*cp)->div(self, other));
 }
 
 /* Return a copy of the Numeric with its value negated. */
@@ -49,6 +76,12 @@ static void	*NumericClass_ctor(void *_self, va_list *app)
 		method = va_arg(ap, voidf);
 		if (selector == (voidf)numeric_add)
 			*(voidf *)&self->add = method;
+		else if (selector == (voidf)numeric_sub)
+			*(voidf *)&self->sub = method;
+		else if (selector == (voidf)numeric_mul)
+			*(voidf *)&self->mul = method;
+		else if (selector == (voidf)numeric_div)
+			*(voidf *)&self->div = method;
 		else if (selector == (voidf)numeric_unary)
 			*(voidf *)&self->unary = method;
 	}

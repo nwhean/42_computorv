@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+#include "Num.h"
 #include "Real.h"
 
 const void	*Real;
@@ -33,8 +34,8 @@ static const char	*Real_to_string(const void *_self)
 	return (retval);
 }
 
-/* Return the addition of two Numeric */
-static struct s_Real	*Real_add(const void *_self, const void *_other)
+/* Return the addition of two Numerics. */
+static struct s_Numeric	*Real_add(const void *_self, const void *_other)
 {
 	const struct s_Real		*self = _self;
 	const struct s_Token	*other = _other;
@@ -46,6 +47,62 @@ static struct s_Real	*Real_add(const void *_self, const void *_other)
 		case REAL:
 			return (new(Real, REAL,
 						self->value + ((struct s_Real *)other)->value));
+		default:
+			return (NULL);
+	};
+}
+
+/* Return the subtraction of one Numeric from another. */
+static struct s_Numeric	*Real_sub(const void *_self, const void *_other)
+{
+	const struct s_Real		*self = _self;
+	const struct s_Token	*other = _other;
+
+	switch (other->tag)
+	{
+		case NUM:
+			return (new(Real, REAL,
+						self->value - ((struct s_Num *)other)->value));
+		case REAL:
+			return (new(Real, REAL,
+						self->value - ((struct s_Real *)other)->value));
+		default:
+			return (NULL);
+	};
+}
+
+/* Return the multiplication of two Numerics. */
+static struct s_Numeric	*Real_mul(const void *_self, const void *_other)
+{
+	const struct s_Real		*self = _self;
+	const struct s_Token	*other = _other;
+
+	switch (other->tag)
+	{
+		case NUM:
+			return numeric_mul(other, self);
+		case REAL:
+			return (new(Real, REAL,
+						self->value * ((struct s_Real *)other)->value));
+		default:
+			return (NULL);
+	};
+}
+
+/* Return the division of one Numeric from another. */
+static struct s_Numeric	*Real_div(const void *_self, const void *_other)
+{
+	const struct s_Real		*self = _self;
+	const struct s_Token	*other = _other;
+
+	switch (other->tag)
+	{
+		case NUM:
+			return (new(Real, REAL,
+						self->value / ((struct s_Num *)other)->value));
+		case REAL:
+			return (new(Real, REAL,
+						self->value / ((struct s_Real *)other)->value));
 		default:
 			return (NULL);
 	};
@@ -72,6 +129,9 @@ void	initReal(void)
 				token_copy, Real_copy,
 				token_to_string, Real_to_string,
 				numeric_add, Real_add,
+				numeric_sub, Real_sub,
+				numeric_mul, Real_mul,
+				numeric_div, Real_div,
 				numeric_unary, Real_unary,
 				0);
 	}
