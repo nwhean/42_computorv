@@ -78,12 +78,17 @@ void	super_program(const void *_class, void *_self)
 /* Parser program method */
 static void	Parser_program(void *_self)
 {
-	struct s_Parser	*self = _self;
-	void			*x = expr(self);
-	const char		*s = to_string(x);
+	struct s_Parser			*self = _self;
+	void					*x = expr(self);
+	const char				*s = to_string(x);
+	const struct s_Token	*token = eval(x);
+	const char				*result = token_to_string(token);
 
 	printf("%s\n", s);
+	printf("%s\n", result);
 	free((char *)s);
+	delete((void *)token);
+	free((char *)result);
 	delete(x);
 }
 

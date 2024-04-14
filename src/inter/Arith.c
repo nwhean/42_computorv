@@ -2,10 +2,11 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include "Type.h"
+#include "Arith.h"
 #include "Expr.r"
 #include "Op.h"
-#include "Arith.h"
+#include "Numeric.h"
+#include "Type.h"
 
 const void	*Arith;
 
@@ -76,6 +77,26 @@ static const char	*Arith_to_string(const void *_self)
 	return (retval);
 }
 
+/* Evaluate the arithmetic expression. */
+static const struct s_Token	*Arith_eval(const void *_self)
+{
+	// const struct s_ExprClass	*class = classOf(_self);
+	const struct s_Arith		*self = _self;
+	const struct s_Token		*op = get_op(self);
+	const struct s_Token		*expr1 = eval(self->expr1);
+	const struct s_Token		*expr2 = eval(self->expr2);
+	const struct s_Token		*retval = NULL;
+
+	switch (op->tag)
+	{
+		case '+':
+			retval = numeric_add(expr1, expr2);
+	}
+	delete((void *)expr1);
+	delete((void *)expr2);
+	return (retval);
+}
+
 void	initArith(void)
 {
 	initOp();
@@ -87,5 +108,6 @@ void	initArith(void)
 				gen, Arith_gen,
 				reduce, Arith_reduce,
 				to_string, Arith_to_string,
+				eval, Arith_eval,
 				0);
 }

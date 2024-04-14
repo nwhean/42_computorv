@@ -18,6 +18,7 @@ classDiagram
 		+gen() Expr
 		+reduce() Expr
 		+to_string() String
+		+eval() Token
 		+get_op() Token
 		+set_type(Type)
 		+get_type() Type

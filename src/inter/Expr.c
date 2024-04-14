@@ -92,6 +92,30 @@ static const char	*Expr_to_string(const void *_self)
 	return (token_to_string(self->op));
 }
 
+/* Return Token representing the Expr. */
+const struct s_Token	*eval(const void *self)
+{
+	const struct s_ExprClass *const	*cp = self;
+
+	assert(self && *cp && (*cp)->eval);
+	return ((*cp)->eval(self));
+}
+
+const struct s_Token	*super_eval(const void *_class, const void *_self)
+{
+	const struct s_ExprClass	*superclass = super(_class);
+
+	assert(_self && superclass->eval);
+	return (superclass->eval(_self));
+}
+
+static const struct s_Token	*Expr_eval(const void *_self)
+{
+	const struct s_Expr	*self = _self;
+
+	return token_copy(self->op);
+}
+
 /* Get the op of an Expr. */
 const struct s_Token	*get_op(const void *_self)
 {
@@ -137,6 +161,8 @@ static void	*ExprClass_ctor(void *_self, va_list *app)
 			*(voidf *)&self->reduce = method;
 		else if (selector == (voidf)to_string)
 			*(voidf *)&self->to_string = method;
+		else if (selector == (voidf)eval)
+			*(voidf *)&self->eval = method;
 	}
 	return (self);
 }
@@ -157,5 +183,6 @@ void	initExpr(void)
 				gen, Expr_gen,
 				reduce, Expr_reduce,
 				to_string, Expr_to_string,
+				eval, Expr_eval,
 				0);
 }

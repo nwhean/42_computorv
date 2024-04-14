@@ -28,7 +28,7 @@ static void	*Op_dtor(void *_self, va_list *app)
 static struct s_Expr	*Op_gen(const void *_self)
 {
 	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Expr			*self = _self;
+	const struct s_Op			*self = _self;
 
 	return (super_gen(class, self));
 }
@@ -36,7 +36,7 @@ static struct s_Expr	*Op_gen(const void *_self)
 static struct s_Expr	*Op_reduce(const void *_self)
 {
 	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Expr			*self = _self;
+	const struct s_Op			*self = _self;
 
 	return (super_reduce(class, self));
 }
@@ -44,9 +44,17 @@ static struct s_Expr	*Op_reduce(const void *_self)
 static const char	*Op_to_string(const void *_self)
 {
 	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Expr			*self = _self;
+	const struct s_Op			*self = _self;
 
 	return (super_to_string(class, self));
+}
+
+static const struct s_Token	*Op_eval(const void *_self)
+{
+	const struct s_ExprClass	*class = classOf(_self);
+	const struct s_Op			*self = _self;
+
+	return (super_eval(class, self));
 }
 
 void	initOp(void)
@@ -60,5 +68,6 @@ void	initOp(void)
 				gen, Op_gen,
 				reduce, Op_reduce,
 				to_string, Op_to_string,
+				eval, Op_eval,
 				0);
 }

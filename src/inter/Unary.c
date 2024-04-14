@@ -2,10 +2,11 @@
 #include <stdarg.h>
 #include <string.h>
 
-#include "Type.h"
 #include "Expr.r"
 #include "Op.h"
 #include "Unary.h"
+#include "Numeric.h"
+#include "Type.h"
 
 const void	*Unary;
 
@@ -68,6 +69,16 @@ static const char	*Unary_to_string(const void *_self)
 	return (retval);
 }
 
+static const struct s_Token	*Unary_eval(const void *_self)
+{
+	const struct s_Unary		*self = _self;
+	const struct s_Token		*expr = eval(self->expr);
+	const struct s_Token		*retval = numeric_unary(expr);
+
+	delete((void *)expr);
+	return (retval);
+}
+
 void	initUnary(void)
 {
 	initOp();
@@ -79,5 +90,6 @@ void	initUnary(void)
 				gen, Unary_gen,
 				reduce, Unary_reduce,
 				to_string, Unary_to_string,
+				eval, Unary_eval,
 				0);
 }
