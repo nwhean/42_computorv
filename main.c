@@ -19,9 +19,6 @@
 // parser
 #include "Parser.h"
 
-// symbols
-#include "Type.h"
-
 void	init_inter(void)
 {
 	initArith();
@@ -46,18 +43,12 @@ void	init_parser(void)
 	initParser();
 }
 
-void	init_symbols(void)
-{
-	initType();
-}
-
 // initialise all classes
 void	init(void)
 {
 	init_inter();
 	init_lexer();
 	init_parser();
-	init_symbols();
 }
 
 int	main(void)

@@ -3,7 +3,6 @@ INCLUDE	=	-Iinclude \
 			-Iinclude/inter \
 			-Iinclude/lexer \
 			-Iinclude/parser \
-			-Iinclude/symbols \
 			-Iliboop/include
 LDFLAGS	=	-L. -Lliboop
 LDLIBS	=	-lcomputorv -loop -lm
@@ -15,7 +14,6 @@ LIBCOMP	=	libcomputorv.a
 INTER_DIR	=	inter/
 LEXER_DIR	=	lexer/
 PARSER_DIR	=	parser/
-SYMBOLS_DIR	=	symbols/
 
 SRCDIR	=	src
 SRCS	=	$(addprefix $(INTER_DIR), \
@@ -36,9 +34,6 @@ SRCS	=	$(addprefix $(INTER_DIR), \
 			) \
 			$(addprefix $(PARSER_DIR), \
 				Parser.c \
-			) \
-			$(addprefix $(SYMBOLS_DIR), \
-				Type.c \
 			)
 OBJDIR	=	obj
 OBJS	=	$(addprefix $(OBJDIR)/, $(SRCS:%.c=%.o))

@@ -71,7 +71,7 @@ static const char	*Token_to_string(const void *_self)
 }
 
 /* Return the tag of the Token. */
-int	get_tag(const void *_self)
+enum e_Tag	token_get_tag(const void *_self)
 {
 	const struct s_Token	*self = _self;
 

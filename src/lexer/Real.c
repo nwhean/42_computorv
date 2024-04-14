@@ -21,7 +21,7 @@ static struct s_Real	*Real_copy(const void *_self)
 {
 	const struct s_Real	*self = _self;
 
-	return new(Real, get_tag(self), self->value);
+	return new(Real, token_get_tag(self), self->value);
 }
 
 /* Return string representing the Real. */

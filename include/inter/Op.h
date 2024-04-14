@@ -8,7 +8,7 @@ struct s_Op			// Op: Expr
 	const struct s_Expr	_;
 };
 
-extern const void	*Op;			// new(Op, Token, Type);
+extern const void	*Op;			// new(Op, Token, Tag);
 
 void	initOp(void);
 

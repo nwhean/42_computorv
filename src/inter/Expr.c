@@ -13,7 +13,7 @@ static void	*Expr_ctor(void *_self, va_list *app)
 
 	self = super_ctor(Expr, _self, app);
 	self->op = va_arg(*app, struct s_Token *);
-	self->type = va_arg(*app, struct s_Type *);
+	self->tag = va_arg(*app, enum e_Tag);
 	return (self);
 }
 
@@ -124,20 +124,20 @@ const struct s_Token	*get_op(const void *_self)
 	return (self->op);
 }
 
-/* Set the type of an Expr. */
-void		set_type(void *_self, const struct s_Type *type)
+/* Set the tag of an Expr. */
+void	set_tag(void *_self, enum e_Tag tag)
 {
 	struct s_Expr	*self = _self;
 
-	self->type = (struct s_Type *)type;
+	self->tag = tag;
 }
 
-/* Get the type of an Expr. */
-const struct s_Type	*get_type(const void *_self)
+/* Get the tag of an Expr. */
+enum e_Tag	get_tag(const void *_self)
 {
 	const struct s_Expr	*self = _self;
 
-	return (self->type);
+	return (self->tag);
 }
 
 /* ExprClass constructor method. */

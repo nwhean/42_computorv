@@ -11,7 +11,7 @@ struct s_Arith			// Arith: Op
 	struct s_Expr		*expr2;
 };
 
-extern const void	*Arith;			// new(Arith, Token, NULL, expr1, expr2);
+extern const void	*Arith;			// new(Arith, Token, 0, Expr1, Expr2);
 
 void	initArith(void);
 

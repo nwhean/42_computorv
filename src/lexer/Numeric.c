@@ -135,3 +135,19 @@ void	initNumeric(void)
 				ctor, Numeric_ctor,
 				0);
 }
+
+bool	numeric_is(enum e_Tag tag)
+{
+	if (tag == NUM || tag == REAL)
+		return true;
+	return false;
+}
+
+enum e_Tag	numeric_max(enum e_Tag tag1, enum e_Tag tag2)
+{
+	if (!numeric_is(tag1) || !numeric_is(tag2))
+		return (0);
+	if (tag1 == REAL || tag2 == REAL)
+		return (REAL);
+	return NUM;
+}

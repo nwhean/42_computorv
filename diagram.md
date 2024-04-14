@@ -14,14 +14,14 @@ classDiagram
 
 	class Expr {
 		+Token op
-		+Type type
+		+Tag tag
 		+gen() Expr
 		+reduce() Expr
 		+to_string() String
 		+eval() Token
 		+get_op() Token
-		+set_type(Type)
-		+get_type() Type
+		+set_tag(Tag)
+		+get_tag() Tag
 	}
 
 	Object <|-- Node
@@ -69,11 +69,21 @@ classDiagram
 
 	Object <|-- Token
 
+	class Tag {
+		<<enumeration>>
+		PLUS
+		MINUS
+		NUM
+		REAL
+		WORD
+		ID
+	}
+
 	class Token {
-		+int tag
+		+Tag tag
 		+copy() Token
 		+to_string() String
-		#get_tag() int
+		#get_tag() Tag
 	}
 
 	Token <|-- Word
@@ -91,14 +101,5 @@ classDiagram
 		-Lexer lexer
 		-Token look
 		+program()
-	}
-
-
-	%% symbols
-
-	Word <|-- Type
-
-	class Type {
-		+int width
 	}
 ```

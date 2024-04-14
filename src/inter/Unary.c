@@ -6,7 +6,7 @@
 #include "Op.h"
 #include "Unary.h"
 #include "Numeric.h"
-#include "Type.h"
+#include "Word.h"
 
 const void	*Unary;
 
@@ -17,8 +17,8 @@ static void	*Unary_ctor(void *_self, va_list *app)
 
 	self = super_ctor(Unary, _self, app);
 	self->expr = va_arg(*app, struct s_Expr *);
-	set_type(self, type_max(Type_Int, self->expr->type));
-	assert(get_type(self));
+	set_tag(self, numeric_max(NUM, self->expr->tag));
+	assert(get_tag(self));
 	return (self);
 }
 

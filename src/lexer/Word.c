@@ -38,7 +38,7 @@ static struct s_Word	*Word_copy(const void *_self)
 {
 	const struct s_Word	*self = _self;
 
-	return new(Word, get_tag(self), self->lexeme);
+	return new(Word, token_get_tag(self), self->lexeme);
 }
 
 /* Return string representing the Word. */

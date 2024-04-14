@@ -22,7 +22,7 @@ static struct s_Num	*Num_copy(const void *_self)
 {
 	const struct s_Num	*self = _self;
 
-	return new(Num, get_tag(self), self->value);
+	return new(Num, token_get_tag(self), self->value);
 }
 
 /* Return string representing the Num. */

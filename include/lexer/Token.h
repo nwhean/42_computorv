@@ -5,8 +5,7 @@
 # include "Object.r"
 
 enum e_Tag {
-	BASIC = 256,
-	PLUS,
+	PLUS = 256,
 	MINUS,
 	NUM,
 	REAL,

@@ -20,9 +20,6 @@
 #include "Parser.h"
 #include "Parser.r"
 
-// symbols
-#include "Type.h"
-
 static void				move(void *_self);
 static struct s_Expr	*expr(void *_self);
 static struct s_Expr	*term(void *_self);
@@ -122,7 +119,7 @@ static struct s_Expr	*expr(void *_self)
 	{
 		struct s_Token	*tok = new(Token, self->look->tag);
 		move(self);
-		x = new(Arith, tok, NULL, x, term(self));
+		x = new(Arith, tok, 0, x, term(self));
 	}
 	return (x);
 }
@@ -135,13 +132,13 @@ static struct s_Expr	*term(void *_self)
 {
 	struct s_Parser	*self = _self;
 	struct s_Expr	*x = unary(self);
-	int				tag = self->look->tag;
+	enum e_Tag		tag = self->look->tag;
 
 	while (tag == '*' || tag == '/' || tag == '%')
 	{
 		struct s_Token	*tok = new(Token, tag);
 		move(self);
-		x = new(Arith, tok, NULL, x, unary(self));
+		x = new(Arith, tok, 0, x, unary(self));
 		tag = self->look->tag;
 	}
 	return (x);
@@ -155,12 +152,12 @@ static struct s_Expr	*unary(void *_self)
 	if (self->look->tag == '+')
 	{
 		move(self);
-		return new(Unary, Word_plus, NULL, unary(self));
+		return new(Unary, Word_plus, 0, unary(self));
 	}
 	else if (self->look->tag == '-')
 	{
 		move(self);
-		return new(Unary, Word_minus, NULL, unary(self));
+		return new(Unary, Word_minus, 0, unary(self));
 	}
 	else
 		return (factor(self));
@@ -179,7 +176,7 @@ static struct s_Expr	*factor(void *_self)
 	{
 		struct s_Token	*tok = new(Token, self->look->tag);
 		move(self);
-		x = new(Arith, tok, NULL, x, factor(self));
+		x = new(Arith, tok, 0, x, factor(self));
 	}
 	return (x);
 }
@@ -200,12 +197,12 @@ static struct s_Expr	*base(void *_self)
 			return (x);
 		case NUM:
 			tok = new(Num, NUM, ((struct s_Num *)self->look)->value);
-			x = new(Constant, tok, Type_Int);
+			x = new(Constant, tok, NUM);
 			move(self);
 			return (x);
 		case REAL:
 			tok = new(Real, REAL, ((struct s_Real *)self->look)->value);
-			x = new(Constant, tok, Type_Real);
+			x = new(Constant, tok, REAL);
 			move(self);
 			return (x);
 		default:

@@ -6,7 +6,6 @@
 #include "Expr.r"
 #include "Op.h"
 #include "Numeric.h"
-#include "Type.h"
 
 const void	*Arith;
 
@@ -18,8 +17,8 @@ static void	*Arith_ctor(void *_self, va_list *app)
 	self = super_ctor(Arith, _self, app);
 	self->expr1 = va_arg(*app, struct s_Expr *);
 	self->expr2 = va_arg(*app, struct s_Expr *);
-	set_type(self, type_max(self->expr1->type, self->expr2->type));
-	assert(get_type(self));
+	set_tag(self, numeric_max(self->expr1->tag, self->expr2->tag));
+	assert(get_tag(self));
 	return (self);
 }
 

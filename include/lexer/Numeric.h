@@ -1,6 +1,8 @@
 #ifndef NUMERIC_H
 # define NUMERIC_H
 
+# include <stdbool.h>
+
 # include "Token.h"
 # include "Token.r"
 
@@ -35,6 +37,8 @@ void				*numeric_pos(const void *self);
 void				*numeric_neg(const void *self);
 void				*numeric_pow(const void *self, const void *other);
 
-void		initNumeric(void);
+void				initNumeric(void);
+bool				numeric_is(enum e_Tag tag);
+enum e_Tag			numeric_max(enum e_Tag tag1, enum e_Tag tag2);
 
 #endif

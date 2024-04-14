@@ -8,7 +8,7 @@ struct s_Constant			// Constant: Expr
 	const struct s_Expr	_;
 };
 
-extern const void	*Constant;			// new(Constant, Token, Type);
+extern const void	*Constant;			// new(Constant, Token, Tag);
 
 void	initConstant(void);
 
