@@ -80,32 +80,35 @@ static const char	*Arith_to_string(const void *_self)
 static const struct s_Token	*Arith_eval(const void *_self)
 {
 	// const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Arith		*self = _self;
-	const struct s_Token		*op = get_op(self);
-	const struct s_Token		*expr1 = eval(self->expr1);
-	const struct s_Token		*expr2 = eval(self->expr2);
-	const struct s_Token		*retval = NULL;
+	const struct s_Arith	*self = _self;
+	const struct s_Token	*op = get_op(self);
+	const struct s_Token	*expr1 = eval(self->expr1);
+	const struct s_Token	*expr2 = eval(self->expr2);
+	const struct s_Token	*retval = NULL;
 
-	switch (op->tag)
+	if (expr1 && expr2)
 	{
-		case '+':
-			retval = numeric_add(expr1, expr2);
-			break ;
-		case '-':
-			retval = numeric_sub(expr1, expr2);
-			break ;
-		case '*':
-			retval = numeric_mul(expr1, expr2);
-			break ;
-		case '/':
-			retval = numeric_div(expr1, expr2);
-			break ;
-		case '%':
-			retval = numeric_mod(expr1, expr2);
-			break ;
-		case '^':
-			retval = numeric_pow(expr1, expr2);
-			break ;
+		switch (op->tag)
+		{
+			case '+':
+				retval = numeric_add(expr1, expr2);
+				break ;
+			case '-':
+				retval = numeric_sub(expr1, expr2);
+				break ;
+			case '*':
+				retval = numeric_mul(expr1, expr2);
+				break ;
+			case '/':
+				retval = numeric_div(expr1, expr2);
+				break ;
+			case '%':
+				retval = numeric_mod(expr1, expr2);
+				break ;
+			case '^':
+				retval = numeric_pow(expr1, expr2);
+				break ;
+		}
 	}
 	delete((void *)expr1);
 	delete((void *)expr2);

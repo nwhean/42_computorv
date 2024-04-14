@@ -81,15 +81,18 @@ static void	Parser_program(void *_self)
 	if (!x)
 		return ;
 
-	const char				*s = to_string(x);
-	const struct s_Token	*token = eval(x);
-	const char				*result = token_to_string(token);
-
+	const char	*s = to_string(x);
 	printf("%s\n", s);
-	printf("%s\n", result);
 	free((char *)s);
-	delete((void *)token);
-	free((char *)result);
+
+	const struct s_Token	*token = eval(x);
+	if (token)
+	{
+		const char	*result = token_to_string(token);
+		printf("%s\n", result);
+		free((char *)result);
+		delete((void *)token);
+	}
 	delete(x);
 }
 

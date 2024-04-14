@@ -71,10 +71,12 @@ static const char	*Unary_to_string(const void *_self)
 
 static const struct s_Token	*Unary_eval(const void *_self)
 {
-	const struct s_Unary		*self = _self;
-	const struct s_Token		*expr = eval(self->expr);
-	struct s_Token		*retval;
+	const struct s_Unary	*self = _self;
+	const struct s_Token	*expr = eval(self->expr);
+	struct s_Token			*retval = NULL;
 
+	if (!expr)
+		return (NULL);
 	if (get_op(self) == (struct s_Token *)Word_plus)
 		retval = numeric_pos(expr);
 	else
