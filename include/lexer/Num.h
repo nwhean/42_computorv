@@ -1,12 +1,12 @@
 #ifndef NUM_H
 # define NUM_H
 
-# include "Token.h"
+# include "Numeric.h"
 
 // all members are public
-struct s_Num		// Num: Token
+struct s_Num		// Num: Numeric
 {
-	const struct s_Token	_;
+	const struct s_Numeric	_;
 	int						value;
 };
 

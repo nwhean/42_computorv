@@ -41,13 +41,21 @@ classDiagram
 		+scan() Token
 	}
 
-	Token <|-- Num
+	Numeric <|-- Num
 
 	class Num {
 		+int value
 	}
 
-	Token <|-- Real
+	Token <|-- Numeric
+
+	class Numeric {
+		<<abstract>>
+		+add(Numeric) Numeric*
+		+unary() Numeric*
+	}
+
+	Numeric <|-- Real
 
 	class Real {
 		+double value
@@ -57,7 +65,9 @@ classDiagram
 
 	class Token {
 		+int tag
+		+copy() Token
 		+to_string() String
+		#get_tag() int
 	}
 
 	Token <|-- Word

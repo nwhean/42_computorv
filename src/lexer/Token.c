@@ -16,6 +16,31 @@ static void	*Token_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* Return a copy of the Token or its subclass. */
+void	*token_copy(const void *self)
+{
+	const struct s_TokenClass *const	*cp = self;
+
+	assert(self && *cp && (*cp)->copy);
+	return ((*cp)->copy(self));
+}
+
+void	*super_token_copy(const void *_class, const void *_self)
+{
+	const struct s_TokenClass	*superclass = super(_class);
+
+	assert(_self && superclass->copy);
+	return (superclass->copy(_self));
+}
+
+/* Return a copy of the Token. */
+static struct s_Token	*Token_copy(const void *_self)
+{
+	const struct s_Token	*self = _self;
+
+	return new(Token, self->tag);
+}
+
 /* Return string representing the Token and its subclasses. */
 const char	*token_to_string(const void *self)
 {
@@ -45,6 +70,14 @@ static const char	*Token_to_string(const void *_self)
 	return retval;
 }
 
+/* Return the tag of the Token. */
+int	get_tag(const void *_self)
+{
+	const struct s_Token	*self = _self;
+
+	return (self->tag);
+}
+
 /* TokenClass constructor method. */
 static void	*TokenClass_ctor(void *_self, va_list *app)
 {
@@ -60,7 +93,9 @@ static void	*TokenClass_ctor(void *_self, va_list *app)
 		voidf	method;
 
 		method = va_arg(ap, voidf);
-		if (selector == (voidf)token_to_string)
+		if (selector == (voidf)token_copy)
+			*(voidf *)&self->copy = method;
+		else if (selector == (voidf)token_to_string)
 			*(voidf *)&self->to_string = method;
 	}
 	return (self);
@@ -77,6 +112,7 @@ void	initToken(void)
 		Token = new(TokenClass, "Token",
 				Object, sizeof(struct s_Token),
 				ctor, Token_ctor,
+				token_copy, Token_copy,
 				token_to_string, Token_to_string,
 				0);
 }

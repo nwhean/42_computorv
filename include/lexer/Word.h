@@ -2,6 +2,7 @@
 # define WORD_H
 
 # include "Token.h"
+# include "Token.r"
 
 // all members are public
 struct s_Word		// Word: Token

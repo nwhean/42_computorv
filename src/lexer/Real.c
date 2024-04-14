@@ -14,7 +14,15 @@ static void	*Real_ctor(void *_self, va_list *app)
 	return (self);
 }
 
-/* Return string representing the Num. */
+/* Return a copy of the Real. */
+static struct s_Real	*Real_copy(const void *_self)
+{
+	const struct s_Real	*self = _self;
+
+	return new(Real, get_tag(self), self->value);
+}
+
+/* Return string representing the Real. */
 static const char	*Real_to_string(const void *_self)
 {
 	const struct s_Real	*self = _self;
@@ -25,15 +33,46 @@ static const char	*Real_to_string(const void *_self)
 	return (retval);
 }
 
+/* Return the addition of two Numeric */
+static struct s_Real	*Real_add(const void *_self, const void *_other)
+{
+	const struct s_Real		*self = _self;
+	const struct s_Token	*other = _other;
+
+	switch (other->tag)
+	{
+		case NUM:
+			return numeric_add(other, self);
+		case REAL:
+			return (new(Real, REAL,
+						self->value + ((struct s_Real *)other)->value));
+		default:
+			return (NULL);
+	};
+}
+
+/* Return a copy of the Real with its value negated. */
+static struct s_Real	*Real_unary(const void *_self)
+{
+	const struct s_Real	*self = _self;
+	struct s_Real		*retval = token_copy(self);
+
+	retval->value *= -1;
+	return (retval);
+}
+
 void	initReal(void)
 {
 	if (!Real)
 	{
-		initToken();
-		Real = new(TokenClass, "Real",
-				Token, sizeof(struct s_Real),
+		initNumeric();
+		Real = new(NumericClass, "Real",
+				Numeric, sizeof(struct s_Real),
 				ctor, Real_ctor,
+				token_copy, Real_copy,
 				token_to_string, Real_to_string,
+				numeric_add, Real_add,
+				numeric_unary, Real_unary,
 				0);
 	}
 }

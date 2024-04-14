@@ -29,6 +29,7 @@ SRCS	=	$(addprefix $(INTER_DIR), \
 			$(addprefix $(LEXER_DIR), \
 				Lexer.c \
 				Num.c \
+				Numeric.c \
 				Real.c \
 				Token.c \
 				Word.c \

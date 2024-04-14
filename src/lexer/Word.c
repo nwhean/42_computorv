@@ -32,6 +32,14 @@ static void	*Word_dtor(void *_self, va_list *app)
 	return (super_dtor(Word, _self));
 }
 
+/* Return a copy of the Word. */
+static struct s_Word	*Word_copy(const void *_self)
+{
+	const struct s_Word	*self = _self;
+
+	return new(Word, get_tag(self), self->lexeme);
+}
+
 /* Return string representing the Word. */
 static const char	*Word_to_string(const void *_self)
 {
@@ -49,6 +57,7 @@ void	initWord(void)
 				Token, sizeof(struct s_Word),
 				ctor, Word_ctor,
 				dtor, Word_dtor,
+				token_copy, Word_copy,
 				token_to_string, Word_to_string,
 				0);
 		Word_minus = new(Word, MINUS, "minus");
