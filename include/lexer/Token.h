@@ -7,8 +7,10 @@
 enum e_Tag {
 	PLUS = 256,
 	MINUS,
+	ZERO,
 	NUM,
 	REAL,
+	RATIONAL,
 	WORD,
 	ID
 };

@@ -3,8 +3,7 @@
 #include <ctype.h>
 
 #include "Token.h"
-#include "Num.h"
-#include "Real.h"
+#include "Rational.h"
 #include "Lexer.h"
 #include "Lexer.r"
 
@@ -61,27 +60,24 @@ static struct s_Token	*Lexer_scan(void *_self)
 	/* handle numbers */
 	if (isdigit(self->peek))
 	{
-		double	x;
-		double	d;
-		int		val = 0;
+		long	val = 0;
+		long	d = 1;
 		do
 		{
 			val = 10 * val + self->peek - '0';
 			readch(_self);
 		} while (isdigit(self->peek));
 		if (self->peek != '.')
-			return new(Num, NUM, val);
-		x = val;
-		d = 10;
+			return new(Rational, RATIONAL, val, 1);
 		while (true)
 		{
 			readch(_self);
 			if (!isdigit(self->peek))
 				break ;
-			x += (self->peek - '0') / d;
+			val = 10 * val + self->peek - '0';
 			d *= 10;
 		}
-		return new(Real, REAL, x);
+		return new(Rational, RATIONAL, val, d);
 	}
 
 	/* other tokens */

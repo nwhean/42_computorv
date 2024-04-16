@@ -11,6 +11,7 @@
 /* lexer */
 #include "Lexer.h"
 #include "Num.h"
+#include "Rational.h"
 #include "Real.h"
 #include "Token.h"
 #include "Word.h"
@@ -94,6 +95,10 @@ static void	Parser_program(void *_self)
 		printf("%s\n", result);
 		free((char *)result);
 		delete((void *)token);
+	}
+	else
+	{
+		fprintf(stderr, "Evaluation failure\n");
 	}
 	delete(x);
 }
@@ -190,7 +195,7 @@ static struct s_Expr	*unary(void *_self)
 		move(self);
 		rhs = unary(self);
 		if (rhs)
-			return new(Unary, tag == '+' ? Word_plus: Word_minus, 0, rhs);
+			return new(Unary, tag == '+' ? Word_plus: Word_minus, ZERO, rhs);
 		return (NULL);
 	}
 	return (factor(self));
@@ -224,7 +229,7 @@ static struct s_Expr	*factor(void *_self)
 	return (x);
 }
 
-/* <base>	:== '(' <expr> ')' | Num | Real */
+/* <base>	:== '(' <expr> ')' | Rational */
 static struct s_Expr	*base(void *_self)
 {
 	struct s_Parser	*self = _self;
@@ -238,14 +243,9 @@ static struct s_Expr	*base(void *_self)
 			x = expr(self);
 			match(self, ')');
 			return (x);
-		case NUM:
-			tok = new(Num, NUM, ((struct s_Num *)self->look)->value);
-			x = new(Constant, tok, NUM);
-			move(self);
-			return (x);
-		case REAL:
-			tok = new(Real, REAL, ((struct s_Real *)self->look)->value);
-			x = new(Constant, tok, REAL);
+		case RATIONAL:
+			tok = token_copy((struct s_Rational *)self->look);
+			x = new(Constant, tok, self->look->tag);
 			move(self);
 			return (x);
 		default:

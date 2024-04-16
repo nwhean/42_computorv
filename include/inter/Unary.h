@@ -10,7 +10,7 @@ struct s_Unary	/* Unary: Op */
 	struct s_Expr		*expr;
 };
 
-extern const void	*Unary;	/* new(Unary, Token, 0, Expr); */
+extern const void	*Unary;	/* new(Unary, Token, ZERO, Expr); */
 
 void	initUnary(void);
 

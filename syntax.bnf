@@ -6,5 +6,5 @@
 <unary>			:== '+' <unary> | '-' <unary> | <factor>
 <factor>		:== <base> <factor_tail> | <base>
 <factor_tail>	:== '^' <factor>
-<base>			:== '(' <expr> ')' | Num | Real
+<base>			:== '(' <expr> ')' | Rational
 <exponent>		:== <base>

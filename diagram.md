@@ -61,6 +61,13 @@ classDiagram
 		+neg() Numeric*
 	}
 
+	Numeric <|-- Rational
+
+	class Rational {
+		+long numerator
+		+long denominator
+	}
+
 	Numeric <|-- Real
 
 	class Real {
@@ -74,6 +81,7 @@ classDiagram
 		PLUS
 		MINUS
 		NUM
+		RATIONAL
 		REAL
 		WORD
 		ID

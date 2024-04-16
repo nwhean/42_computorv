@@ -17,7 +17,7 @@ static void	*Unary_ctor(void *_self, va_list *app)
 
 	self = super_ctor(Unary, _self, app);
 	self->expr = va_arg(*app, struct s_Expr *);
-	set_tag(self, numeric_max(NUM, self->expr->tag));
+	set_tag(self, numeric_max(RATIONAL, self->expr->tag));
 	assert(get_tag(self));
 	return (self);
 }
@@ -36,7 +36,7 @@ static struct s_Expr	*Unary_gen(const void *_self)
 {
 	const struct s_Unary		*self = _self;
 
-	return (new(Unary, get_op(self), NULL, reduce(self->expr)));
+	return (new(Unary, get_op(self), ZERO, reduce(self->expr)));
 }
 
 static struct s_Expr	*Unary_reduce(const void *_self)

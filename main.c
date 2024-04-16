@@ -11,8 +11,7 @@
 
 /* lexer */
 #include "Lexer.h"
-#include "Num.h"
-#include "Real.h"
+#include "Rational.h"
 #include "Token.h"
 #include "Word.h"
 
@@ -32,8 +31,7 @@ void	init_inter(void)
 void	init_lexer(void)
 {
 	initLexer();
-	initNum();
-	initReal();
+	initRational();
 	initToken();
 	initWord();
 }
