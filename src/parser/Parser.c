@@ -10,9 +10,7 @@
 
 /* lexer */
 #include "Lexer.h"
-#include "Num.h"
 #include "Rational.h"
-#include "Real.h"
 #include "Token.h"
 #include "Word.h"
 

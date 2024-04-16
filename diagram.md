@@ -42,12 +42,6 @@ classDiagram
 		+scan() Token
 	}
 
-	Numeric <|-- Num
-
-	class Num {
-		+int value
-	}
-
 	Token <|-- Numeric
 
 	class Numeric {
@@ -68,21 +62,13 @@ classDiagram
 		+long denominator
 	}
 
-	Numeric <|-- Real
-
-	class Real {
-		+double value
-	}
-
 	Object <|-- Token
 
 	class Tag {
 		<<enumeration>>
 		PLUS
 		MINUS
-		NUM
 		RATIONAL
-		REAL
 		WORD
 		ID
 	}
