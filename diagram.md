@@ -99,7 +99,7 @@ classDiagram
 		+Tag tag
 		+copy() Token
 		+to_string() String
-		#get_tag() Tag
+		+get_tag() Tag
 	}
 
 	Token <|-- Word
