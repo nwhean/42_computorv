@@ -1,19 +1,9 @@
-#include <string.h>
-
+#include "str.h"
 #include "Word.h"
 
 const struct s_Word		*Word;
 const struct s_Word		*Word_plus;
 const struct s_Word		*Word_minus;
-
-static char *strdup(const char *s)
-{
-	size_t	len = strlen(s);
-	char	*retval = malloc(len + 1);
-
-	memcpy(retval, s, len + 1);
-	return (retval);
-}
 
 /* Word constructor method. */
 static void	*Word_ctor(void *_self, va_list *app)

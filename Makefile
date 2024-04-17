@@ -1,5 +1,6 @@
 CFLAGS	=	-Wall -Wextra -Werror -pedantic -std=c90 $(INCLUDE) -fsanitize=address -g
 INCLUDE	=	-Iinclude \
+			-Iinclude/common \
 			-Iinclude/inter \
 			-Iinclude/lexer \
 			-Iinclude/parser \
@@ -14,9 +15,13 @@ LIBCOMP	=	libcomputorv.a
 INTER_DIR	=	inter/
 LEXER_DIR	=	lexer/
 PARSER_DIR	=	parser/
+COMMON_DIR		=	common/
 
 SRCDIR	=	src
-SRCS	=	$(addprefix $(INTER_DIR), \
+SRCS	=	$(addprefix $(COMMON_DIR), \
+				str.c \
+			) \
+			$(addprefix $(INTER_DIR), \
 				Arith.c \
 				Constant.c \
 				Expr.c \
