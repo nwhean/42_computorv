@@ -1,6 +1,7 @@
 CFLAGS	=	-Wall -Wextra -Werror -pedantic -std=c90 $(INCLUDE) -fsanitize=address -g
 INCLUDE	=	-Iinclude \
 			-Iinclude/common \
+			-Iinclude/container \
 			-Iinclude/inter \
 			-Iinclude/lexer \
 			-Iinclude/parser \
@@ -12,14 +13,19 @@ NAME	=	a.out
 LIBCOMP	=	libcomputorv.a
 
 # source and object files
-INTER_DIR	=	inter/
-LEXER_DIR	=	lexer/
-PARSER_DIR	=	parser/
 COMMON_DIR		=	common/
+CONTAINER_DIR	=	container/
+INTER_DIR		=	inter/
+LEXER_DIR		=	lexer/
+PARSER_DIR		=	parser/
 
 SRCDIR	=	src
 SRCS	=	$(addprefix $(COMMON_DIR), \
 				str.c \
+			) \
+			$(addprefix $(CONTAINER_DIR), \
+				Container.c \
+				UnorderedMap.c \
 			) \
 			$(addprefix $(INTER_DIR), \
 				Arith.c \

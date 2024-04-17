@@ -1,6 +1,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+/* container */
+#include "Container.h"
+#include "UnorderedMap.h"
+
 /* inter */
 #include "Arith.h"
 #include "Expr.h"
@@ -17,6 +21,12 @@
 
 /* parser */
 #include "Parser.h"
+
+void	init_container(void)
+{
+	initContainer();
+	initUnorderedMap();
+}
 
 void	init_inter(void)
 {
@@ -44,6 +54,7 @@ void	init_parser(void)
 /* initialise all classes */
 void	init(void)
 {
+	init_container();
 	init_inter();
 	init_lexer();
 	init_parser();

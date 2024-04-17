@@ -1,5 +1,27 @@
 ```mermaid
 classDiagram
+	%% container
+	class Container {
+		empty() bool
+		size() size_t
+		clear() void
+		insert(void *) bool
+		erase(void *) size_t
+		find(void *)
+		reserve(size_t) void
+	}
+
+	Container <|-- UnorderedMap
+
+	class UnorderedMap {
+		-size_t size
+		-size_t capacity
+		-void **key
+		-void **value
+		-func_ptr key_equal
+	}
+
+
 	%% inter
 
 	Op <|-- Arith

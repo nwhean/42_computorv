@@ -1,9 +1,12 @@
 #include "str.h"
+#include "Container.h"
+#include "UnorderedMap.h"
 #include "Word.h"
 
-const struct s_Word		*Word;
-const struct s_Word		*Word_plus;
-const struct s_Word		*Word_minus;
+const struct s_Word	*Word;
+const struct s_Word	*Word_plus;
+const struct s_Word	*Word_minus;
+const void			*reserved;
 
 /* Word constructor method. */
 static void	*Word_ctor(void *_self, va_list *app)
@@ -19,21 +22,10 @@ static void	*Word_ctor(void *_self, va_list *app)
 static void	*Word_dtor(void *_self)
 {
 	struct s_Word		*self = _self;
-	const struct s_Word	*reserved[2];
-	size_t				len;
-	size_t				i;
-
-	reserved[0] = Word_plus;
-	reserved[1] = Word_minus;
-	len = sizeof(reserved) / sizeof(struct s_Word *);
 
 	/* avoid destructing some reserved Words */
-	for (i = 0; i < len; ++i)
-	{
-		if (self == reserved[i])
-			return (NULL);
-	}
-	free(self->lexeme);
+	if (!container_find(reserved, self->lexeme))
+		free(self->lexeme);
 	return (super_dtor(Word, _self));
 }
 
@@ -53,11 +45,22 @@ static const char	*Word_to_string(const void *_self)
 	return (strdup(self->lexeme));
 }
 
+/* add a word into the reserve. */
+static void	reserve_add(const char *s, const struct s_Word *word)
+{
+	struct s_Pair	pair;
+
+	pair.first = (void *)s;
+	pair.second = (void *)word;
+	container_insert((void *)reserved, &pair);
+}
+
 void	initWord(void)
 {
 	if (!Word)
 	{
 		initToken();
+		initUnorderedMap();
 		Word = new(TokenClass, "Word",
 				Token, sizeof(struct s_Word),
 				ctor, Word_ctor,
@@ -67,5 +70,10 @@ void	initWord(void)
 				0);
 		Word_plus = new(Word, PLUS, "plus");
 		Word_minus = new(Word, MINUS, "minus");
+		reserved = new(UnorderedMap, str_equal);
+
+		/* Insert data into reserve. */
+		reserve_add("plus", Word_plus);
+		reserve_add("minus", Word_minus);
 	}
 }
