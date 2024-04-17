@@ -31,6 +31,7 @@ SRCS	=	$(addprefix $(COMMON_DIR), \
 				Arith.c \
 				Constant.c \
 				Expr.c \
+				Id.c \
 				Node.c \
 				Op.c \
 				Unary.c \

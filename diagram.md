@@ -46,6 +46,7 @@ classDiagram
 		+get_tag() Tag
 	}
 
+	Expr <|-- Id
 	Object <|-- Node
 	Expr <|-- Op
 	Op <|-- Unary

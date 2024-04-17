@@ -2,10 +2,18 @@
 #include <ctype.h>
 #include <stdio.h>
 
+/* common */
+#include "str.h"
+
+/* container */
+#include "Container.h"
+#include "UnorderedMap.h"
+
 /* inter */
 #include "Arith.h"
 #include "Constant.h"
 #include "Expr.h"
+#include "Id.h"
 #include "Unary.h"
 
 /* lexer */
@@ -33,6 +41,7 @@ static void	*Parser_ctor(void *_self, va_list *app)
 	self = super_ctor(Parser, _self, app);
 	self->lexer = va_arg(*app, void *);
 	self->look = NULL;
+	self->top = new(UnorderedMap, str_equal);
 	move(self);
 	return (self);
 }
@@ -43,6 +52,7 @@ static void	*Parser_dtor(void *_self)
 	struct s_Parser	*self = _self;
 
 	delete(self->look);
+	delete(self->top);
 	return (super_dtor(Parser, _self));
 }
 
@@ -51,7 +61,11 @@ static void	move(void *_self)
 {
 	struct s_Parser	*self = _self;
 
-	delete(self->look);
+	if (self->look)
+	{
+		if (self->look->tag != ID)
+			delete(self->look);
+	}
 	self->look = scan(self->lexer);
 }
 
@@ -75,7 +89,7 @@ void	super_program(const void *_class, void *_self)
 static void	Parser_program(void *_self)
 {
 	struct s_Parser			*self = _self;
-	void					*x = expr(self);
+	void					*x = expr(self);	/* Expr or subclass */
 	const char				*s;
 	const struct s_Token	*token;
 
@@ -90,9 +104,11 @@ static void	Parser_program(void *_self)
 	if (token)
 	{
 		const char	*result = token_to_string(token);
+
 		printf("%s\n", result);
 		free((char *)result);
-		delete((void *)token);
+		if (token_get_tag(token) != ID)
+			delete((void *)token);
 	}
 	else
 	{
@@ -227,7 +243,7 @@ static struct s_Expr	*factor(void *_self)
 	return (x);
 }
 
-/* <base>	:== '(' <expr> ')' | Rational */
+/* <base>	:== '(' <expr> ')' | Rational | Id */
 static struct s_Expr	*base(void *_self)
 {
 	struct s_Parser	*self = _self;
@@ -244,6 +260,20 @@ static struct s_Expr	*base(void *_self)
 		case RATIONAL:
 			tok = token_copy((struct s_Rational *)self->look);
 			x = new(Constant, tok, self->look->tag);
+			move(self);
+			return (x);
+		case ID:
+			tok = container_find(self->top, (struct s_Word *)self->look);
+			if (!tok)
+			{
+				struct s_Pair	pair;
+
+				tok = token_copy(self->look);
+				pair.first = strdup(((struct s_Word *)tok)->lexeme);
+				pair.second = tok;
+				container_insert(self->top, &pair);
+			}
+			x = new(Id, token_copy(tok), self->look->tag);
 			move(self);
 			return (x);
 		default:

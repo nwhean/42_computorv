@@ -1,9 +1,14 @@
 #include <assert.h>
-#include <stdbool.h>
 #include <ctype.h>
+#include <stdbool.h>
+#include <string.h>
 
+#include "str.h"
+#include "Container.h"
+#include "UnorderedMap.h"
 #include "Token.h"
 #include "Rational.h"
+#include "Word.h"
 #include "Lexer.h"
 #include "Lexer.r"
 
@@ -14,6 +19,18 @@ static void	*Lexer_ctor(void *_self, va_list *app)
 
 	self = super_ctor(Lexer, _self, app);
 	self->peek = ' ';
+	self->words = new(UnorderedMap, str_equal);
+	return (self);
+}
+
+/* Lexer destructor method. */
+static void	*Lexer_dtor(void *_self)
+{
+	struct s_Lexer	*self = self;
+
+	self->peek = ' ';
+	delete(self->words);
+	self = super_dtor(Lexer, _self);
 	return (self);
 }
 
@@ -80,6 +97,44 @@ static struct s_Token	*Lexer_scan(void *_self)
 		return new(Rational, RATIONAL, val, d);
 	}
 
+	/* handle words */
+	if (isalpha(self->peek))
+	{
+		char	*str = NULL;
+		size_t	len = 0;
+		void	*word;
+
+		do
+		{
+			char	*temp;
+
+			temp = realloc(str, len + 2);
+			if (temp == NULL)
+			{
+				free(str);
+				return (NULL);
+			}
+			str = temp;
+			str[len] = self->peek;
+			str[len + 1] = '\0';
+			len += 1;
+			readch(_self);
+		} while (isalnum(self->peek));
+		word = container_find(self->words, str);
+		if (word)
+			free(str);
+		else
+		{
+			struct s_Pair	pair;
+
+			pair.first = str;
+			pair.second = word;
+			word = new(Word, ID, str);
+			container_insert(self->words, &pair);
+		}
+		return (word);
+	}
+
 	/* other tokens */
 	token = new(Token, self->peek);
 	self->peek = ' ';
@@ -127,6 +182,7 @@ void	initLexer(void)
 		Lexer = new(LexerClass, "Lexer",
 				Object, sizeof(struct s_Lexer),
 				ctor, Lexer_ctor,
+				dtor, Lexer_dtor,
 				scan, Lexer_scan,
 				0);
 }

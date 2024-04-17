@@ -8,6 +8,7 @@ struct s_Lexer	/* Lexer: Object */
 {
 	const struct s_Object	_;
 	char					peek;
+	void					*words;
 };
 
 struct	s_LexerClass	/* LexerClass: Class */

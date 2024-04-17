@@ -9,6 +9,7 @@
 #include "Arith.h"
 #include "Expr.h"
 #include "Constant.h"
+#include "Id.h"
 #include "Node.h"
 #include "Op.h"
 #include "Unary.h"
@@ -31,8 +32,9 @@ void	init_container(void)
 void	init_inter(void)
 {
 	initArith();
-	initExpr();
 	initConstant();
+	initExpr();
+	initId();
 	initNode();
 	initOp();
 	initUnary();
