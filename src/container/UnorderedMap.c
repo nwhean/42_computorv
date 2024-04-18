@@ -53,8 +53,7 @@ void	UnorderedMap_clear(void *_self)
 
 	for (i = 0; i < self->size; ++i)
 	{
-		/* delete(self->key[i]); */
-		free(self->key[i]);
+		delete(self->key[i]);
 		delete(self->value[i]);
 	}
 	free(self->key);

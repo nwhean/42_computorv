@@ -2,6 +2,22 @@
 classDiagram
 	%% container
 
+	class Str {
+		size_t	size;
+		size_t	capacity;
+		char	*buffer;
+		Str_copy() Str;
+		Str_size() size_t
+		Str_capacity() size_t
+		Str_reserve(size_t n);
+		Str_clear()
+		Str_empty() bool
+		Str_append(const char *s) Str
+		Str_push_back(char c);
+		Str_c_str();
+		Str_compare(const void *other) int
+	}
+
 	class UnorderedMap {
 		-size_t size
 		-size_t capacity

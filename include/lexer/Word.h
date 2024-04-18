@@ -8,7 +8,7 @@
 struct s_Word	/* Word: Token */
 {
 	const struct s_Token	_;
-	char					*lexeme;
+	void					*lexeme; /* Str*/
 };
 
 extern const struct s_Word	*Word;	/* new(Word, Tag, char *); */

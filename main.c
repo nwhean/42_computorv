@@ -2,6 +2,7 @@
 #include <stdio.h>
 
 /* container */
+#include "Str.h"
 #include "UnorderedMap.h"
 
 /* inter */
@@ -24,6 +25,7 @@
 
 void	init_container(void)
 {
+	initStr();
 	initUnorderedMap();
 }
 

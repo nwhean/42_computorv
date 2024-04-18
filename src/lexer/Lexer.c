@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <string.h>
 
+#include "Str.h"
 #include "UnorderedMap.h"
 #include "Token.h"
 #include "Rational.h"
@@ -17,7 +18,7 @@ static void	*Lexer_ctor(void *_self, va_list *app)
 
 	self = super_ctor(Lexer, _self, app);
 	self->peek = ' ';
-	self->words = new(UnorderedMap, strcmp);
+	self->words = new(UnorderedMap, Str_compare);
 	return (self);
 }
 
@@ -98,34 +99,21 @@ static struct s_Token	*Lexer_scan(void *_self)
 	/* handle words */
 	if (isalpha(self->peek))
 	{
-		char	*str = NULL;
-		size_t	len = 0;
+		void	*str = new(Str, "");
 		void	*word;
 
 		do
 		{
-			char	*temp;
-
-			temp = realloc(str, len + 2);
-			if (temp == NULL)
-			{
-				free(str);
-				return (NULL);
-			}
-			str = temp;
-			str[len] = self->peek;
-			str[len + 1] = '\0';
-			len += 1;
+			Str_push_back(str, self->peek);
 			readch(_self);
 		} while (isalnum(self->peek));
 		word = UnorderedMap_find(self->words, str);
-		if (word)
-			free(str);
-		else
+		if (!word)
 		{
-			word = new(Word, ID, str);
-			UnorderedMap_insert(self->words, str, word);
+			word = new(Word, ID, Str_c_str(str));
+			UnorderedMap_insert(self->words, Str_copy(str), word);
 		}
+		delete(str);
 		return (word);
 	}
 

@@ -1,6 +1,6 @@
 #include <string.h>
 
-#include "str.h"
+#include "Str.h"
 #include "UnorderedMap.h"
 #include "Word.h"
 
@@ -22,13 +22,13 @@ static void	*Word_ctor(void *_self, va_list *app)
 	struct s_Word	*retval;
 
 	self = super_ctor(Word, _self, app);
-	self->lexeme = strdup(va_arg(*app, char *));
+	self->lexeme = new(Str, va_arg(*app, char *));
 	retval = reserve_find(self->lexeme);
 	if (!retval)
 		return (self);
 
 	/* free the resources, if a reserved word is identified. */
-	free(self->lexeme);
+	delete(self->lexeme);
 	super_dtor(Word, _self);
 	return (retval);
 }
@@ -43,7 +43,7 @@ static void	*Word_dtor(void *_self)
 	retval = reserve_find(self->lexeme);
 	if (retval)
 		return (NULL);
-	free(self->lexeme);
+	delete(self->lexeme);
 	return (super_dtor(Word, _self));
 }
 
@@ -57,7 +57,7 @@ static struct s_Word	*Word_copy(const void *_self)
 
 	retval = reserve_find(self->lexeme);
 	if (!retval)
-		return new(Word, token_get_tag(self), self->lexeme);
+		return new(Word, token_get_tag(self), Str_c_str(self->lexeme));
 	return (retval);
 }
 
@@ -66,19 +66,23 @@ static const char	*Word_to_string(const void *_self)
 {
 	const struct s_Word	*self = _self;
 
-	return (strdup(self->lexeme));
+	return (strdup(Str_c_str(self->lexeme)));
 }
 
 /* add a word into the reserve. */
 static void	reserve_add(const char *s, const struct s_Word *word)
 {
-	UnorderedMap_insert((void *)Word_reserved, (void *)s, (void *)word);
+	UnorderedMap_insert((void *)Word_reserved, new(Str, s), (void *)word);
 }
 
 /* Find a Word regestered in the the reserve. */
 static struct s_Word *reserve_find(const char *s)
 {
-	return UnorderedMap_find((void *)Word_reserved, (void *)s);
+	void			*str = new(Str, s);
+	struct s_Word	*retval = UnorderedMap_find((void *)Word_reserved, str);
+
+	delete(str);
+	return (retval);
 }
 
 void	initWord(void)
@@ -94,12 +98,12 @@ void	initWord(void)
 				token_copy, Word_copy,
 				token_to_string, Word_to_string,
 				0);
-		Word_reserved = new(UnorderedMap, strcmp);
+		Word_reserved = new(UnorderedMap, Str_compare);
 		Word_plus = new(Word, PLUS, "plus");
 		Word_minus = new(Word, MINUS, "minus");
 
 		/* Insert data into reserve. */
-		reserve_add(strdup("plus"), Word_plus);
-		reserve_add(strdup("minus"), Word_minus);
+		reserve_add("plus", Word_plus);
+		reserve_add("minus", Word_minus);
 	}
 }

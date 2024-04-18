@@ -13,17 +13,14 @@ NAME	=	a.out
 LIBCOMP	=	libcomputorv.a
 
 # source and object files
-COMMON_DIR		=	common/
 CONTAINER_DIR	=	container/
 INTER_DIR		=	inter/
 LEXER_DIR		=	lexer/
 PARSER_DIR		=	parser/
 
 SRCDIR	=	src
-SRCS	=	$(addprefix $(COMMON_DIR), \
-				str.c \
-			) \
-			$(addprefix $(CONTAINER_DIR), \
+SRCS	=	$(addprefix $(CONTAINER_DIR), \
+				Str.c \
 				UnorderedMap.c \
 			) \
 			$(addprefix $(INTER_DIR), \

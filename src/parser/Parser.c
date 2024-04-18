@@ -4,7 +4,7 @@
 #include <string.h>
 
 /* common */
-#include "str.h"
+#include "Str.h"
 
 /* container */
 #include "UnorderedMap.h"
@@ -41,7 +41,7 @@ static void	*Parser_ctor(void *_self, va_list *app)
 	self = super_ctor(Parser, _self, app);
 	self->lexer = va_arg(*app, void *);
 	self->look = NULL;
-	self->top = new(UnorderedMap, strcmp);
+	self->top = new(UnorderedMap, Str_compare);
 	move(self);
 	return (self);
 }
@@ -249,6 +249,7 @@ static struct s_Expr	*base(void *_self)
 	struct s_Parser	*self = _self;
 	struct s_Expr	*x = NULL;
 	struct s_Token	*tok;
+	void			*str;
 
 	switch (self->look->tag)
 	{
@@ -263,14 +264,12 @@ static struct s_Expr	*base(void *_self)
 			move(self);
 			return (x);
 		case ID:
-			tok = UnorderedMap_find(self->top, (struct s_Word *)self->look);
+			str = ((struct s_Word *)self->look)->lexeme;
+			tok = UnorderedMap_find(self->top, str);
 			if (!tok)
 			{
-				void			*key;
-
 				tok = token_copy(self->look);
-				key = strdup(((struct s_Word *)tok)->lexeme);
-				UnorderedMap_insert(self->top, key, tok);
+				UnorderedMap_insert(self->top, Str_copy(str), tok);
 			}
 			x = new(Id, token_copy(tok), self->look->tag);
 			move(self);
