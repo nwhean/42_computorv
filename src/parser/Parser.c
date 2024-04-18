@@ -6,7 +6,6 @@
 #include "str.h"
 
 /* container */
-#include "Container.h"
 #include "UnorderedMap.h"
 
 /* inter */
@@ -263,15 +262,14 @@ static struct s_Expr	*base(void *_self)
 			move(self);
 			return (x);
 		case ID:
-			tok = container_find(self->top, (struct s_Word *)self->look);
+			tok = UnorderedMap_find(self->top, (struct s_Word *)self->look);
 			if (!tok)
 			{
-				struct s_Pair	pair;
+				void			*key;
 
 				tok = token_copy(self->look);
-				pair.first = strdup(((struct s_Word *)tok)->lexeme);
-				pair.second = tok;
-				container_insert(self->top, &pair);
+				key = strdup(((struct s_Word *)tok)->lexeme);
+				UnorderedMap_insert(self->top, key, tok);
 			}
 			x = new(Id, token_copy(tok), self->look->tag);
 			move(self);

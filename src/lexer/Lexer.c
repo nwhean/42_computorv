@@ -4,7 +4,6 @@
 #include <string.h>
 
 #include "str.h"
-#include "Container.h"
 #include "UnorderedMap.h"
 #include "Token.h"
 #include "Rational.h"
@@ -120,17 +119,13 @@ static struct s_Token	*Lexer_scan(void *_self)
 			len += 1;
 			readch(_self);
 		} while (isalnum(self->peek));
-		word = container_find(self->words, str);
+		word = UnorderedMap_find(self->words, str);
 		if (word)
 			free(str);
 		else
 		{
-			struct s_Pair	pair;
-
-			pair.first = str;
-			pair.second = word;
 			word = new(Word, ID, str);
-			container_insert(self->words, &pair);
+			UnorderedMap_insert(self->words, str, word);
 		}
 		return (word);
 	}

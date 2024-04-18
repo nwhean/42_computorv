@@ -24,7 +24,6 @@ SRCS	=	$(addprefix $(COMMON_DIR), \
 				str.c \
 			) \
 			$(addprefix $(CONTAINER_DIR), \
-				Container.c \
 				UnorderedMap.c \
 			) \
 			$(addprefix $(INTER_DIR), \

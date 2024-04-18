@@ -4,15 +4,6 @@
 #include "UnorderedMap.r"
 
 const void	*UnorderedMap;
-const void	*UnorderedMapClass;
-
-bool	UnorderedMap_empty(const void *self);
-size_t	UnorderedMap_size(const void *self);
-void	UnorderedMap_clear(void *self);
-bool	UnorderedMap_insert(void *self, void *pair);
-size_t	UnorderedMap_erase(void *self, void *data);
-void	*UnorderedMap_find(const void *self, void *data);
-void	UnorderedMap_reserve(void *self, size_t count);
 
 /* UnorderedMap constructor method. */
 static void	*UnorderedMap_ctor(void *_self, va_list *app)
@@ -76,11 +67,8 @@ void	UnorderedMap_clear(void *_self)
 /* Inserts a key, value pair into the container, if the container doesn't
  * already contain an element with an equivalent key.
  */
-bool	UnorderedMap_insert(void *_self, void *_pair)
+bool	UnorderedMap_insert(void *_self, void *key, void *value)
 {
-	struct s_Pair			*pair = _pair;
-	void					*key = pair->first;
-	void					*value = pair->second;
 	struct s_UnorderedMap	*self = _self;
 	void					*found = UnorderedMap_find(_self, key);
 
@@ -122,7 +110,7 @@ size_t	UnorderedMap_erase(void *_self, void *key)
 void	*UnorderedMap_find(const void *_self, void *key)
 {
 	const struct s_UnorderedMap	*self = _self;
-	size_t					i;
+	size_t						i;
 
 	for (i = 0; i < self->size; ++i)
 	{
@@ -154,49 +142,12 @@ void	UnorderedMap_reserve(void *_self, size_t count)
 	self->capacity = count;
 }
 
-/* UnorderedMapClass constructor method. */
-static void	*UnorderedMapClass_ctor(void *_self, va_list *app)
-{
-	typedef void		(*voidf)();
-	struct s_UnorderedMapClass	*self;
-	voidf				selector;
-	va_list				ap;
-
-	self = super_ctor(UnorderedMapClass, _self, app);
-	#ifdef va_copy
-		va_copy(ap, *app);
-	#else
-		*ap = **app;
-	#endif
-	while ((selector = va_arg(ap, voidf)))
-	{
-		voidf	method;
-
-		method = va_arg(ap, voidf);
-		(void) method;
-	}
-	return (self);
-}
-
 void	initUnorderedMap(void)
 {
-	initContainer();
-	if (!UnorderedMapClass)
-		UnorderedMapClass = new(Class, "UnorderedMapClass",
-				ContainerClass, sizeof(struct s_UnorderedMapClass),
-				ctor, UnorderedMapClass_ctor,
-				0);
 	if (!UnorderedMap)
-		UnorderedMap = new(UnorderedMapClass, "UnorderedMap",
-				Container, sizeof(struct s_UnorderedMap),
+		UnorderedMap = new(Class, "UnorderedMap",
+				Object, sizeof(struct s_UnorderedMap),
 				ctor, UnorderedMap_ctor,
 				dtor, UnorderedMap_dtor,
-				container_empty, UnorderedMap_empty,
-				container_size, UnorderedMap_size,
-				container_clear, UnorderedMap_clear,
-				container_insert, UnorderedMap_insert,
-				container_erase, UnorderedMap_erase,
-				container_find, UnorderedMap_find,
-				container_reserve, UnorderedMap_reserve,
 				0);
 }

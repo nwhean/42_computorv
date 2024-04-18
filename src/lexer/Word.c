@@ -1,40 +1,62 @@
 #include "str.h"
-#include "Container.h"
 #include "UnorderedMap.h"
 #include "Word.h"
 
 const struct s_Word	*Word;
 const struct s_Word	*Word_plus;
 const struct s_Word	*Word_minus;
-const void			*reserved;
+const void			*Word_reserved;
 
-/* Word constructor method. */
+/* forward declaration */
+static void	reserve_add(const char *s, const struct s_Word *word);
+static struct s_Word *reserve_find(const char *s);
+
+/* Word constructor method.
+ * If a Word is reserved, the original is returned instead, i.e. Singleton.
+ */
 static void	*Word_ctor(void *_self, va_list *app)
 {
 	struct s_Word	*self;
+	struct s_Word	*retval;
 
 	self = super_ctor(Word, _self, app);
 	self->lexeme = strdup(va_arg(*app, char *));
-	return (self);
+	retval = reserve_find(self->lexeme);
+	if (!retval)
+		return (self);
+
+	/* free the resources, if a reserved word is identified. */
+	free(self->lexeme);
+	super_dtor(Word, _self);
+	return (retval);
 }
 
 /* Word destructor method. */
 static void	*Word_dtor(void *_self)
 {
-	struct s_Word		*self = _self;
+	struct s_Word	*self = _self;
+	struct s_Word	*retval;
 
 	/* avoid destructing some reserved Words */
-	if (!container_find(reserved, self->lexeme))
-		free(self->lexeme);
+	retval = reserve_find(self->lexeme);
+	if (retval)
+		return (NULL);
+	free(self->lexeme);
 	return (super_dtor(Word, _self));
 }
 
-/* Return a copy of the Word. */
+/* Return a copy of the Word.
+ * If a Word is a reserved, the original is retured instead (i.e. Singleton).
+ */
 static struct s_Word	*Word_copy(const void *_self)
 {
 	const struct s_Word	*self = _self;
+	struct s_Word		*retval;
 
-	return new(Word, token_get_tag(self), self->lexeme);
+	retval = reserve_find(self->lexeme);
+	if (!retval)
+		return new(Word, token_get_tag(self), self->lexeme);
+	return (retval);
 }
 
 /* Return string representing the Word. */
@@ -48,19 +70,21 @@ static const char	*Word_to_string(const void *_self)
 /* add a word into the reserve. */
 static void	reserve_add(const char *s, const struct s_Word *word)
 {
-	struct s_Pair	pair;
+	UnorderedMap_insert((void *)Word_reserved, (void *)s, (void *)word);
+}
 
-	pair.first = (void *)s;
-	pair.second = (void *)word;
-	container_insert((void *)reserved, &pair);
+/* Find a Word regestered in the the reserve. */
+static struct s_Word *reserve_find(const char *s)
+{
+	return UnorderedMap_find((void *)Word_reserved, (void *)s);
 }
 
 void	initWord(void)
 {
+	initToken();
+	initUnorderedMap();
 	if (!Word)
 	{
-		initToken();
-		initUnorderedMap();
 		Word = new(TokenClass, "Word",
 				Token, sizeof(struct s_Word),
 				ctor, Word_ctor,
@@ -68,12 +92,12 @@ void	initWord(void)
 				token_copy, Word_copy,
 				token_to_string, Word_to_string,
 				0);
+		Word_reserved = new(UnorderedMap, str_equal);
 		Word_plus = new(Word, PLUS, "plus");
 		Word_minus = new(Word, MINUS, "minus");
-		reserved = new(UnorderedMap, str_equal);
 
 		/* Insert data into reserve. */
-		reserve_add("plus", Word_plus);
-		reserve_add("minus", Word_minus);
+		reserve_add(strdup("plus"), Word_plus);
+		reserve_add(strdup("minus"), Word_minus);
 	}
 }

@@ -1,17 +1,6 @@
 ```mermaid
 classDiagram
 	%% container
-	class Container {
-		empty() bool
-		size() size_t
-		clear() void
-		insert(void *) bool
-		erase(void *) size_t
-		find(void *)
-		reserve(size_t) void
-	}
-
-	Container <|-- UnorderedMap
 
 	class UnorderedMap {
 		-size_t size
@@ -19,6 +8,13 @@ classDiagram
 		-void **key
 		-void **value
 		-func_ptr key_equal
+		UnorderedMap_empty() bool
+		UnorderedMap_size() size_t
+		UnorderedMap_clear()
+		UnorderedMap_insert()
+		UnorderedMap_erase(void *key)
+		UnorderedMap_find(void *key)
+		UnorderedMap_reserve(size_t count)
 	}
 
 
@@ -47,7 +43,7 @@ classDiagram
 	}
 
 	Expr <|-- Id
-	Object <|-- Node
+	Class Node
 	Expr <|-- Op
 	Op <|-- Unary
 
@@ -57,8 +53,6 @@ classDiagram
 
 
 	%% lexer
-
-	Object <|-- Lexer
 
 	class Lexer {
 		-char peek
@@ -85,8 +79,6 @@ classDiagram
 		+long denominator
 	}
 
-	Object <|-- Token
-
 	class Tag {
 		<<enumeration>>
 		PLUS
@@ -111,8 +103,6 @@ classDiagram
 
 
 	%% parser
-
-	Object <|-- Parser
 
 	class Parser {
 		-Lexer lexer
