@@ -7,7 +7,7 @@ classDiagram
 		-size_t capacity
 		-void **key
 		-void **value
-		-func_ptr key_equal
+		-func_ptr key_cmp
 		UnorderedMap_empty() bool
 		UnorderedMap_size() size_t
 		UnorderedMap_clear()

@@ -9,11 +9,11 @@
 struct s_UnorderedMap	/* UnorderedMap: Object */
 {
 	const struct s_Object	_;
-	size_t						size;
-	size_t						capacity;
-	void						**key;
-	void						**value;
-	bool						(*key_equal)(void *key1, void *key2);
+	size_t					size;
+	size_t					capacity;
+	void					**key;
+	void					**value;
+	int						(*key_cmp)(void *key1, void *key2);
 };
 
 #endif

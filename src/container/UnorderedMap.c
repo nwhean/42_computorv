@@ -11,7 +11,7 @@ static void	*UnorderedMap_ctor(void *_self, va_list *app)
 	struct s_UnorderedMap	*self = _self;
 
 	self = super_ctor(UnorderedMap, _self, app);
-	self->key_equal = va_arg(*app, bool (*)(void *, void *));
+	self->key_cmp = va_arg(*app, int (*)(void *, void *));
 	self->size = 0;
 	self->capacity = 0;
 	return (self);
@@ -92,7 +92,7 @@ size_t	UnorderedMap_erase(void *_self, void *key)
 
 	for (i = 0; i < self->size; ++i)
 	{
-		if (self->key_equal(key, self->key[i]))
+		if (self->key_cmp(key, self->key[i]) == 0)
 			break ;
 	}
 	if (i == self->size)
@@ -114,7 +114,7 @@ void	*UnorderedMap_find(const void *_self, void *key)
 
 	for (i = 0; i < self->size; ++i)
 	{
-		if (self->key_equal(key, self->key[i]))
+		if (self->key_cmp(key, self->key[i]) == 0)
 			return (self->value[i]);
 	}
 	return (NULL);

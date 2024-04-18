@@ -60,6 +60,8 @@ void	init(void)
 	init_parser();
 }
 
+#include <string.h>
+
 int	main(void)
 {
 	void	*lexer;

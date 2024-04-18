@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "str.h"
 #include "UnorderedMap.h"
 #include "Word.h"
@@ -92,7 +94,7 @@ void	initWord(void)
 				token_copy, Word_copy,
 				token_to_string, Word_to_string,
 				0);
-		Word_reserved = new(UnorderedMap, str_equal);
+		Word_reserved = new(UnorderedMap, strcmp);
 		Word_plus = new(Word, PLUS, "plus");
 		Word_minus = new(Word, MINUS, "minus");
 

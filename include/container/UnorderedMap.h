@@ -6,7 +6,7 @@
 
 # include "Object.h"
 
-extern const void	*UnorderedMap;	/* new(UnorderedMap, key_equal); */
+extern const void	*UnorderedMap;	/* new(UnorderedMap, key_cmp); */
 
 void	initUnorderedMap(void);
 bool	UnorderedMap_empty(const void *self);

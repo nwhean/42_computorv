@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "str.h"
 #include "UnorderedMap.h"
 #include "Token.h"
 #include "Rational.h"
@@ -18,7 +17,7 @@ static void	*Lexer_ctor(void *_self, va_list *app)
 
 	self = super_ctor(Lexer, _self, app);
 	self->peek = ' ';
-	self->words = new(UnorderedMap, str_equal);
+	self->words = new(UnorderedMap, strcmp);
 	return (self);
 }
 

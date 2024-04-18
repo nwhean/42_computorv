@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <string.h>
 
 /* common */
 #include "str.h"
@@ -40,7 +41,7 @@ static void	*Parser_ctor(void *_self, va_list *app)
 	self = super_ctor(Parser, _self, app);
 	self->lexer = va_arg(*app, void *);
 	self->look = NULL;
-	self->top = new(UnorderedMap, str_equal);
+	self->top = new(UnorderedMap, strcmp);
 	move(self);
 	return (self);
 }
