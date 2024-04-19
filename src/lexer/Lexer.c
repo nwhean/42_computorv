@@ -23,6 +23,7 @@ static void	*Lexer_ctor(void *_self, va_list *app)
 	self = super_ctor(Lexer, _self, app);
 	self->peek = ' ';
 	self->words = new(UnorderedMap, Str_compare);
+	Lexer_reserve(self, (struct s_Word *)Word_imag);	/* i as keyword */
 	return (self);
 }
 
@@ -131,7 +132,7 @@ static struct s_Token	*Lexer_scan(void *_self)
 		if (!word)
 		{
 			word = new(Word, ID, Str_c_str(str));
-			UnorderedMap_insert(self->words, Str_copy(str), word);
+			Lexer_reserve(self, word);
 		}
 		delete(str);
 		return (word);
@@ -141,6 +142,14 @@ static struct s_Token	*Lexer_scan(void *_self)
 	token = new(Token, self->peek);
 	self->peek = ' ';
 	return token;
+}
+
+/* Reserve keywords into a hashtable. */
+void	Lexer_reserve(void *_self, struct s_Word *word)
+{
+	struct s_Lexer	*self = _self;
+
+	UnorderedMap_insert(self->words, Str_copy(word->lexeme), word);
 }
 
 /* LexerClass constructor method. */

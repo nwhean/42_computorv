@@ -17,6 +17,7 @@
 #include "Unary.h"
 
 /* lexer */
+#include "Complex.h"
 #include "Lexer.h"
 #include "Rational.h"
 #include "Token.h"
@@ -50,8 +51,10 @@ static void	*Parser_ctor(void *_self, va_list *app)
 static void	*Parser_dtor(void *_self)
 {
 	struct s_Parser	*self = _self;
+	enum e_Tag	tag = self->look->tag;
 
-	delete(self->look);
+	if (!(tag == ID || tag == IMAG))
+		delete(self->look);
 	delete(self->top);
 	return (super_dtor(Parser, _self));
 }
@@ -63,7 +66,8 @@ static void	move(void *_self)
 
 	if (self->look)
 	{
-		if (self->look->tag != ID)
+		enum e_Tag	tag = self->look->tag;
+		if (!(tag == ID || tag == IMAG))
 			delete(self->look);
 	}
 	self->look = scan(self->lexer);
@@ -262,6 +266,13 @@ static struct s_Expr	*base(void *_self)
 		case COMPLEX:
 			tok = token_copy(self->look);
 			x = new(Constant, tok, self->look->tag);
+			move(self);
+			return (x);
+		case IMAG:
+			tok = new(Complex, COMPLEX,
+					Rational_from_double(0),
+					Rational_from_double(1));
+			x = new(Constant, tok, COMPLEX);
 			move(self);
 			return (x);
 		case ID:

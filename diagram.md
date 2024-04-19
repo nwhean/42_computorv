@@ -85,6 +85,7 @@ classDiagram
 	class Lexer {
 		-char peek
 		+scan() Token
+		-reserve(Word) void
 	}
 
 	Token <|-- Numeric

@@ -7,6 +7,7 @@
 const struct s_Word	*Word;
 const struct s_Word	*Word_plus;
 const struct s_Word	*Word_minus;
+const struct s_Word	*Word_imag;
 const void			*Word_reserved;
 
 /* forward declaration */
@@ -101,9 +102,11 @@ void	initWord(void)
 		Word_reserved = new(UnorderedMap, Str_compare);
 		Word_plus = new(Word, PLUS, "plus");
 		Word_minus = new(Word, MINUS, "minus");
+		Word_imag = new(Word, IMAG, "i");
 
 		/* Insert data into reserve. */
 		reserve_add("plus", Word_plus);
 		reserve_add("minus", Word_minus);
+		reserve_add("i", Word_imag);
 	}
 }
