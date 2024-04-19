@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 #include "Rational.h"
+#include "Complex.h"
 
 const void	*Rational;
 
@@ -143,7 +144,7 @@ static void	*Rational_add_Rational(const void *_self, const void *_other)
 	long					d = other->denominator;
 	long					g = gcd(b, d);
 
-	return new(Rational, RATIONAL, a * (d / g) + b * (c / g), b * (d / g));
+	return new(Rational, RATIONAL, a * (d / g) + c * (b / g), b * (d / g));
 }
 
 /* Return the addition of two Numerics. */
@@ -155,6 +156,8 @@ static void	*Rational_add(const void *_self, const void *_other)
 	{
 		case RATIONAL:
 			return Rational_add_Rational(_self, _other);
+		case COMPLEX:
+			return numeric_add(_other, _self);
 	};
 	return (NULL);
 }
@@ -170,20 +173,28 @@ static void	*Rational_sub_Rational(const void *_self, const void *_other)
 	long					d = other->denominator;
 	long					g = gcd(b, d);
 
-	return new(Rational, RATIONAL, a * (d / g) - b * (c / g), b * (d / g));
+	return new(Rational, RATIONAL, a * (d / g) - c * (b / g), b * (d / g));
 }
 
 /* Return the subtraction of one Numeric from another. */
 static void	*Rational_sub(const void *_self, const void *_other)
 {
 	const struct s_Token	*other = _other;
+	struct s_Numeric	*temp = NULL;
+	struct s_Numeric	*retval = NULL;
 
 	switch (other->tag)
 	{
 		case RATIONAL:
-			return Rational_sub_Rational(_self, _other);
+			retval = Rational_sub_Rational(_self, _other);
+			break ;
+		case COMPLEX:
+			temp = numeric_sub(_other, _self);
+			retval = numeric_neg(temp);
+			break ;
 	};
-	return (NULL);
+	delete(temp);
+	return (retval);
 }
 
 /* Return the multiplication of two Rationals. */
@@ -211,6 +222,8 @@ static void	*Rational_mul(const void *_self, const void *_other)
 	{
 		case RATIONAL:
 			return Rational_mul_Rational(self, other);
+		case COMPLEX:
+			return numeric_mul(_other, _self);
 	};
 	return (NULL);
 }
@@ -220,13 +233,14 @@ static void	*Rational_div_Rational(const void *_self, const void *_other)
 {
 	const struct s_Rational	*self = _self;
 	const struct s_Rational	*other = _other;
-	struct s_Rational		*temp;
-	struct s_Rational		*retval;
+	long					a = self->numerator;
+	long					b = self->denominator;
+	long					c = other->numerator;
+	long					d = other->denominator;
+	long					f = gcd(a, c);
+	long					g = gcd(b, d);
 
-	temp = new(Rational, RATIONAL, other->denominator, other->numerator);
-	retval = Rational_mul_Rational(self, temp);
-	delete(temp);
-	return retval;
+	return new(Rational, RATIONAL, (a / f) * (d / g), (b / g) * (c / f));
 }
 
 /* Return the division of one Numeric from another. */
@@ -234,13 +248,20 @@ static void	*Rational_div(const void *_self, const void *_other)
 {
 	const struct s_Rational	*self = _self;
 	const struct s_Token	*other = _other;
+	struct s_Numeric		*temp = NULL;
+	struct s_Numeric		*retval = NULL;
 
 	switch (other->tag)
 	{
 		case RATIONAL:
-			return Rational_div_Rational(self, other);
+			retval = Rational_div_Rational(self, other);
+			break ;
+		case COMPLEX:
+			temp = numeric_promote(self, COMPLEX);
+			retval = numeric_div(self, other);
 	};
-	return (NULL);
+	delete(temp);
+	return (retval);
 }
 
 /* Rounds a Rational down to an integer value. */
@@ -273,13 +294,18 @@ static void	*Rational_mod_Rational(const void *_self, const void *_other)
 static void	*Rational_mod(const void *_self, const void *_other)
 {
 	const struct s_Token	*other = _other;
+	struct s_Numeric		*retval = NULL;
 
 	switch (other->tag)
 	{
 		case RATIONAL:
-			return Rational_mod_Rational(_self, _other);
+			retval = Rational_mod_Rational(_self, _other);
+			break ;
+		case COMPLEX:
+			fprintf(stderr, "%s\n", "Rational %% Complex is not supported");
+			break ;
 	};
-	return (NULL);
+	return (retval);
 }
 
 /* Return a copy of the Rational with its value negated. */
@@ -306,11 +332,21 @@ static void	*Rational_pow_Rational(const void *_self, const void *_other)
 	long					c = other->numerator;
 	long					d = other->denominator;
 	double					value = pow((double)a / b, (double)c / d);
+	struct s_Numeric		*promoted;
+	struct s_Numeric		*retval;
 
 	if (a < 0 && d != 1)
 	{
-		fprintf(stderr, "%s\n", "(-Rational)^(non-integer) is not supported");
-		return (NULL);
+		if (!Complex)
+		{
+			fprintf(stderr, "%s\n",
+					"(-Rational)^(non-integer) is not supported");
+			return (NULL);
+		}
+		promoted = numeric_promote(self, COMPLEX);
+		retval = numeric_pow(promoted, other);
+		delete(promoted);
+		return (retval);
 	}
 	return Rational_from_double(value);
 }
@@ -319,13 +355,38 @@ static void	*Rational_pow_Rational(const void *_self, const void *_other)
 static void	*Rational_pow(const void *_self, const void *_other)
 {
 	const struct s_Token	*other = _other;
+	struct s_Numeric		*retval = NULL;
 
 	switch (other->tag)
 	{
 		case RATIONAL:
-			return Rational_pow_Rational(_self, _other);
+			retval = Rational_pow_Rational(_self, _other);
+			break ;
+		case COMPLEX:
+			fprintf(stderr, "%s\n", "Rational^Complex is not supported");
+			break ;
 	};
-	return (NULL);
+	return (retval);
+}
+
+/* Promote one Numeric type to another */
+static void	*Rational_promote(const void *_self, enum e_Tag tag)
+{
+	const struct s_Rational	*self = _self;
+
+	switch (tag)
+	{
+		case RATIONAL:
+			return Rational_copy(self);
+		case COMPLEX:
+			return new(Complex, COMPLEX,
+					Rational_copy(self),
+					new(Rational, RATIONAL, (long)0, (long)1));
+		default:
+			fprintf(stderr, "%s\n",
+					"Other Rational promotion is not supported");
+			return (NULL);
+	};
 }
 
 void	initRational(void)
@@ -346,6 +407,7 @@ void	initRational(void)
 				numeric_pos, Rational_copy,
 				numeric_neg, Rational_neg,
 				numeric_pow, Rational_pow,
+				numeric_promote, Rational_promote,
 				0);
 	}
 }

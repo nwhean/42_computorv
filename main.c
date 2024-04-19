@@ -15,6 +15,7 @@
 #include "Unary.h"
 
 /* lexer */
+#include "Complex.h"
 #include "Lexer.h"
 #include "Rational.h"
 #include "Token.h"
@@ -42,6 +43,7 @@ void	init_inter(void)
 
 void	init_lexer(void)
 {
+	initComplex();
 	initLexer();
 	initRational();
 	initToken();

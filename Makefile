@@ -33,6 +33,7 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 				Unary.c \
 			) \
 			$(addprefix $(LEXER_DIR), \
+				Complex.c \
 				Lexer.c \
 				Numeric.c \
 				Rational.c \

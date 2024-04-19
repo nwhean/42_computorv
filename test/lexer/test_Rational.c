@@ -2,8 +2,10 @@
 
 #include "unity.h"
 #include "Rational.h"
+#include "Complex.h"
 
 void setUp(void) {
+	initComplex();
 	initRational();
 }
 
@@ -152,6 +154,20 @@ void test_pow(void) {
 	delete(target);
 }
 
+void test_pow_neg_to_non_integer(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, (long)-1, (long)2);
+	struct s_Rational	*b = new(Rational, RATIONAL, (long)21, (long)10);
+	struct s_Complex	*target = numeric_pow(a, b);
+	double				real = Rational_to_double(target->real);
+	double				imag = Rational_to_double(target->imag);
+
+	TEST_ASSERT_FLOAT_WITHIN(1e-7, real, 0.2218417766298604);
+	TEST_ASSERT_FLOAT_WITHIN(1e-7, imag, 0.07208076267434244);
+	delete(a);
+	delete(b);
+	delete(target);
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
@@ -168,5 +184,6 @@ int main(void) {
 	RUN_TEST(test_mod2);
 	RUN_TEST(test_neg);
 	RUN_TEST(test_pow);
+	RUN_TEST(test_pow_neg_to_non_integer);
 	return UNITY_END();
 }

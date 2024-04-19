@@ -70,6 +70,18 @@ classDiagram
 
 	%% lexer
 
+	Numeric <|-- Complex
+
+	class Complex {
+		Rational _real
+		Rational _imag
+		real() Rational
+		imag() Rational
+		conjugate() Rational
+		modulus() Rational
+		argument() Rational
+	}
+
 	class Lexer {
 		-char peek
 		+scan() Token
@@ -86,6 +98,8 @@ classDiagram
 		+mod(Numeric) Numeric*
 		+pos() Numeric*
 		+neg() Numeric*
+		+pow(Numeric) Numeric*
+		+promote(Tag tag) Numeric*
 	}
 
 	Numeric <|-- Rational
