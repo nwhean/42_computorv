@@ -5,12 +5,13 @@
 # include "Object.r"
 
 enum e_Tag {
-	PLUS = 256,
-	MINUS,
-	ZERO,
-	RATIONAL,
-	WORD,
-	ID
+	PLUS = 256,	/* unary '+' */
+	MINUS,		/* unary '-' */
+	IMAG,		/* i */
+	ZERO,		/* an empty tag */
+	RATIONAL,	/* Rational number */
+	COMPLEX,	/* Complex number */
+	ID			/* Identifier */
 };
 
 /* all members are public */

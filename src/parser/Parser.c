@@ -243,7 +243,7 @@ static struct s_Expr	*factor(void *_self)
 	return (x);
 }
 
-/* <base>	:== '(' <expr> ')' | Rational | Id */
+/* <base>	:== '(' <expr> ')' | Rational | Complex | Id */
 static struct s_Expr	*base(void *_self)
 {
 	struct s_Parser	*self = _self;
@@ -259,7 +259,8 @@ static struct s_Expr	*base(void *_self)
 			match(self, ')');
 			return (x);
 		case RATIONAL:
-			tok = token_copy((struct s_Rational *)self->look);
+		case COMPLEX:
+			tok = token_copy(self->look);
 			x = new(Constant, tok, self->look->tag);
 			move(self);
 			return (x);

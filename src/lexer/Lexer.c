@@ -3,13 +3,17 @@
 #include <stdbool.h>
 #include <string.h>
 
+/* container */
 #include "Str.h"
 #include "UnorderedMap.h"
-#include "Token.h"
-#include "Rational.h"
-#include "Word.h"
+
+/* lexer */
+#include "Complex.h"
 #include "Lexer.h"
 #include "Lexer.r"
+#include "Rational.h"
+#include "Token.h"
+#include "Word.h"
 
 /* Lexer constructor method. */
 static void	*Lexer_ctor(void *_self, va_list *app)
@@ -59,6 +63,22 @@ struct s_Token	*super_scan(const void *_class, void *_self)
 	return (superclass->scan(_self));
 }
 
+/* Return a Rational or a Complex token */
+static struct s_Token	*generate_numeric(void *_self, long n, long d)
+{
+	struct s_Lexer	*self = _self;
+
+	if (self->peek == 'i')
+	{
+		readch(_self);
+		return (new(Complex, COMPLEX,
+				new(Rational, RATIONAL, 0, 1),
+				new(Rational, RATIONAL, n, d)));
+	}
+	else
+		return (new(Rational, RATIONAL, n, d));
+}
+
 /* Lexer scan method */
 static struct s_Token	*Lexer_scan(void *_self)
 {
@@ -84,7 +104,7 @@ static struct s_Token	*Lexer_scan(void *_self)
 			readch(_self);
 		} while (isdigit(self->peek));
 		if (self->peek != '.')
-			return new(Rational, RATIONAL, val, 1);
+			return generate_numeric(self, val, d);
 		while (true)
 		{
 			readch(_self);
@@ -93,7 +113,7 @@ static struct s_Token	*Lexer_scan(void *_self)
 			val = 10 * val + self->peek - '0';
 			d *= 10;
 		}
-		return new(Rational, RATIONAL, val, d);
+		return generate_numeric(self, val, d);
 	}
 
 	/* handle words */
