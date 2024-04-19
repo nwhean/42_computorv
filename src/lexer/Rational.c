@@ -49,16 +49,19 @@ static void	*Rational_ctor(void *_self, va_list *app)
 	return (self);
 }
 
-/* Construct a Rational from double. */
-static void	*Rational_from_double(double n)
+/* Construct a Rational from double.
+ * Adapted from Python source code:
+ * https://github.com/python/cpython/blob/a0f82dd6ccddc5fd3266df8ba55496ab573aacf2/Lib/fractions.py#L340
+ */
+void	*Rational_from_double(double n)
 {
 	const unsigned long	max_denominator = 1.0e+9;	/* precision */
-	long		p0 = 0;
-	long		q0 = 1;
-	long		p1 = 1;
-	long		q1 = 0;
-	double		d = 1;
-	long		sign = n < 0 ? -1 : 1;
+	unsigned long		p0 = 0;
+	unsigned long		q0 = 1;
+	unsigned long		p1 = 1;
+	unsigned long		q1 = 0;
+	double				d = 1;
+	long				sign = n < 0 ? -1 : 1;
 
 	if (n != n)		/* if n == nan, this evaluates to true */
 		return (NULL);
@@ -67,13 +70,13 @@ static void	*Rational_from_double(double n)
 	while (1)
 	{
 		unsigned long	q2;
-		long	a;
-		long	temp_l;
+		unsigned long	a;
+		unsigned long	temp_l;
 		double	temp_d;
 
 		a = floor(n / d);
 		q2 = q0 + a * q1;
-		if (q2 > max_denominator)
+		if (q2 > max_denominator || d == 0)
 			break ;
 
 		/* update p and q values for next cycle */
@@ -89,6 +92,12 @@ static void	*Rational_from_double(double n)
 		d = temp_d - a * d;
 	}
 	return new(Rational, RATIONAL, sign * p1, q1);
+}
+
+/* convert Rational to a double. */
+double	Rational_to_double(const struct s_Rational *self)
+{
+	return ((double)(self->numerator) / self->denominator);
 }
 
 /* Return a copy of the Rational. */
@@ -211,14 +220,13 @@ static void	*Rational_div_Rational(const void *_self, const void *_other)
 {
 	const struct s_Rational	*self = _self;
 	const struct s_Rational	*other = _other;
-	long					a = self->numerator;
-	long					b = self->denominator;
-	long					c = other->numerator;
-	long					d = other->denominator;
-	long					f = gcd(a, c);
-	long					g = gcd(b, d);
+	struct s_Rational		*temp;
+	struct s_Rational		*retval;
 
-	return new(Rational, RATIONAL, (a / f) * (d / g), (b / g) * (c / f));
+	temp = new(Rational, RATIONAL, other->denominator, other->numerator);
+	retval = Rational_mul_Rational(self, temp);
+	delete(temp);
+	return retval;
 }
 
 /* Return the division of one Numeric from another. */
@@ -299,6 +307,11 @@ static void	*Rational_pow_Rational(const void *_self, const void *_other)
 	long					d = other->denominator;
 	double					value = pow((double)a / b, (double)c / d);
 
+	if (a < 0 && d != 1)
+	{
+		fprintf(stderr, "%s\n", "(-Rational)^(non-integer) is not supported");
+		return (NULL);
+	}
 	return Rational_from_double(value);
 }
 

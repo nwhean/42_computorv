@@ -14,5 +14,7 @@ struct s_Rational	/* Rational: Numeric */
 extern const void	*Rational;	/* new(Rational, RATIONAL, long, long); */
 
 void	initRational(void);
+void	*Rational_from_double(double n);
+double	Rational_to_double(const struct s_Rational *self);
 
 #endif

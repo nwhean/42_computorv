@@ -93,6 +93,7 @@ classDiagram
 	class Rational {
 		+long numerator
 		+long denominator
+		to_double() double
 	}
 
 	class Tag {
