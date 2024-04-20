@@ -27,6 +27,15 @@
 #include "Parser.h"
 #include "Parser.r"
 
+const void	*Parser;
+const void	*ParserClass;
+
+static void				symbol_add(
+							struct s_Parser *self,
+							const struct s_Word *word);
+static struct s_Word	*symbol_find(
+							const struct s_Parser *self,
+							const void *str);
 static void				move(void *_self);
 static struct s_Expr	*expr(void *_self);
 static struct s_Expr	*term(void *_self);
@@ -42,7 +51,7 @@ static void	*Parser_ctor(void *_self, va_list *app)
 	self = super_ctor(Parser, _self, app);
 	self->lexer = va_arg(*app, void *);
 	self->look = NULL;
-	self->top = new(UnorderedMap, Str_compare);
+	self->top = new(UnorderedMap, Str_compare);	/* symbol table */
 	move(self);
 	return (self);
 }
@@ -252,8 +261,8 @@ static struct s_Expr	*base(void *_self)
 {
 	struct s_Parser	*self = _self;
 	struct s_Expr	*x = NULL;
-	struct s_Token	*tok;
-	void			*str;
+	void			*tok;	/* Token or its subclass */
+	void			*str;	/* Str */
 
 	switch (self->look->tag)
 	{
@@ -277,11 +286,12 @@ static struct s_Expr	*base(void *_self)
 			return (x);
 		case ID:
 			str = ((struct s_Word *)self->look)->lexeme;
-			tok = UnorderedMap_find(self->top, str);
+			tok = symbol_find(self, str);
+			/* if symbol is not found, add it to the symbol table. */
 			if (!tok)
 			{
 				tok = token_copy(self->look);
-				UnorderedMap_insert(self->top, Str_copy(str), tok);
+				symbol_add(self, tok);
 			}
 			x = new(Id, token_copy(tok), self->look->tag);
 			move(self);
@@ -317,8 +327,16 @@ static void	*ParserClass_ctor(void *_self, va_list *app)
 	return (self);
 }
 
-const void	*Parser;
-const void	*ParserClass;
+static void	symbol_add(struct s_Parser *self, const struct s_Word *word)
+{
+	UnorderedMap_insert(self->top, Str_copy(word->lexeme), (void *)word);
+}
+
+static struct s_Word	*symbol_find(
+		const struct s_Parser *self, const void *str)
+{
+	return (UnorderedMap_find(self->top, str));
+}
 
 void	initParser(void)
 {

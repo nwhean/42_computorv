@@ -28,8 +28,8 @@ classDiagram
 		UnorderedMap_size() size_t
 		UnorderedMap_clear()
 		UnorderedMap_insert()
-		UnorderedMap_erase(void *key)
-		UnorderedMap_find(void *key)
+		UnorderedMap_erase(const void *key)
+		UnorderedMap_find(const void *key)
 		UnorderedMap_reserve(size_t count)
 	}
 

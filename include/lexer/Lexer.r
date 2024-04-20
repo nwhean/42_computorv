@@ -18,6 +18,7 @@ struct	s_LexerClass	/* LexerClass: Class */
 	struct s_Token			*(*scan)(void *self);
 };
 
-void	Lexer_reserve(void *_self, struct s_Word *word);
+void			Lexer_reserve(void *_self, const struct s_Word *word);
+struct s_Word	*Lexer_find(void *_self, const void *str);
 
 #endif

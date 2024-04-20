@@ -128,7 +128,7 @@ static struct s_Token	*Lexer_scan(void *_self)
 			Str_push_back(str, self->peek);
 			readch(_self);
 		} while (isalnum(self->peek));
-		word = UnorderedMap_find(self->words, str);
+		word = Lexer_find(self, str);
 		if (!word)
 		{
 			word = new(Word, ID, Str_c_str(str));
@@ -145,11 +145,20 @@ static struct s_Token	*Lexer_scan(void *_self)
 }
 
 /* Reserve keywords into a hashtable. */
-void	Lexer_reserve(void *_self, struct s_Word *word)
+void	Lexer_reserve(void *_self, const struct s_Word *word)
 {
 	struct s_Lexer	*self = _self;
 
-	UnorderedMap_insert(self->words, Str_copy(word->lexeme), word);
+	UnorderedMap_insert(
+		self->words, Str_copy(word->lexeme), (struct s_Word *)word);
+}
+
+/* Retrive a value from a hashtable. */
+struct s_Word	*Lexer_find(void *_self, const void *str)
+{
+	struct s_Lexer	*self = _self;
+
+	return (UnorderedMap_find((void *)self->words, str));
 }
 
 /* LexerClass constructor method. */

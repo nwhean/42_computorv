@@ -11,7 +11,7 @@ static void	*UnorderedMap_ctor(void *_self, va_list *app)
 	struct s_UnorderedMap	*self = _self;
 
 	self = super_ctor(UnorderedMap, _self, app);
-	self->key_cmp = va_arg(*app, int (*)(void *, void *));
+	self->key_cmp = va_arg(*app, int (*)(const void *, const void *));
 	self->size = 0;
 	self->capacity = 0;
 	return (self);
@@ -53,7 +53,7 @@ void	UnorderedMap_clear(void *_self)
 
 	for (i = 0; i < self->size; ++i)
 	{
-		delete(self->key[i]);
+		delete((void *)self->key[i]);
 		delete(self->value[i]);
 	}
 	free(self->key);
@@ -66,7 +66,7 @@ void	UnorderedMap_clear(void *_self)
 /* Inserts a key, value pair into the container, if the container doesn't
  * already contain an element with an equivalent key.
  */
-bool	UnorderedMap_insert(void *_self, void *key, void *value)
+bool	UnorderedMap_insert(void *_self, const void *key, void *value)
 {
 	struct s_UnorderedMap	*self = _self;
 	void					*found = UnorderedMap_find(_self, key);
@@ -83,7 +83,7 @@ bool	UnorderedMap_insert(void *_self, void *key, void *value)
 }
 
 /* Removes specified elements from the container. */
-size_t	UnorderedMap_erase(void *_self, void *key)
+size_t	UnorderedMap_erase(void *_self, const void *key)
 {
 	struct s_UnorderedMap	*self = _self;
 	size_t					i;
@@ -106,7 +106,7 @@ size_t	UnorderedMap_erase(void *_self, void *key)
 }
 
 /* Finds an element with key equivalent to key. */
-void	*UnorderedMap_find(const void *_self, void *key)
+void	*UnorderedMap_find(const void *_self, const void *key)
 {
 	const struct s_UnorderedMap	*self = _self;
 	size_t						i;
@@ -130,7 +130,7 @@ void	UnorderedMap_reserve(void *_self, size_t count)
 		return ;
 	key_new = realloc(self->key, sizeof(void *) * count);
 	if (key_new)
-		self->key = key_new;
+		self->key = (const void **)key_new;
 	else
 		return ;
 	value_new = realloc(self->value, sizeof(void *) * count);
