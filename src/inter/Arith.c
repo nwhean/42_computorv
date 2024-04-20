@@ -1,10 +1,15 @@
 #include <assert.h>
 #include <stdarg.h>
-#include <string.h>
 
+/* container */
+#include "Str.h"
+
+/* inter */
 #include "Arith.h"
 #include "Expr.r"
 #include "Op.h"
+
+/* lexer */
 #include "Numeric.h"
 
 const void	*Arith;
@@ -56,23 +61,18 @@ static char	*Arith_str(const void *_self)
 	const char				*str1 = str(self->expr1);
 	const char				*str2 = str(get_op(self));
 	const char				*str3 = str(self->expr2);
-	size_t					len1 = strlen(str1);
-	size_t					len2 = strlen(str2);
-	size_t					len3 = strlen(str3);
+	void					*s = new(Str, str1);
 	char					*retval;
 
-	retval = calloc(sizeof(char), len1 + len2 + len3 + 3);
-	if (retval)
-	{
-		memcpy(retval, str1, len1);
-		retval[len1] = ' ';
-		memcpy(retval + len1 + 1, str3, len3);
-		retval[len1 + 1 + len3] = ' ';
-		memcpy(retval + len1 + 1 + len3 + 1, str2, len2);
-	}
+	Str_push_back(s, ' ');
+	Str_append(s, str2);
+	Str_push_back(s, ' ');
+	Str_append(s, str3);
+	retval = str(s);
 	free((char *)str1);
 	free((char *)str2);
 	free((char *)str3);
+	delete(s);
 	return (retval);
 }
 
@@ -116,6 +116,7 @@ static const struct s_Token	*Arith_eval(const void *_self)
 
 void	initArith(void)
 {
+	initStr();
 	initOp();
 	if (!Arith)
 		Arith = new(ExprClass, "Arith",

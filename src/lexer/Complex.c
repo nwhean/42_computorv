@@ -1,7 +1,10 @@
 #include <math.h>
 #include <stdlib.h>
-#include <string.h>
 
+/* container */
+#include "Str.h"
+
+/* lexer */
 #include "Complex.h"
 #include "Rational.h"
 
@@ -57,20 +60,17 @@ static char	*Complex_str(const void *_self)
 	const struct s_Complex	*self = _self;
 	const char *			str_real = str(self->real);
 	const char *			str_imag = str(self->imag);
-	int						len_real = strlen(str_real);
-	int						len_imag = strlen(str_imag);
-	int						len_new;
+	void					*s = new(Str, str_real);
 	char					*retval;
 
-	len_new = len_real + (*str_imag != '-') + len_imag + 1;
-	retval = calloc(sizeof(char), len_new + 1);
-	memcpy(retval, str_real, len_real);
 	if (*str_imag != '-')
-		retval[len_real] = '+';
-	memcpy(retval + len_real + (*str_imag != '-'), str_imag, len_imag);
-	retval[len_real + (*str_imag != '-') + len_imag] = 'i';
+		Str_push_back(s, '+');
+	Str_append(s, str_imag);
+	Str_push_back(s, 'i');
+	retval = str(s);
 	free((void *)str_real);
 	free((void *)str_imag);
+	delete(s);
 	return (retval);
 }
 
@@ -317,9 +317,10 @@ static void	*Complex_pow(const void *_self, const void *_other)
 
 void	initComplex(void)
 {
+	initStr();
+	initNumeric();
 	if (!Complex)
 	{
-		initNumeric();
 		Complex = new(NumericClass, "Complex",
 				Numeric, sizeof(struct s_Complex),
 				ctor, Complex_ctor,

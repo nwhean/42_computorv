@@ -1,10 +1,15 @@
 #include <assert.h>
 #include <stdarg.h>
-#include <string.h>
 
+/* container */
+#include "Str.h"
+
+/* inter */
 #include "Expr.r"
 #include "Op.h"
 #include "Unary.h"
+
+/* lexer */
 #include "Numeric.h"
 #include "Word.h"
 
@@ -53,19 +58,15 @@ static char	*Unary_str(const void *_self)
 	const struct s_Unary	*self = _self;
 	const char				*str1 = str(get_op(self));
 	const char				*str2 = str(self->expr);
-	size_t					len1 = strlen(str1);
-	size_t					len2 = strlen(str2);
+	void					*s = new(Str, str1);
 	char					*retval;
 
-	retval = calloc(sizeof(char), len1 + len2 + 2);
-	if (retval)
-	{
-		memcpy(retval, str1, len1);
-		retval[len1] = ' ';
-		memcpy(retval + len1 + 1, str2, len2);
-	}
+	Str_push_back(s, ' ');
+	Str_append(s, str2);
+	retval = str(s);
 	free((char *)str1);
 	free((char *)str2);
+	delete(s);
 	return (retval);
 }
 
@@ -87,6 +88,7 @@ static const struct s_Token	*Unary_eval(const void *_self)
 
 void	initUnary(void)
 {
+	initStr();
 	initOp();
 	if (!Unary)
 		Unary = new(ExprClass, "Unary",
