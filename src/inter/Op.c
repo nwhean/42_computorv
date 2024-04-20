@@ -41,12 +41,12 @@ static struct s_Expr	*Op_reduce(const void *_self)
 	return (super_reduce(class, self));
 }
 
-static const char	*Op_to_string(const void *_self)
+static char	*Op_str(const void *_self)
 {
 	const struct s_ExprClass	*class = classOf(_self);
 	const struct s_Op			*self = _self;
 
-	return (super_to_string(class, self));
+	return (super_str(class, self));
 }
 
 static const struct s_Token	*Op_eval(const void *_self)
@@ -65,9 +65,9 @@ void	initOp(void)
 				Expr, sizeof(struct s_Op),
 				ctor, Op_ctor,
 				dtor, Op_dtor,
+				str, Op_str,
 				gen, Op_gen,
 				reduce, Op_reduce,
-				to_string, Op_to_string,
 				eval, Op_eval,
 				0);
 }

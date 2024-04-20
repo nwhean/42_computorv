@@ -93,14 +93,14 @@ void	Parser_program(void *_self)
 	if (!x)
 		return ;
 
-	s = to_string(x);
+	s = str(x);
 	printf("%s\n", s);
 	free((char *)s);
 
 	token = eval(x);
 	if (token)
 	{
-		const char	*result = token_to_string(token);
+		const char	*result = str(token);
 
 		printf("%s\n", result);
 		free((char *)result);
@@ -246,7 +246,7 @@ static struct s_Expr	*base(void *_self)
 	struct s_Parser	*self = _self;
 	struct s_Expr	*x = NULL;
 	void			*tok;	/* Token or its subclass */
-	void			*str;	/* Str */
+	void			*s;	/* Str */
 
 	switch (self->look->tag)
 	{
@@ -269,8 +269,8 @@ static struct s_Expr	*base(void *_self)
 			move(self);
 			return (x);
 		case ID:
-			str = ((struct s_Word *)self->look)->lexeme;
-			tok = symbol_find(self, str);
+			s = ((struct s_Word *)self->look)->lexeme;
+			tok = symbol_find(self, s);
 			/* if symbol is not found, add it to the symbol table. */
 			if (!tok)
 			{

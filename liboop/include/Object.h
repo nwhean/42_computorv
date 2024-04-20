@@ -16,6 +16,7 @@ void		delete(void *self);
 void		*ctor(void *self, va_list *app);	/* default constructor */
 void		*copy(const void *self);			/* copy constructor */
 void		*dtor(void *self);					/* destructor */
+char		*str(const void *self);				/* convert to char * */
 int			differ(const void *self, const void *b);
 int			puto(const void *self, FILE *fp);
 

@@ -50,12 +50,12 @@ static struct s_Expr	*Arith_reduce(const void *_self)
 }
 
 /* Return the string representation in Reverse Polish Notation. */
-static const char	*Arith_to_string(const void *_self)
+static char	*Arith_str(const void *_self)
 {
 	const struct s_Arith	*self = _self;
-	const char				*str1 = to_string(self->expr1);
-	const char				*str2 = token_to_string(get_op(self));
-	const char				*str3 = to_string(self->expr2);
+	const char				*str1 = str(self->expr1);
+	const char				*str2 = str(get_op(self));
+	const char				*str3 = str(self->expr2);
 	size_t					len1 = strlen(str1);
 	size_t					len2 = strlen(str2);
 	size_t					len3 = strlen(str3);
@@ -122,9 +122,9 @@ void	initArith(void)
 				Op, sizeof(struct s_Arith),
 				ctor, Arith_ctor,
 				dtor, Arith_dtor,
+				str, Arith_str,
 				gen, Arith_gen,
 				reduce, Arith_reduce,
-				to_string, Arith_to_string,
 				eval, Arith_eval,
 				0);
 }

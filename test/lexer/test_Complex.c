@@ -24,16 +24,16 @@ void test_ctor(void) {
 	delete(comp);
 }
 
-void test_to_string(void) {
+void test_str(void) {
 	struct s_Complex	*comp = new(Complex, COMPLEX,
 									new(Rational, RATIONAL, (long)1, (long)1),
 									new(Rational, RATIONAL, (long)2, (long)1)
 									);
-	const char			*str = token_to_string(comp);
+	const char			*s = str(comp);
 	const char			*target = "1+2i";
-	TEST_ASSERT_EQUAL_STRING_LEN(target, str, 7);
+	TEST_ASSERT_EQUAL_STRING_LEN(target, s, 7);
 	delete(comp);
-	free((void *)str);
+	free((void *)s);
 }
 
 void test_add(void) {
@@ -153,7 +153,7 @@ void test_pow_complex(void) {
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
-	RUN_TEST(test_to_string);
+	RUN_TEST(test_str);
 	RUN_TEST(test_add);
 	RUN_TEST(test_sub);
 	RUN_TEST(test_mul);

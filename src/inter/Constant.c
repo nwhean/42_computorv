@@ -41,12 +41,12 @@ static struct s_Expr	*Constant_reduce(const void *_self)
 	return (super_reduce(class, self));
 }
 
-static const char	*Constant_to_string(const void *_self)
+static char	*Constant_str(const void *_self)
 {
 	const struct s_ExprClass	*class = classOf(_self);
 	const struct s_Constant		*self = _self;
 
-	return (super_to_string(class, self));
+	return (super_str(class, self));
 }
 
 static const struct s_Token	*Constant_eval(const void *_self)
@@ -67,7 +67,7 @@ void	initConstant(void)
 				dtor, Constant_dtor,
 				gen, Constant_gen,
 				reduce, Constant_reduce,
-				to_string, Constant_to_string,
+				str, Constant_str,
 				eval, Constant_eval,
 				0);
 }

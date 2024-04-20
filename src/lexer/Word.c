@@ -67,11 +67,11 @@ static struct s_Word	*Word_copy(const void *_self)
 }
 
 /* Return string representing the Word. */
-static const char	*Word_to_string(const void *_self)
+static char	*Word_str(const void *_self)
 {
 	const struct s_Word	*self = _self;
 
-	return (strdup(Str_c_str(self->lexeme)));
+	return (str(self->lexeme));
 }
 
 /* add a word into the reserve. */
@@ -98,7 +98,7 @@ void	initWord(void)
 				ctor, Word_ctor,
 				copy, Word_copy,
 				dtor, Word_dtor,
-				token_to_string, Word_to_string,
+				str, Word_str,
 				0);
 		Word_reserved = new(UnorderedMap, Str_compare);
 		Word_plus = new(Word, PLUS, "plus");

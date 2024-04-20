@@ -68,28 +68,11 @@ static struct s_Expr	*Expr_reduce(const void *self)
 	return ((struct s_Expr *)self);
 }
 
-/* Return string representing the Expr. */
-const char	*to_string(const void *self)
-{
-	const struct s_ExprClass *const	*cp = self;
-
-	assert(self && *cp && (*cp)->to_string);
-	return ((*cp)->to_string(self));
-}
-
-const char	*super_to_string(const void *_class, const void *_self)
-{
-	const struct s_ExprClass	*superclass = super(_class);
-
-	assert(_self && superclass->to_string);
-	return (superclass->to_string(_self));
-}
-
-static const char	*Expr_to_string(const void *_self)
+static char	*Expr_str(const void *_self)
 {
 	const struct s_Expr	*self = _self;
 
-	return (token_to_string(self->op));
+	return (str(self->op));
 }
 
 /* Return Token representing the Expr. */
@@ -164,8 +147,6 @@ static void	*ExprClass_ctor(void *_self, va_list *app)
 			*(voidf *)&self->gen = method;
 		else if (selector == (voidf)reduce)
 			*(voidf *)&self->reduce = method;
-		else if (selector == (voidf)to_string)
-			*(voidf *)&self->to_string = method;
 		else if (selector == (voidf)eval)
 			*(voidf *)&self->eval = method;
 		#pragma GCC diagnostic pop
@@ -186,9 +167,9 @@ void	initExpr(void)
 				Node, sizeof(struct s_Expr),
 				ctor, Expr_ctor,
 				dtor, Expr_dtor,
+				str, Expr_str,
 				gen, Expr_gen,
 				reduce, Expr_reduce,
-				to_string, Expr_to_string,
 				eval, Expr_eval,
 				0);
 }

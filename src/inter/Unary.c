@@ -48,11 +48,11 @@ static struct s_Expr	*Unary_reduce(const void *_self)
 }
 
 /* Return the string representation in Reverse Polish Notation. */
-static const char	*Unary_to_string(const void *_self)
+static char	*Unary_str(const void *_self)
 {
 	const struct s_Unary	*self = _self;
-	const char				*str1 = token_to_string(get_op(self));
-	const char				*str2 = to_string(self->expr);
+	const char				*str1 = str(get_op(self));
+	const char				*str2 = str(self->expr);
 	size_t					len1 = strlen(str1);
 	size_t					len2 = strlen(str2);
 	char					*retval;
@@ -93,9 +93,9 @@ void	initUnary(void)
 				Op, sizeof(struct s_Unary),
 				ctor, Unary_ctor,
 				dtor, Unary_dtor,
+				str, Unary_str,
 				gen, Unary_gen,
 				reduce, Unary_reduce,
-				to_string, Unary_to_string,
 				eval, Unary_eval,
 				0);
 }

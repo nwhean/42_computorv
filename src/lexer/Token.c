@@ -1,7 +1,6 @@
 #include <assert.h>
 
 #include "Token.h"
-#include "Token.r"
 
 const void	*Token;
 const void	*TokenClass;
@@ -27,25 +26,8 @@ static struct s_Token	*Token_copy(const void *_self)
 	return (retval);
 }
 
-/* Return string representing the Token and its subclasses. */
-const char	*token_to_string(const void *self)
-{
-	const struct s_TokenClass *const	*cp = self;
-
-	assert(self && *cp && (*cp)->to_string);
-	return ((*cp)->to_string(self));
-}
-
-const char	*super_token_to_string(const void *_class, const void *_self)
-{
-	const struct s_TokenClass	*superclass = super(_class);
-
-	assert(_self && superclass->to_string);
-	return (superclass->to_string(_self));
-}
-
 /* Return string representing the Token. */
-static const char	*Token_to_string(const void *_self)
+static char	*Token_str(const void *_self)
 {
 	const struct s_Token	*self = _self;
 	char 					*retval;
@@ -75,9 +57,7 @@ static void	*TokenClass_ctor(void *_self, va_list *app)
 		voidf	method;
 
 		#pragma GCC diagnostic ignored "-Wcast-function-type"
-		method = va_arg(ap, voidf);
-		if (selector == (voidf)token_to_string)
-			*(voidf *)&self->to_string = method;
+		(void)method;
 		#pragma GCC diagnostic pop
 	}
 	return (self);
@@ -95,6 +75,6 @@ void	initToken(void)
 				Object, sizeof(struct s_Token),
 				ctor, Token_ctor,
 				copy, Token_copy,
-				token_to_string, Token_to_string,
+				str, Token_str,
 				0);
 }

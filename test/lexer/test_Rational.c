@@ -57,14 +57,14 @@ void test_to_double(void) {
 	delete(rational);
 }
 
-void test_to_string(void) {
+void test_str(void) {
 	double				val = -1.4142135623730951;
 	char				*target = "-1.4142135623730951";
 	struct s_Rational	*rational = Rational_from_double(val);
-	const char			*str = token_to_string(rational);
-	TEST_ASSERT_EQUAL_STRING_LEN(target, str, 7);
+	const char			*s = str(rational);
+	TEST_ASSERT_EQUAL_STRING_LEN(target, s, 7);
 	delete(rational);
-	free((void *)str);
+	free((void *)s);
 }
 
 void test_add(void) {
@@ -175,7 +175,7 @@ int main(void) {
 	RUN_TEST(test_from_double2);
 	RUN_TEST(test_from_double3);
 	RUN_TEST(test_from_double4);
-	RUN_TEST(test_to_string);
+	RUN_TEST(test_str);
 	RUN_TEST(test_add);
 	RUN_TEST(test_sub);
 	RUN_TEST(test_mul);

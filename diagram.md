@@ -3,17 +3,16 @@ classDiagram
 	%% container
 
 	class Str {
-		size_t	size;
-		size_t	capacity;
-		char	*buffer;
+		size_t	size
+		size_t	capacity
+		char	*buffer
 		Str_size() size_t
 		Str_capacity() size_t
-		Str_reserve(size_t n);
+		Str_reserve(size_t n)
 		Str_clear()
 		Str_empty() bool
 		Str_append(const char *s) Str
-		Str_push_back(char c);
-		Str_c_str();
+		Str_push_back(char c)
 		Str_compare(const void *other) int
 	}
 
@@ -50,7 +49,6 @@ classDiagram
 		+Tag tag
 		+gen() Expr
 		+reduce() Expr
-		+to_string() String
 		+eval() Token
 		+get_op() Token
 		+set_tag(Tag)
@@ -63,7 +61,7 @@ classDiagram
 	Op <|-- Unary
 
 	class Unary {
-		Expr expr;
+		Expr expr
 	}
 
 
@@ -125,7 +123,6 @@ classDiagram
 
 	class Token {
 		+Tag tag
-		+to_string() String
 	}
 
 	Token <|-- Word

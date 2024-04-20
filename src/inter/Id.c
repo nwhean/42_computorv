@@ -42,12 +42,12 @@ static struct s_Expr	*Id_reduce(const void *_self)
 	return (super_reduce(class, self));
 }
 
-static const char	*Id_to_string(const void *_self)
+static char	*Id_str(const void *_self)
 {
 	const struct s_Id			*self = _self;
 	const struct s_Work			*token = (struct s_Work *)get_op(self);
 
-	return (token_to_string(token));
+	return (str(token));
 }
 
 static const struct s_Token	*Id_eval(const void *_self)
@@ -65,9 +65,9 @@ void	initId(void)
 				Expr, sizeof(struct s_Id),
 				ctor, Id_ctor,
 				dtor, Id_dtor,
+				str, Id_str,
 				gen, Id_gen,
 				reduce, Id_reduce,
-				to_string, Id_to_string,
 				eval, Id_eval,
 				0);
 }

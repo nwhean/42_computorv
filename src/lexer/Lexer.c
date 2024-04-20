@@ -107,21 +107,23 @@ struct s_Token	*Lexer_scan(void *_self)
 	/* handle words */
 	if (isalpha(self->peek))
 	{
-		void	*str = new(Str, "");
+		void	*s = new(Str, "");
 		void	*word;
 
 		do
 		{
-			Str_push_back(str, self->peek);
+			Str_push_back(s, self->peek);
 			readch(_self);
 		} while (isalnum(self->peek));
-		word = Lexer_find(self, str);
+		word = Lexer_find(self, s);
 		if (!word)
 		{
-			word = new(Word, ID, Str_c_str(str));
+			char	*s_ptr = str(s);
+			word = new(Word, ID, s_ptr);
 			Lexer_reserve(self, word);
+			free(s_ptr);
 		}
-		delete(str);
+		delete(s);
 		return (word);
 	}
 

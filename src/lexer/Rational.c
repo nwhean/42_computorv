@@ -114,7 +114,7 @@ static struct s_Rational	*Rational_copy(const void *_self)
 }
 
 /* Return string representing the Rational. */
-static const char	*Rational_to_string(const void *_self)
+static char	*Rational_str(const void *_self)
 {
 	const struct s_Rational	*self = _self;
 	int						len;
@@ -401,7 +401,7 @@ void	initRational(void)
 				Numeric, sizeof(struct s_Rational),
 				ctor, Rational_ctor,
 				copy, Rational_copy,
-				token_to_string, Rational_to_string,
+				str, Rational_str,
 				numeric_add, Rational_add,
 				numeric_sub, Rational_sub,
 				numeric_mul, Rational_mul,

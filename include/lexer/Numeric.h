@@ -4,7 +4,6 @@
 # include <stdbool.h>
 
 # include "Token.h"
-# include "Token.r"
 
 /* all members are public */
 struct s_Numeric	/* Numeric: Token */

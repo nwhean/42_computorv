@@ -119,11 +119,11 @@ void	Str_push_back(void *_self, char c)
 /* Returns a pointer to an array that contains a null-terminated sequence
  * of characters (i.e., a C-string) representing the current value of the
  * string object.*/
-const char*	Str_c_str(const void *_self)
+char	*Str_str(const void *_self)
 {
 	const struct s_Str	*self = _self;
 
-	return (self->buffer);
+	return (strdup(self->buffer));
 }
 
 /* Compares the value of the string object (or a substring) to the
@@ -144,6 +144,7 @@ void	initStr(void)
 				ctor, Str_ctor,
 				copy, Str_copy,
 				dtor, Str_dtor,
+				str, Str_str,
 				0);
 }
 

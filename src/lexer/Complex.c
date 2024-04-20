@@ -52,11 +52,11 @@ static struct s_Complex	*Complex_from_polar(double modulus, double argument)
 }
 
 /* Return string representing the Complex. */
-static const char	*Complex_to_string(const void *_self)
+static char	*Complex_str(const void *_self)
 {
 	const struct s_Complex	*self = _self;
-	const char *			str_real = token_to_string(self->real);
-	const char *			str_imag = token_to_string(self->imag);
+	const char *			str_real = str(self->real);
+	const char *			str_imag = str(self->imag);
 	int						len_real = strlen(str_real);
 	int						len_imag = strlen(str_imag);
 	int						len_new;
@@ -325,7 +325,7 @@ void	initComplex(void)
 				ctor, Complex_ctor,
 				copy, Complex_copy,
 				dtor, Complex_dtor,
-				token_to_string, Complex_to_string,
+				str, Complex_str,
 				numeric_add, Complex_add,
 				numeric_sub, Complex_sub,
 				numeric_mul, Complex_mul,

@@ -102,6 +102,23 @@ void	*super_dtor(const void *_class, void *_self)
 	return (superclass->dtor(_self));
 }
 
+/* Return a string representation of an object. */
+char	*str(const void *_self)
+{
+	const struct s_Class	*class = classOf(_self);
+
+	assert(class->str);
+	return (class->str(_self));
+}
+
+char	*super_str(const void *_class, const void *_self)
+{
+	const struct s_Class	*superclass = super(_class);
+
+	assert(_self && superclass->str);
+	return (superclass->str(_self));
+}
+
 /* Compare two objects. */
 int	differ(const void *self, const void *b)
 {
@@ -146,6 +163,13 @@ static void	*Object_copy(const void *_self)
 static void	*Object_dtor(void *_self)
 {
 	return (_self);
+}
+
+/* Object string representation. */
+static char	*Object_str(const void *_self)
+{
+	(void)_self;
+	return (NULL);
 }
 
 /* Return 1 if the inputs are equal, 0 otherwise. */
@@ -199,6 +223,8 @@ static void	*Class_ctor(void *_self, va_list *app)
 				*(voidf *)&self->copy = method;
 			else if (selector == (voidf)dtor)
 				*(voidf *)&self->dtor = method;
+			else if (selector == (voidf)str)
+				*(voidf *)&self->str = method;
 			else if (selector == (voidf)differ)
 				*(voidf *)&self->differ = method;
 			else if (selector == (voidf)puto)
@@ -231,12 +257,14 @@ static const struct s_Class	object[] = {
 	{
 		{object + 1},
 		"Object", object, sizeof(struct s_Object),
-		Object_ctor, Object_copy, Object_dtor, Object_differ, Object_puto
+		Object_ctor, Object_copy, Object_dtor, Object_str,
+		Object_differ, Object_puto
 	},
 	{
 		{object + 1},
 		"Class", object, sizeof(struct s_Class),
-		Class_ctor, Class_copy, Class_dtor, Object_differ, Object_puto
+		Class_ctor, Class_copy, Class_dtor, Object_str,
+		Object_differ, Object_puto
 	}
 };
 

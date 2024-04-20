@@ -19,6 +19,7 @@ struct s_Class
 	void					*(*ctor)(void *self, va_list *app);
 	void					*(*copy)(const void *self);
 	void					*(*dtor)(void *self);
+	char					*(*str)(const void *self);
 	int						(*differ)(const void *self, const void *b);
 	int						(*puto)(const void *self, FILE *fp);
 };
@@ -26,5 +27,6 @@ struct s_Class
 void	*super_ctor(const void *_class, void *_self, va_list *app);
 void	*super_copy(const void *_class, const void *_self);
 void	*super_dtor (const void *_class, void *_self);
+char	*super_str(const void *_class, const void *_self);
 
 #endif
