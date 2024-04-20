@@ -74,7 +74,7 @@ int	main(void)
 	init();
 	lexer = new(Lexer);
 	parser = new(Parser, lexer);
-	program(parser);
+	Parser_program(parser);
 	delete(parser);
 	delete(lexer);
 	return (0);

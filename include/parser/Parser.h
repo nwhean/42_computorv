@@ -4,7 +4,7 @@
 extern const void	*Parser;	/* new(Parser, lexer); */
 
 extern const void	*ParserClass;
-void	program(void *self);
+void	Parser_program(void *self);
 
 void	initParser(void);
 

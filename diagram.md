@@ -143,6 +143,14 @@ classDiagram
 	class Parser {
 		-Lexer lexer
 		-Token look
-		+program()
+		+program() void
+		-symbol_add(Word)
+		-symbol_find(Str)
+		-move() void
+		-expr() void
+		-term() void
+		-unary() void
+		-factor() void
+		-base() void
 	}
 ```

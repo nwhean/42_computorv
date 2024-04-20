@@ -15,7 +15,6 @@ struct s_Parser	/* Parser: Object */
 struct	s_ParserClass	/* ParserClass: Class */
 {
 	const struct s_Class	_;
-	void				(*program)(void *self);
 };
 
 #endif

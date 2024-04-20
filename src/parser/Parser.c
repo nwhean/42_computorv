@@ -82,24 +82,8 @@ static void	move(void *_self)
 	self->look = Lexer_scan(self->lexer);
 }
 
-void	program(void *self)
-{
-	const struct s_ParserClass *const	*cp = self;
-
-	assert(self && *cp && (*cp)->program);
-	(*cp)->program(self);
-}
-
-void	super_program(const void *_class, void *_self)
-{
-	const struct s_ParserClass	*superclass = super(_class);
-
-	assert(_self && superclass->program);
-	superclass->program(_self);
-}
-
-/* Parser program method */
-static void	Parser_program(void *_self)
+/* Runs the parser. */
+void	Parser_program(void *_self)
 {
 	struct s_Parser			*self = _self;
 	void					*x = expr(self);	/* Expr or subclass */
@@ -320,18 +304,20 @@ static void	*ParserClass_ctor(void *_self, va_list *app)
 	{
 		voidf	method;
 
-		method = va_arg(ap, voidf);
-		if (selector == (voidf)program)
-			*(voidf *)&self->program = method;
+		#pragma GCC diagnostic ignored "-Wcast-function-type"
+		(void)method;
+		#pragma GCC diagnostic pop
 	}
 	return (self);
 }
 
+/* Add a Word to the symbol table. */
 static void	symbol_add(struct s_Parser *self, const struct s_Word *word)
 {
 	UnorderedMap_insert(self->top, Str_copy(word->lexeme), (void *)word);
 }
 
+/* Find a Word from the symbol table. */
 static struct s_Word	*symbol_find(
 		const struct s_Parser *self, const void *str)
 {
@@ -350,6 +336,5 @@ void	initParser(void)
 				Object, sizeof(struct s_Parser),
 				ctor, Parser_ctor,
 				dtor, Parser_dtor,
-				program, Parser_program,
 				0);
 }
