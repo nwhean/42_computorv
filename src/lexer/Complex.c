@@ -32,9 +32,12 @@ static void	*Complex_dtor(void *_self)
 static struct s_Complex	*Complex_copy(const void *_self)
 {
 	const struct s_Complex	*self = _self;
+	struct s_Complex		*retval;
 
-	return new(Complex, token_get_tag(self),
-			token_copy(self->real), token_copy(self->imag));
+	retval = super_copy(Complex, self);
+	retval->real = copy(self->real);
+	retval->imag = copy(self->imag);
+	return (retval);
 }
 
 /* Return a Complex number given its polar form */
@@ -320,8 +323,8 @@ void	initComplex(void)
 		Complex = new(NumericClass, "Complex",
 				Numeric, sizeof(struct s_Complex),
 				ctor, Complex_ctor,
+				copy, Complex_copy,
 				dtor, Complex_dtor,
-				token_copy, Complex_copy,
 				token_to_string, Complex_to_string,
 				numeric_add, Complex_add,
 				numeric_sub, Complex_sub,
@@ -338,13 +341,13 @@ void	initComplex(void)
 /* Return the real part of a Complex number. */
 struct s_Rational	*Complex_real(const struct s_Complex *self)
 {
-	return token_copy(self->real);
+	return copy(self->real);
 }
 
 /* Return the imaginary part of a complex number. */
 struct s_Rational	*Complex_imag(const struct s_Complex *self)
 {
-	return token_copy(self->imag);
+	return copy(self->imag);
 }
 
 /* Return the modulus of a complex number. */

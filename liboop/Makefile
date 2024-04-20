@@ -8,13 +8,10 @@ FDLIBS	=	-loop
 # source and object files
 
 SRCDIR	=	src
-SRCS	=	Object.c \
-			Circle.c \
-			Point.c
+SRCS	=	Object.c
 
 OBJDIR	=	obj
 OBJS	=	$(addprefix $(OBJDIR)/, $(SRCS:%.c=%.o))
-OBJS_ROOT	=
 
 # targets
 MAIN	=	main.c
@@ -26,7 +23,7 @@ all: $(NAME)
 $(NAME):  $(LIBOBJ) $(MAIN)
 	$(CC) $(CFLAGS) -o $(NAME) $(MAIN) $(FDFLAGS) $(FDLIBS)
 
-$(LIBOBJ): $(OBJS)
+$(LIBOBJ): $(OBJDIR)/Object.o
 	$(AR) -rcs $(LIBOBJ) $?
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c

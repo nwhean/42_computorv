@@ -14,6 +14,12 @@ static void	*Numeric_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* Return a copy of the Numeric. */
+static struct s_Numeric	*Numeric_copy(const void *_self)
+{
+	return (super_copy(Numeric, _self));
+}
+
 /* Return the addition of two Numerics. */
 void	*numeric_add(const void *self, const void *other)
 {
@@ -150,6 +156,7 @@ void	initNumeric(void)
 		Numeric = new(NumericClass, "Numeric",
 				Token, sizeof(struct s_Numeric),
 				ctor, Numeric_ctor,
+				copy, Numeric_copy,
 				0);
 }
 

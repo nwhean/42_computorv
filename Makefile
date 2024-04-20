@@ -64,7 +64,7 @@ $(LIBCOMP):	$(OBJS)
 	$(AR) crs $@ $?
 
 $(LIBOOP_PATH)/liboop.a:
-	$(MAKE) -C $(LIBOOP_PATH) -s
+	$(MAKE) liboop.a -C $(LIBOOP_PATH) -s
 
 clean:
 	$(MAKE) clean -C $(LIBOOP_PATH) -s

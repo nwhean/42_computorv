@@ -105,9 +105,12 @@ double	Rational_to_double(const struct s_Rational *self)
 static struct s_Rational	*Rational_copy(const void *_self)
 {
 	const struct s_Rational	*self = _self;
+	struct s_Rational		*retval;
 
-	return new(Rational, token_get_tag(self),
-			self->numerator, self->denominator);
+	retval = super_copy(Rational, self);
+	retval->numerator = self->numerator;
+	retval->denominator = self->denominator;
+	return (retval);
 }
 
 /* Return string representing the Rational. */
@@ -312,7 +315,7 @@ static void	*Rational_mod(const void *_self, const void *_other)
 static struct s_Rational	*Rational_neg(const void *_self)
 {
 	const struct s_Rational	*self = _self;
-	struct s_Rational		*retval = token_copy(self);
+	struct s_Rational		*retval = copy(self);
 
 	retval->numerator *= -1;
 	return (retval);
@@ -397,7 +400,7 @@ void	initRational(void)
 		Rational = new(NumericClass, "Rational",
 				Numeric, sizeof(struct s_Rational),
 				ctor, Rational_ctor,
-				token_copy, Rational_copy,
+				copy, Rational_copy,
 				token_to_string, Rational_to_string,
 				numeric_add, Rational_add,
 				numeric_sub, Rational_sub,

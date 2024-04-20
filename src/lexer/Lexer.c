@@ -137,7 +137,7 @@ static void	Lexer_reserve(void *_self, const struct s_Word *word)
 	struct s_Lexer	*self = _self;
 
 	UnorderedMap_insert(
-		self->words, Str_copy(word->lexeme), (struct s_Word *)word);
+		self->words, copy(word->lexeme), (struct s_Word *)word);
 }
 
 /* Retrive a value from a hashtable. */

@@ -6,7 +6,6 @@ classDiagram
 		size_t	size;
 		size_t	capacity;
 		char	*buffer;
-		Str_copy() Str;
 		Str_size() size_t
 		Str_capacity() size_t
 		Str_reserve(size_t n);
@@ -126,7 +125,6 @@ classDiagram
 
 	class Token {
 		+Tag tag
-		+copy() Token
 		+to_string() String
 		+get_tag() Tag
 	}

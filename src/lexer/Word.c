@@ -54,12 +54,16 @@ static void	*Word_dtor(void *_self)
 static struct s_Word	*Word_copy(const void *_self)
 {
 	const struct s_Word	*self = _self;
-	const struct s_Word	*retval;
+	struct s_Word	*retval;
 
-	retval = reserve_find(self->lexeme);
+	retval = (struct s_Word *)reserve_find(self->lexeme);
 	if (!retval)
-		return new(Word, token_get_tag(self), Str_c_str(self->lexeme));
-	return ((struct s_Word *)retval);
+	{
+		retval = super_copy(Word, self);
+		retval->lexeme = copy(self->lexeme);
+		return (retval);
+	}
+	return (retval);
 }
 
 /* Return string representing the Word. */
@@ -74,7 +78,7 @@ static const char	*Word_to_string(const void *_self)
 static void	reserve_add(const struct s_Word *word)
 {
 	UnorderedMap_insert(
-		(void *)Word_reserved, Str_copy(word->lexeme), (void *)word);
+		(void *)Word_reserved, copy(word->lexeme), (void *)word);
 }
 
 /* Find a Word regestered in the the reserve. */
@@ -92,8 +96,8 @@ void	initWord(void)
 		Word = new(TokenClass, "Word",
 				Token, sizeof(struct s_Word),
 				ctor, Word_ctor,
+				copy, Word_copy,
 				dtor, Word_dtor,
-				token_copy, Word_copy,
 				token_to_string, Word_to_string,
 				0);
 		Word_reserved = new(UnorderedMap, Str_compare);

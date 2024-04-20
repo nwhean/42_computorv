@@ -8,10 +8,7 @@
 
 extern const void	*Str;	/* new(Str, char *); */
 
-extern const void	*StrClass;
-
 /* capacity */
-void		*Str_copy(const void *self);
 size_t		Str_size(const void *self);
 size_t		Str_capacity(const void *self);
 void		Str_reserve(void *self, size_t n);

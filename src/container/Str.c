@@ -5,7 +5,6 @@
 #include "Str.r"
 
 const void	*Str;
-const void	*StrClass;
 
 /* Str constructor method.
  * A copy of the string is made, which will be freed upon destruction.
@@ -143,6 +142,7 @@ void	initStr(void)
 		Str = new(Class, "Str",
 				Object, sizeof(struct s_Str),
 				ctor, Str_ctor,
+				copy, Str_copy,
 				dtor, Str_dtor,
 				0);
 }

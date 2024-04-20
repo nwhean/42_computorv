@@ -257,7 +257,7 @@ static struct s_Expr	*base(void *_self)
 			return (x);
 		case RATIONAL:
 		case COMPLEX:
-			tok = token_copy(self->look);
+			tok = copy(self->look);
 			x = new(Constant, tok, self->look->tag);
 			move(self);
 			return (x);
@@ -274,10 +274,10 @@ static struct s_Expr	*base(void *_self)
 			/* if symbol is not found, add it to the symbol table. */
 			if (!tok)
 			{
-				tok = token_copy(self->look);
+				tok = copy(self->look);
 				symbol_add(self, tok);
 			}
-			x = new(Id, token_copy(tok), self->look->tag);
+			x = new(Id, copy(tok), self->look->tag);
 			move(self);
 			return (x);
 		default:
@@ -314,7 +314,7 @@ static void	*ParserClass_ctor(void *_self, va_list *app)
 /* Add a Word to the symbol table. */
 static void	symbol_add(struct s_Parser *self, const struct s_Word *word)
 {
-	UnorderedMap_insert(self->top, Str_copy(word->lexeme), (void *)word);
+	UnorderedMap_insert(self->top, copy(word->lexeme), (void *)word);
 }
 
 /* Find a Word from the symbol table. */

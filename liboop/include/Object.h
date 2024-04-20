@@ -9,11 +9,13 @@ extern const void	*Object;
 size_t		sizeOf(const void *self);
 const void	*classOf(const void *self);
 const void	*super(const void *self);
-void		*ctor(void *self, va_list *app);
-void		*dtor(void *self);
-
 void		*new(const void *_class, ...);	/* new(Object); */
 void		delete(void *self);
+
+/* instance method */
+void		*ctor(void *self, va_list *app);	/* default constructor */
+void		*copy(const void *self);			/* copy constructor */
+void		*dtor(void *self);					/* destructor */
 int			differ(const void *self, const void *b);
 int			puto(const void *self, FILE *fp);
 

@@ -113,7 +113,7 @@ static const struct s_Token	*Expr_eval(const void *_self)
 {
 	const struct s_Expr	*self = _self;
 
-	return token_copy(self->op);
+	return copy(self->op);
 }
 
 /* Get the op of an Expr. */

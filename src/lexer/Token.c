@@ -16,29 +16,15 @@ static void	*Token_ctor(void *_self, va_list *app)
 	return (self);
 }
 
-/* Return a copy of the Token or its subclass. */
-void	*token_copy(const void *self)
-{
-	const struct s_TokenClass *const	*cp = self;
-
-	assert(self && *cp && (*cp)->copy);
-	return ((*cp)->copy(self));
-}
-
-void	*super_token_copy(const void *_class, const void *_self)
-{
-	const struct s_TokenClass	*superclass = super(_class);
-
-	assert(_self && superclass->copy);
-	return (superclass->copy(_self));
-}
-
 /* Return a copy of the Token. */
 static struct s_Token	*Token_copy(const void *_self)
 {
 	const struct s_Token	*self = _self;
+	struct s_Token			*retval;
 
-	return new(Token, self->tag);
+	retval = super_copy(Token, self);
+	retval->tag = self->tag;
+	return (retval);
 }
 
 /* Return string representing the Token and its subclasses. */
@@ -98,9 +84,7 @@ static void	*TokenClass_ctor(void *_self, va_list *app)
 
 		#pragma GCC diagnostic ignored "-Wcast-function-type"
 		method = va_arg(ap, voidf);
-		if (selector == (voidf)token_copy)
-			*(voidf *)&self->copy = method;
-		else if (selector == (voidf)token_to_string)
+		if (selector == (voidf)token_to_string)
 			*(voidf *)&self->to_string = method;
 		#pragma GCC diagnostic pop
 	}
@@ -118,7 +102,7 @@ void	initToken(void)
 		Token = new(TokenClass, "Token",
 				Object, sizeof(struct s_Token),
 				ctor, Token_ctor,
-				token_copy, Token_copy,
+				copy, Token_copy,
 				token_to_string, Token_to_string,
 				0);
 }

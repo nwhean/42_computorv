@@ -29,38 +29,6 @@ const void	*super(const void *_self)
 	return (self->super);
 }
 
-void	*ctor(void *_self, va_list *app)
-{
-	const struct s_Class	*class = classOf(_self);
-
-	assert(class->ctor);
-	return (class->ctor(_self, app));
-}
-
-void	*dtor(void *_self)
-{
-	const struct s_Class	*class = classOf(_self);
-
-	assert(class->dtor);
-	return (class->dtor(_self));
-}
-
-void	*super_ctor(const void *_class, void *_self, va_list *app)
-{
-	const struct s_Class	*superclass = super(_class);
-
-	assert(_self && superclass->ctor);
-	return (superclass->ctor(_self, app));
-}
-
-void	*super_dtor(const void *_class, void *_self)
-{
-	const struct s_Class	*superclass = super(_class);
-
-	assert(_self && superclass->dtor);
-	return (superclass->dtor(_self));
-}
-
 void	*new(const void *_class, ...)
 {
 	const struct s_Class	*class = _class;
@@ -83,6 +51,58 @@ void	delete(void *_self)
 		free(dtor(_self));
 }
 
+/* default constructor */
+void	*ctor(void *_self, va_list *app)
+{
+	const struct s_Class	*class = classOf(_self);
+
+	assert(class->ctor);
+	return (class->ctor(_self, app));
+}
+
+void	*super_ctor(const void *_class, void *_self, va_list *app)
+{
+	const struct s_Class	*superclass = super(_class);
+
+	assert(_self && superclass->ctor);
+	return (superclass->ctor(_self, app));
+}
+
+/* copy constructor */
+void	*copy(const void *_self)
+{
+	const struct s_Class	*class = classOf(_self);
+
+	assert(class->copy);
+	return (class->copy(_self));
+}
+
+void	*super_copy(const void *_class, const void *_self)
+{
+	const struct s_Class	*superclass = super(_class);
+
+	assert(_self && superclass->copy);
+	return (superclass->copy(_self));
+}
+
+/* destructor */
+void	*dtor(void *_self)
+{
+	const struct s_Class	*class = classOf(_self);
+
+	assert(class->dtor);
+	return (class->dtor(_self));
+}
+
+void	*super_dtor(const void *_class, void *_self)
+{
+	const struct s_Class	*superclass = super(_class);
+
+	assert(_self && superclass->dtor);
+	return (superclass->dtor(_self));
+}
+
+/* Compare two objects. */
 int	differ(const void *self, const void *b)
 {
 	const struct s_Class *const	*cp = self;
@@ -92,6 +112,7 @@ int	differ(const void *self, const void *b)
 	return (self == b);
 }
 
+/* Display object to a FILE stream. */
 int	puto(const void *self, FILE *fp)
 {
 	const struct s_Class *const	*cp = self;
@@ -101,22 +122,39 @@ int	puto(const void *self, FILE *fp)
 	return (-1);
 }
 
+/* Object default constructor. */
 static void	*Object_ctor(void *_self, va_list *app)
 {
 	(void)app;
 	return (_self);
 }
 
+/* Object copy constructor. */
+static void	*Object_copy(const void *_self)
+{
+	const struct s_Class	*class = classOf(_self);
+	struct s_Object			*object;
+
+	assert(class && class->size);
+	object = calloc(1, class->size);
+	assert(object);
+	object->class = class;
+	return (object);
+}
+
+/* Object destructor. */
 static void	*Object_dtor(void *_self)
 {
 	return (_self);
 }
 
+/* Return 1 if the inputs are equal, 0 otherwise. */
 static int	Object_differ(const void *_self, const void *b)
 {
 	return (_self == b);
 }
 
+/* Print information of the object to the FILE stream. */
 static int	Object_puto(const void *_self, FILE *fp)
 {
 	const struct s_Class	*class = classOf(_self);
@@ -124,6 +162,7 @@ static int	Object_puto(const void *_self, FILE *fp)
 	return (fprintf(fp, "%s at %p\n", class->name, _self));
 }
 
+/* Class default constructor. */
 static void	*Class_ctor(void *_self, va_list *app)
 {
 	struct s_Class	*self;
@@ -156,6 +195,8 @@ static void	*Class_ctor(void *_self, va_list *app)
 			method = va_arg(ap, voidf);
 			if (selector == (voidf)ctor)
 				*(voidf *)&self->ctor = method;
+			else if (selector == (voidf)copy)
+				*(voidf *)&self->copy = method;
 			else if (selector == (voidf)dtor)
 				*(voidf *)&self->dtor = method;
 			else if (selector == (voidf)differ)
@@ -168,24 +209,34 @@ static void	*Class_ctor(void *_self, va_list *app)
 	}
 }
 
+/* Class copy constructor. */
+static void	*Class_copy(const void *_self)
+{
+	const struct s_Class	*self = _self;
+
+	fprintf(stderr, "%s: cannot copy class\n", self->name);
+	return (NULL);
+}
+
+/* Class destructor. */
 static void	*Class_dtor(void *_self)
 {
 	const struct s_Class	*self = _self;
 
 	fprintf(stderr, "%s: cannot destroy class\n", self->name);
-	return (0);
+	return (NULL);
 }
 
 static const struct s_Class	object[] = {
 	{
 		{object + 1},
 		"Object", object, sizeof(struct s_Object),
-		Object_ctor, Object_dtor, Object_differ, Object_puto
+		Object_ctor, Object_copy, Object_dtor, Object_differ, Object_puto
 	},
 	{
 		{object + 1},
 		"Class", object, sizeof(struct s_Class),
-		Class_ctor, Class_dtor, Object_differ, Object_puto
+		Class_ctor, Class_copy, Class_dtor, Object_differ, Object_puto
 	}
 };
 
