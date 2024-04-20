@@ -85,7 +85,11 @@ classDiagram
 	class Lexer {
 		-char peek
 		+scan() Token
+		-reachch() void
+		-generate_numeric(long n, long d) Token
 		-reserve(Word) void
+		-find(Str) Word
+
 	}
 
 	Token <|-- Numeric

@@ -6,7 +6,7 @@
 extern const void	*Lexer;	/* new(Lexer) */
 
 extern const void	*LexerClass;
-struct s_Token	*scan(void *self);
+struct s_Token		*Lexer_scan(void *_self);
 
 void			initLexer(void);
 

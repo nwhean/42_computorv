@@ -15,6 +15,9 @@
 #include "Token.h"
 #include "Word.h"
 
+static void				Lexer_reserve(void *_self, const struct s_Word *word);
+static struct s_Word	*Lexer_find(void *_self, const void *str);
+
 /* Lexer constructor method. */
 static void	*Lexer_ctor(void *_self, va_list *app)
 {
@@ -48,22 +51,6 @@ static void	readch(void *_self)
 	self->peek = getchar();
 }
 
-struct s_Token	*scan(void *self)
-{
-	const struct s_LexerClass *const	*cp = self;
-
-	assert(self && *cp && (*cp)->scan);
-	return ((*cp)->scan(self));
-}
-
-struct s_Token	*super_scan(const void *_class, void *_self)
-{
-	const struct s_LexerClass	*superclass = super(_class);
-
-	assert(_self && superclass->scan);
-	return (superclass->scan(_self));
-}
-
 /* Return a Rational or a Complex token */
 static struct s_Token	*generate_numeric(void *_self, long n, long d)
 {
@@ -80,8 +67,8 @@ static struct s_Token	*generate_numeric(void *_self, long n, long d)
 		return (new(Rational, RATIONAL, n, d));
 }
 
-/* Lexer scan method */
-static struct s_Token	*Lexer_scan(void *_self)
+/* Scan the input in return a Tokon object. */
+struct s_Token	*Lexer_scan(void *_self)
 {
 	struct s_Lexer	*self = _self;
 	struct s_Token	*token;
@@ -145,7 +132,7 @@ static struct s_Token	*Lexer_scan(void *_self)
 }
 
 /* Reserve keywords into a hashtable. */
-void	Lexer_reserve(void *_self, const struct s_Word *word)
+static void	Lexer_reserve(void *_self, const struct s_Word *word)
 {
 	struct s_Lexer	*self = _self;
 
@@ -154,7 +141,7 @@ void	Lexer_reserve(void *_self, const struct s_Word *word)
 }
 
 /* Retrive a value from a hashtable. */
-struct s_Word	*Lexer_find(void *_self, const void *str)
+static struct s_Word	*Lexer_find(void *_self, const void *str)
 {
 	struct s_Lexer	*self = _self;
 
@@ -180,9 +167,7 @@ static void	*LexerClass_ctor(void *_self, va_list *app)
 		voidf	method;
 
 		#pragma GCC diagnostic ignored "-Wcast-function-type"
-		method = va_arg(ap, voidf);
-		if (selector == (voidf)scan)
-			*(voidf *)&self->scan = method;
+		(void)method;
 		#pragma GCC diagnostic pop
 	}
 	return (self);
@@ -203,6 +188,5 @@ void	initLexer(void)
 				Object, sizeof(struct s_Lexer),
 				ctor, Lexer_ctor,
 				dtor, Lexer_dtor,
-				scan, Lexer_scan,
 				0);
 }

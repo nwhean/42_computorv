@@ -79,7 +79,7 @@ static void	move(void *_self)
 		if (!(tag == ID || tag == IMAG))
 			delete(self->look);
 	}
-	self->look = scan(self->lexer);
+	self->look = Lexer_scan(self->lexer);
 }
 
 void	program(void *self)
