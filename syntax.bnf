@@ -5,6 +5,6 @@
 					'%' <unary> <term_tail> | epsilon
 <unary>			:== '+' <unary> | '-' <unary> | <factor>
 <factor>		:== <base> <factor_tail> | <base>
-<factor_tail>	:== '^' <factor>
+<factor_tail>	:== '^' <unary>
 <base>			:== '(' <expr> ')' | Rational | Complex
 <exponent>		:== <base>

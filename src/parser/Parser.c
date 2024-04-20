@@ -214,7 +214,7 @@ static struct s_Expr	*unary(void *_self)
 
 /*
  * <factor>			:== <base> <factor_tail> | <base>
- * <factor_tail>	:== '^' <factor>
+ * <factor_tail>	:== '^' <unary>
  */
 static struct s_Expr	*factor(void *_self)
 {
@@ -229,7 +229,7 @@ static struct s_Expr	*factor(void *_self)
 		enum e_Tag		tag_bak = self->look->tag;
 
 		move(self);
-		rhs = factor(self);
+		rhs = unary(self);
 		if (!rhs)
 		{
 			delete(x);
