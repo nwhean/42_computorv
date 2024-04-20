@@ -126,7 +126,6 @@ classDiagram
 	class Token {
 		+Tag tag
 		+to_string() String
-		+get_tag() Tag
 	}
 
 	Token <|-- Word

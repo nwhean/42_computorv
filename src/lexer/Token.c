@@ -56,14 +56,6 @@ static const char	*Token_to_string(const void *_self)
 	return retval;
 }
 
-/* Return the tag of the Token. */
-enum e_Tag	token_get_tag(const void *_self)
-{
-	const struct s_Token	*self = _self;
-
-	return (self->tag);
-}
-
 /* TokenClass constructor method. */
 static void	*TokenClass_ctor(void *_self, va_list *app)
 {

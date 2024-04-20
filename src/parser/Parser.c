@@ -104,7 +104,7 @@ void	Parser_program(void *_self)
 
 		printf("%s\n", result);
 		free((char *)result);
-		if (token_get_tag(token) != ID)
+		if (token->tag != ID)
 			delete((void *)token);
 	}
 	else

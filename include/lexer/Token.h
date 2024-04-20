@@ -31,7 +31,6 @@ struct	s_TokenClass	/* TokenClass: Class */
 
 extern const void	*TokenClass;
 const char	*token_to_string(const void *self);
-enum e_Tag	token_get_tag(const void *self);
 
 void		initToken(void);
 
