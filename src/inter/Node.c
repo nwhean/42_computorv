@@ -31,8 +31,9 @@ static void	*NodeClass_ctor(void *_self, va_list *app)
 	{
 		voidf	method;
 
-		method = va_arg(ap, voidf);
-		(void) method;
+		#pragma GCC diagnostic ignored "-Wcast-function-type"
+		(void)method;
+		#pragma GCC diagnostic pop
 	}
 	return (self);
 }
