@@ -372,6 +372,22 @@ static void	*Rational_pow(const void *_self, const void *_other)
 	return (retval);
 }
 
+/* Return true if two Rationals are the same, false otherwise. */
+static bool	Rational_equal(
+		const struct s_Rational *_self, const struct s_Rational *_other)
+{
+	const struct s_Token	*self = (const struct s_Token *)_self;
+	const struct s_Token	*other = (const struct s_Token *)_other;
+
+	if (self->tag != other->tag)
+		return (false);
+	if (_self->numerator != _other->numerator)
+		return (false);
+	if (_self->denominator != _other->denominator)
+		return (false);
+	return (true);
+}
+
 /* Promote one Numeric type to another */
 static void	*Rational_promote(const void *_self, enum e_Tag tag)
 {
@@ -394,9 +410,9 @@ static void	*Rational_promote(const void *_self, enum e_Tag tag)
 
 void	initRational(void)
 {
+	initNumeric();
 	if (!Rational)
 	{
-		initNumeric();
 		Rational = new(NumericClass, "Rational",
 				Numeric, sizeof(struct s_Rational),
 				ctor, Rational_ctor,
@@ -410,7 +426,9 @@ void	initRational(void)
 				numeric_pos, Rational_copy,
 				numeric_neg, Rational_neg,
 				numeric_pow, Rational_pow,
+				numeric_equal, Rational_equal,
 				numeric_promote, Rational_promote,
 				0);
+		initComplex();
 	}
 }

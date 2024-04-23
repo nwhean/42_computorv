@@ -315,10 +315,27 @@ static void	*Complex_pow(const void *_self, const void *_other)
 	return (NULL);
 }
 
+/* Return true if two Complexes are the same, false otherwise. */
+static bool	Complex_equal(
+		const struct s_Complex *_self, const struct s_Complex *_other)
+{
+	const struct s_Token	*self = (const struct s_Token *)_self;
+	const struct s_Token	*other = (const struct s_Token *)_other;
+
+	if (self->tag != other->tag)
+		return (false);
+	if (!numeric_equal(_self->real, _other->real))
+		return (false);
+	if (!numeric_equal(_self->imag, _other->imag))
+		return (false);
+	return (true);
+}
+
 void	initComplex(void)
 {
 	initStr();
 	initNumeric();
+	initRational();
 	if (!Complex)
 	{
 		Complex = new(NumericClass, "Complex",
@@ -335,6 +352,7 @@ void	initComplex(void)
 				numeric_pos, Complex_copy,
 				numeric_neg, Complex_neg,
 				numeric_pow, Complex_pow,
+				numeric_equal, Complex_equal,
 				0);
 	}
 }

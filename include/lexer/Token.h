@@ -11,6 +11,7 @@ enum e_Tag {
 	ZERO,		/* an empty tag */
 	RATIONAL,	/* Rational number */
 	COMPLEX,	/* Complex number */
+	VECTOR,		/* Vector of Complex or Rational numbers */
 	ID			/* Identifier */
 };
 

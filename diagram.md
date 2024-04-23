@@ -101,6 +101,7 @@ classDiagram
 		+pos() Numeric*
 		+neg() Numeric*
 		+pow(Numeric) Numeric*
+		+equal(Numeric) bool
 		+promote(Tag tag) Numeric*
 	}
 

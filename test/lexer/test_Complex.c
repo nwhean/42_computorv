@@ -6,7 +6,6 @@
 
 void setUp(void) {
 	initComplex();
-	initRational();
 }
 
 void tearDown(void) {
@@ -150,6 +149,32 @@ void test_pow_complex(void) {
 	delete(target);
 }
 
+void test_equal_true(void) {
+	struct s_Complex	*a = new(Complex, COMPLEX,
+								new(Rational, RATIONAL, (long)1, (long)2),
+								new(Rational, RATIONAL, (long)3, (long)4));
+	struct s_Complex	*b = new(Complex, COMPLEX,
+								new(Rational, RATIONAL, (long)1, (long)2),
+								new(Rational, RATIONAL, (long)3, (long)4));
+
+	TEST_ASSERT_TRUE(numeric_equal(a, b));
+	delete(a);
+	delete(b);
+}
+
+void test_equal_false(void) {
+	struct s_Complex	*a = new(Complex, COMPLEX,
+								new(Rational, RATIONAL, (long)1, (long)2),
+								new(Rational, RATIONAL, (long)3, (long)4));
+	struct s_Complex	*b = new(Complex, COMPLEX,
+								new(Rational, RATIONAL, (long)5, (long)6),
+								new(Rational, RATIONAL, (long)7, (long)8));
+
+	TEST_ASSERT_FALSE(numeric_equal(a, b));
+	delete(a);
+	delete(b);
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
@@ -161,5 +186,7 @@ int main(void) {
 	RUN_TEST(test_neg);
 	RUN_TEST(test_pow_rational);
 	RUN_TEST(test_pow_complex);
+	RUN_TEST(test_equal_true);
+	RUN_TEST(test_equal_false);
 	return UNITY_END();
 }

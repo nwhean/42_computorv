@@ -5,7 +5,6 @@
 #include "Complex.h"
 
 void setUp(void) {
-	initComplex();
 	initRational();
 }
 
@@ -168,6 +167,24 @@ void test_pow_neg_to_non_integer(void) {
 	delete(target);
 }
 
+void test_equal_true(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, (long)22, (long)7);
+	struct s_Rational	*b = new(Rational, RATIONAL, (long)22, (long)7);
+
+	TEST_ASSERT_TRUE(numeric_equal(a, b));
+	delete(a);
+	delete(b);
+}
+
+void test_equal_false(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, (long)22, (long)7);
+	struct s_Rational	*b = new(Rational, RATIONAL, (long)3, (long)5);
+
+	TEST_ASSERT_FALSE(numeric_equal(a, b));
+	delete(a);
+	delete(b);
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
@@ -185,5 +202,7 @@ int main(void) {
 	RUN_TEST(test_neg);
 	RUN_TEST(test_pow);
 	RUN_TEST(test_pow_neg_to_non_integer);
+	RUN_TEST(test_equal_true);
+	RUN_TEST(test_equal_false);
 	return UNITY_END();
 }
