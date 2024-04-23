@@ -38,6 +38,7 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 				Numeric.c \
 				Rational.c \
 				Token.c \
+				Vector.c \
 				Word.c \
 			) \
 			$(addprefix $(PARSER_DIR), \
