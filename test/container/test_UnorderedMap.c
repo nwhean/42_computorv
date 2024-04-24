@@ -6,7 +6,7 @@
 #include "Str.h"
 #include "UnorderedMap.h"
 #include "UnorderedMap.r"
-#include "Rational.h"
+#include "Vec.h"
 
 void setUp(void) {
 	initStr();
@@ -20,8 +20,7 @@ void test_ctor(void) {
 	struct s_UnorderedMap	*m = new(UnorderedMap);
 
 	TEST_ASSERT_NOT_NULL(m);
-	TEST_ASSERT_EQUAL(m->size, 0);
-	TEST_ASSERT_EQUAL(m->capacity, 0);
+	TEST_ASSERT_EQUAL(UnorderedMap_size(m), 0);
 	delete(m);
 }
 
@@ -34,7 +33,7 @@ void test_copy(void) {
 	UnorderedMap_insert(m, str0, copy(str0));
 	UnorderedMap_insert(m, str1, copy(str1));
 	m_copy = copy(m);
-	TEST_ASSERT_EQUAL(m->size, m_copy->size);
+	TEST_ASSERT_EQUAL(UnorderedMap_size(m), UnorderedMap_size(m_copy));
 	void	*val;
 	void	*val_copy;
 	val = UnorderedMap_find(m, str0);
@@ -91,7 +90,7 @@ void test_insert(void) {
 
 	UnorderedMap_insert(m, str0, str1);
 	TEST_ASSERT_TRUE(equal(UnorderedMap_find(m, str0), str1));
-	TEST_ASSERT_EQUAL(m->size, 1);
+	TEST_ASSERT_EQUAL(UnorderedMap_size(m), 1);
 	delete(m);
 }
 
@@ -101,10 +100,10 @@ void test_erase(void) {
 	struct s_UnorderedMap		*m = new(UnorderedMap);
 
 	UnorderedMap_insert(m, str0, str1);
-	TEST_ASSERT_EQUAL(m->size, 1);
+	TEST_ASSERT_EQUAL(UnorderedMap_size(m), 1);
 	TEST_ASSERT_EQUAL(UnorderedMap_erase(m, str1), 0);
 	TEST_ASSERT_EQUAL(UnorderedMap_erase(m, str0), 1);
-	TEST_ASSERT_EQUAL(m->size, 0);
+	TEST_ASSERT_EQUAL(UnorderedMap_size(m), 0);
 	delete(m);
 }
 
@@ -115,9 +114,9 @@ void test_clear(void) {
 
 	UnorderedMap_insert(m, str0, copy(str0));
 	UnorderedMap_insert(m, str1, copy(str1));
-	TEST_ASSERT_EQUAL(m->size, 2);
+	TEST_ASSERT_EQUAL(UnorderedMap_size(m), 2);
 	UnorderedMap_clear(m);
-	TEST_ASSERT_EQUAL(m->size, 0);
+	TEST_ASSERT_EQUAL(UnorderedMap_size(m), 0);
 	delete(m);
 }
 
@@ -126,12 +125,12 @@ void test_reserve(void) {
 	void						*str1 = new(Str, "World");
 	struct s_UnorderedMap		*m = new(UnorderedMap);
 
-	TEST_ASSERT_GREATER_OR_EQUAL(m->capacity, 0);
+	TEST_ASSERT_GREATER_OR_EQUAL(Vec_capacity(m->key), 0);
 	UnorderedMap_insert(m, str0, copy(str0));
 	UnorderedMap_insert(m, str1, copy(str1));
-	TEST_ASSERT_GREATER_OR_EQUAL(m->capacity, 2);
+	TEST_ASSERT_GREATER_OR_EQUAL(Vec_capacity(m->key), 2);
 	UnorderedMap_reserve(m, 5);
-	TEST_ASSERT_GREATER_OR_EQUAL(m->capacity, 5);
+	TEST_ASSERT_GREATER_OR_EQUAL(Vec_capacity(m->key), 5);
 	delete(m);
 }
 

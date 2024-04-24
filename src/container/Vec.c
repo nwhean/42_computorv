@@ -150,7 +150,7 @@ void	Vec_erase(void *_self, size_t position)
 	delete(self->data[position]);
 	if (self->size > position)
 	{
-		size = (self->size - position) * sizeof(void *);
+		size = (self->size - position - 1) * sizeof(void *);
 		memmove(&(self->data[position]), &(self->data[position + 1]), size);
 	}
 	self->data[--(self->size)] = NULL;

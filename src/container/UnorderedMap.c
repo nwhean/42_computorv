@@ -2,6 +2,7 @@
 
 #include "UnorderedMap.h"
 #include "UnorderedMap.r"
+#include "Vec.h"
 
 const void	*UnorderedMap;
 
@@ -11,8 +12,8 @@ static void	*UnorderedMap_ctor(void *_self, va_list *app)
 	struct s_UnorderedMap	*self = _self;
 
 	self = super_ctor(UnorderedMap, _self, app);
-	self->size = 0;
-	self->capacity = 0;
+	self->key = new(Vec);
+	self->value = new(Vec);
 	return (self);
 }
 
@@ -21,11 +22,11 @@ static void	*UnorderedMap_copy(void *_self)
 {
 	const struct s_UnorderedMap	*self = _self;
 	struct s_UnorderedMap		*object = new(UnorderedMap);
-	size_t						i;
 
-	UnorderedMap_reserve(object, self->size);
-	for (i = 0; i < self->size; ++i)
-		UnorderedMap_insert(object, copy(self->key[i]), copy(self->value[i]));
+	delete(object->key);
+	delete(object->value);
+	object->key = copy(self->key);
+	object->value = copy(self->value);
 	return (object);
 }
 
@@ -34,11 +35,8 @@ static void	*UnorderedMap_dtor(void *_self)
 {
 	struct s_UnorderedMap	*self = _self;
 
-	UnorderedMap_clear(_self);
-	free(self->key);
-	free(self->value);
-	self->key = NULL;
-	self->value = NULL;
+	delete(self->key);
+	delete(self->value);
 	return (super_dtor(UnorderedMap, self));
 }
 
@@ -47,7 +45,7 @@ bool	UnorderedMap_empty(const void *_self)
 {
 	const struct s_UnorderedMap	*self = _self;
 
-	return (self->size == 0);
+	return (UnorderedMap_size(self) == 0);
 }
 
 /* Returns the number of elements in the container */
@@ -55,19 +53,20 @@ size_t	UnorderedMap_size(const void *_self)
 {
 	const struct s_UnorderedMap	*self = _self;
 
-	return (self->size);
+	return (Vec_size(self->key));
 }
 
 /* Finds an element with key equivalent to key. */
 void	*UnorderedMap_find(const void *_self, const void *key)
 {
 	const struct s_UnorderedMap	*self = _self;
+	size_t						size = UnorderedMap_size(self);
 	size_t						i;
 
-	for (i = 0; i < self->size; ++i)
+	for (i = 0; i < size; ++i)
 	{
-		if (equal(key, self->key[i]))
-			return (self->value[i]);
+		if (equal(key, Vec_at(self->key, i)))
+			return (Vec_at(self->value, i));
 	}
 	return (NULL);
 }
@@ -82,12 +81,8 @@ bool	UnorderedMap_insert(void *_self, const void *key, const void *value)
 
 	if (found)
 		return (false);
-	if (self->capacity == self->size)
-		UnorderedMap_reserve(self,
-							self->capacity == 0 ? 1 : self->capacity * 2);
-	self->key[self->size] = (void *)key;
-	self->value[self->size] = (void *)value;
-	++(self->size);
+	Vec_push_back(self->key, (void *)key);
+	Vec_push_back(self->value, (void *)value);
 	return (true);
 }
 
@@ -95,24 +90,18 @@ bool	UnorderedMap_insert(void *_self, const void *key, const void *value)
 size_t	UnorderedMap_erase(void *_self, const void *key)
 {
 	struct s_UnorderedMap	*self = _self;
+	size_t					size = UnorderedMap_size(self);
 	size_t					i;
-	size_t					size;
 
-	for (i = 0; i < self->size; ++i)
+	for (i = 0; i < size; ++i)
 	{
-		if (equal(key, self->key[i]))
+		if (equal(key, Vec_at(self->key, i)))
 			break ;
 	}
-	if (i == self->size)
+	if (i == size)
 		return (0);
-	delete(self->key[i]);
-	delete(self->value[i]);
-	--(self->size);
-	size = self->size * sizeof(void *);
-	memmove(&(self->key[i]), &(self->key[i + 1]), size);
-	memmove(&(self->value[i]), &(self->value[i + 1]), size);
-	self->key[self->size] = NULL;
-	self->value[self->size] = NULL;
+	Vec_erase(self->key, i);
+	Vec_erase(self->value, i);
 	return (1);
 }
 
@@ -123,40 +112,23 @@ size_t	UnorderedMap_erase(void *_self, const void *key)
 void	UnorderedMap_clear(void *_self)
 {
 	struct s_UnorderedMap	*self = _self;
-	size_t	i;
 
-	for (i = 0; i < self->size; ++i)
-	{
-		delete(self->key[i]);
-		delete(self->value[i]);
-	}
-	self->size = 0;
+	Vec_clear(self->key);
+	Vec_clear(self->value);
 }
 
 /* Update capacity to accommodate at least count elements. */
 void	UnorderedMap_reserve(void *_self, size_t count)
 {
 	struct s_UnorderedMap	*self = _self;
-	void					**key_new;
-	void					**value_new;
 
-	if (self->capacity >= count)
-		return ;
-	key_new = realloc(self->key, sizeof(void *) * count);
-	if (key_new)
-		self->key = (void **)key_new;
-	else
-		return ;
-	value_new = realloc(self->value, sizeof(void *) * count);
-	if (value_new)
-		self->value = value_new;
-	else
-		return ;
-	self->capacity = count;
+	Vec_reserve(self->key, count);
+	Vec_reserve(self->value, count);
 }
 
 void	initUnorderedMap(void)
 {
+	initVec();
 	if (!UnorderedMap)
 		UnorderedMap = new(Class, "UnorderedMap",
 				Object, sizeof(struct s_UnorderedMap),

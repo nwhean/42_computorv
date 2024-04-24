@@ -9,10 +9,8 @@
 struct s_UnorderedMap	/* UnorderedMap: Object */
 {
 	const struct s_Object	_;
-	size_t					size;
-	size_t					capacity;
-	void					**key;
-	void					**value;
+	void					*key;
+	void					*value;
 };
 
 #endif
