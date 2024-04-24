@@ -11,7 +11,7 @@ struct s_UnorderedMap	/* UnorderedMap: Object */
 	const struct s_Object	_;
 	size_t					size;
 	size_t					capacity;
-	const void				**key;
+	void					**key;
 	void					**value;
 	int						(*key_cmp)(const void *key1, const void *key2);
 };
