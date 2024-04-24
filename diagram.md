@@ -31,6 +31,24 @@ classDiagram
 		UnorderedMap_reserve(size_t count)
 	}
 
+	class Vec {
+		-size_t size
+		-size_t capacity
+		-void	**data
+		+size()	size_t
+		+capacity() size_t
+		+empty() bool
+		+reserve(size_t n) void
+		+at(size_t n) Generic
+		+front() Generic
+		+back() Generic
+		+data() Generic_ptr
+		+push_back(Generic value) void
+		+pop_back() void
+		+erase(size_t position) void
+		+clear() void
+	}
+
 
 	%% inter
 

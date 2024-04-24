@@ -22,6 +22,7 @@ SRCDIR	=	src
 SRCS	=	$(addprefix $(CONTAINER_DIR), \
 				Str.c \
 				UnorderedMap.c \
+				Vec.c \
 			) \
 			$(addprefix $(INTER_DIR), \
 				Arith.c \

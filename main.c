@@ -4,6 +4,7 @@
 /* container */
 #include "Str.h"
 #include "UnorderedMap.h"
+#include "Vec.h"
 
 /* inter */
 #include "Arith.h"
@@ -28,6 +29,7 @@ void	init_container(void)
 {
 	initStr();
 	initUnorderedMap();
+	initVec();
 }
 
 void	init_inter(void)
