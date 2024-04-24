@@ -1,6 +1,7 @@
 #ifndef OBJECT_R
 # define OBJECT_R
 
+# include <stdbool.h>
 # include <stdarg.h>
 # include <stdlib.h>
 # include <stdio.h>
@@ -20,13 +21,14 @@ struct s_Class
 	void					*(*copy)(const void *self);
 	void					*(*dtor)(void *self);
 	char					*(*str)(const void *self);
-	int						(*differ)(const void *self, const void *b);
+	bool					(*equal)(const void *self, const void *other);
 	int						(*puto)(const void *self, FILE *fp);
 };
 
 void	*super_ctor(const void *_class, void *_self, va_list *app);
 void	*super_copy(const void *_class, const void *_self);
-void	*super_dtor (const void *_class, void *_self);
+void	*super_dtor(const void *_class, void *_self);
 char	*super_str(const void *_class, const void *_self);
+bool	super_equal(const void *_class, const void *_self, const void *_other);
 
 #endif

@@ -100,7 +100,7 @@ void	initWord(void)
 				dtor, Word_dtor,
 				str, Word_str,
 				0);
-		Word_reserved = new(UnorderedMap, Str_compare);
+		Word_reserved = new(UnorderedMap);
 		Word_plus = new(Word, PLUS, "plus");
 		Word_minus = new(Word, MINUS, "minus");
 		Word_imag = new(Word, IMAG, "i");

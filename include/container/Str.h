@@ -16,7 +16,6 @@ void		Str_clear(void *self);
 bool		Str_empty(const void *self);
 void		*Str_append(void *self, const char *s);
 void		Str_push_back(void *self, char c);
-int			Str_compare(const void *self, const void *other);
 
 void	initStr(void);
 char	*strdup(const char *s);

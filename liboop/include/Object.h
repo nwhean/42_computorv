@@ -1,6 +1,7 @@
 #ifndef OBJECT_H
 # define OBJECT_H
 
+# include <stdbool.h>
 # include <stdarg.h>
 # include <stdio.h>
 
@@ -17,7 +18,7 @@ void		*ctor(void *self, va_list *app);	/* default constructor */
 void		*copy(const void *self);			/* copy constructor */
 void		*dtor(void *self);					/* destructor */
 char		*str(const void *self);				/* convert to char * */
-int			differ(const void *self, const void *b);
+bool		equal(const void *self, const void *other);	/* equal comparison */
 int			puto(const void *self, FILE *fp);
 
 extern const void	*Class;

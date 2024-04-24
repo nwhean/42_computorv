@@ -13,7 +13,6 @@ classDiagram
 		Str_empty() bool
 		Str_append(const char *s) Str
 		Str_push_back(char c)
-		Str_compare(const void *other) int
 	}
 
 	class UnorderedMap {
@@ -21,7 +20,6 @@ classDiagram
 		-size_t capacity
 		-void **key
 		-void **value
-		-func_ptr key_cmp
 		UnorderedMap_empty() bool
 		UnorderedMap_size() size_t
 		UnorderedMap_clear()

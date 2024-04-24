@@ -17,7 +17,7 @@ void tearDown(void) {
 }
 
 void test_ctor(void) {
-	struct s_UnorderedMap	*m = new(UnorderedMap, Str_compare);
+	struct s_UnorderedMap	*m = new(UnorderedMap);
 
 	TEST_ASSERT_NOT_NULL(m);
 	TEST_ASSERT_EQUAL(m->size, 0);
@@ -28,7 +28,7 @@ void test_ctor(void) {
 void test_copy(void) {
 	void						*str0 = new(Str, "Hello");
 	void						*str1 = new(Str, "World");
-	struct s_UnorderedMap		*m = new(UnorderedMap, Str_compare);
+	struct s_UnorderedMap		*m = new(UnorderedMap);
 	struct s_UnorderedMap		*m_copy;
 
 	UnorderedMap_insert(m, str0, copy(str0));
@@ -39,10 +39,10 @@ void test_copy(void) {
 	void	*val_copy;
 	val = UnorderedMap_find(m, str0);
 	val_copy = UnorderedMap_find(m_copy, str0);
-	TEST_ASSERT_TRUE(Str_compare(val, val_copy) == 0);
+	TEST_ASSERT_TRUE(equal(val, val_copy));
 	val = UnorderedMap_find(m, str1);
 	val_copy = UnorderedMap_find(m_copy, str1);
-	TEST_ASSERT_TRUE(Str_compare(val, val_copy) == 0);
+	TEST_ASSERT_TRUE(equal(val, val_copy));
 	delete(m);
 	delete(m_copy);
 }
@@ -50,7 +50,7 @@ void test_copy(void) {
 void test_empty(void) {
 	void						*str0 = new(Str, "Hello");
 	void						*str1 = new(Str, "World");
-	struct s_UnorderedMap		*m = new(UnorderedMap, Str_compare);
+	struct s_UnorderedMap		*m = new(UnorderedMap);
 
 	TEST_ASSERT_TRUE(UnorderedMap_empty(m));
 	UnorderedMap_insert(m, str0, copy(str0));
@@ -62,7 +62,7 @@ void test_empty(void) {
 void test_size(void) {
 	void						*str0 = new(Str, "Hello");
 	void						*str1 = new(Str, "World");
-	struct s_UnorderedMap		*m = new(UnorderedMap, Str_compare);
+	struct s_UnorderedMap		*m = new(UnorderedMap);
 
 	TEST_ASSERT_EQUAL(UnorderedMap_size(m), 0);
 	UnorderedMap_insert(m, str0, copy(str0));
@@ -74,23 +74,23 @@ void test_size(void) {
 void test_find(void) {
 	void						*str0 = new(Str, "Hello");
 	void						*str1 = new(Str, "World");
-	struct s_UnorderedMap		*m = new(UnorderedMap, Str_compare);
+	struct s_UnorderedMap		*m = new(UnorderedMap);
 
 	UnorderedMap_insert(m, str0, copy(str0));
-	TEST_ASSERT_TRUE(Str_compare(UnorderedMap_find(m, str0), str0) == 0);
+	TEST_ASSERT_TRUE(equal(UnorderedMap_find(m, str0), str0));
 	TEST_ASSERT_NOT_EQUAL(UnorderedMap_find(m, str1), str1);
 	UnorderedMap_insert(m, str1, copy(str1));
-	TEST_ASSERT_TRUE(Str_compare(UnorderedMap_find(m, str1), str1) == 0);
+	TEST_ASSERT_TRUE(equal(UnorderedMap_find(m, str1), str1));
 	delete(m);
 }
 
 void test_insert(void) {
 	void						*str0 = new(Str, "Hello");
 	void						*str1 = new(Str, "World");
-	struct s_UnorderedMap		*m = new(UnorderedMap, Str_compare);
+	struct s_UnorderedMap		*m = new(UnorderedMap);
 
 	UnorderedMap_insert(m, str0, str1);
-	TEST_ASSERT_TRUE(Str_compare(UnorderedMap_find(m, str0), str1) == 0);
+	TEST_ASSERT_TRUE(equal(UnorderedMap_find(m, str0), str1));
 	TEST_ASSERT_EQUAL(m->size, 1);
 	delete(m);
 }
@@ -98,7 +98,7 @@ void test_insert(void) {
 void test_erase(void) {
 	void						*str0 = new(Str, "Hello");
 	void						*str1 = new(Str, "World");
-	struct s_UnorderedMap		*m = new(UnorderedMap, Str_compare);
+	struct s_UnorderedMap		*m = new(UnorderedMap);
 
 	UnorderedMap_insert(m, str0, str1);
 	TEST_ASSERT_EQUAL(m->size, 1);
@@ -111,7 +111,7 @@ void test_erase(void) {
 void test_clear(void) {
 	void						*str0 = new(Str, "Hello");
 	void						*str1 = new(Str, "World");
-	struct s_UnorderedMap		*m = new(UnorderedMap, Str_compare);
+	struct s_UnorderedMap		*m = new(UnorderedMap);
 
 	UnorderedMap_insert(m, str0, copy(str0));
 	UnorderedMap_insert(m, str1, copy(str1));
@@ -124,7 +124,7 @@ void test_clear(void) {
 void test_reserve(void) {
 	void						*str0 = new(Str, "Hello");
 	void						*str1 = new(Str, "World");
-	struct s_UnorderedMap		*m = new(UnorderedMap, Str_compare);
+	struct s_UnorderedMap		*m = new(UnorderedMap);
 
 	TEST_ASSERT_GREATER_OR_EQUAL(m->capacity, 0);
 	UnorderedMap_insert(m, str0, copy(str0));

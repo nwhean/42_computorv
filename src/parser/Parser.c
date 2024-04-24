@@ -51,7 +51,7 @@ static void	*Parser_ctor(void *_self, va_list *app)
 	self = super_ctor(Parser, _self, app);
 	self->lexer = va_arg(*app, void *);
 	self->look = NULL;
-	self->top = new(UnorderedMap, Str_compare);	/* symbol table */
+	self->top = new(UnorderedMap);	/* symbol table */
 	move(self);
 	return (self);
 }

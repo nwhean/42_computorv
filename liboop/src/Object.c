@@ -119,14 +119,22 @@ char	*super_str(const void *_class, const void *_self)
 	return (superclass->str(_self));
 }
 
-/* Compare two objects. */
-int	differ(const void *self, const void *b)
+/* Compare the equality of two objects. */
+bool	equal(const void *self, const void *b)
 {
 	const struct s_Class *const	*cp = self;
 
 	if (self && *cp && (*cp)->puto)
-		return ((*cp)->differ(self, b));
+		return ((*cp)->equal(self, b));
 	return (self == b);
+}
+
+bool	super_equal(const void *_class, const void *_self, const void *_other)
+{
+	const struct s_Class	*superclass = super(_class);
+
+	assert(_self && superclass->equal);
+	return (superclass->equal(_self, _other));
 }
 
 /* Display object to a FILE stream. */
@@ -172,10 +180,13 @@ static char	*Object_str(const void *_self)
 	return (NULL);
 }
 
-/* Return 1 if the inputs are equal, 0 otherwise. */
-static int	Object_differ(const void *_self, const void *b)
+/* Return true if the class of the inputs are equal, false otherwise. */
+static bool	Object_equal(const void *_self, const void *_other)
 {
-	return (_self == b);
+	const struct s_Class	*self_class = classOf(_self);
+	const struct s_Class	*other_class = classOf(_other);
+
+	return (self_class == other_class);
 }
 
 /* Print information of the object to the FILE stream. */
@@ -225,8 +236,8 @@ static void	*Class_ctor(void *_self, va_list *app)
 				*(voidf *)&self->dtor = method;
 			else if (selector == (voidf)str)
 				*(voidf *)&self->str = method;
-			else if (selector == (voidf)differ)
-				*(voidf *)&self->differ = method;
+			else if (selector == (voidf)equal)
+				*(voidf *)&self->equal = method;
 			else if (selector == (voidf)puto)
 				*(voidf *)&self->puto = method;
 			#pragma GCC diagnostic pop
@@ -258,13 +269,13 @@ static const struct s_Class	object[] = {
 		{object + 1},
 		"Object", object, sizeof(struct s_Object),
 		Object_ctor, Object_copy, Object_dtor, Object_str,
-		Object_differ, Object_puto
+		Object_equal, Object_puto
 	},
 	{
 		{object + 1},
 		"Class", object, sizeof(struct s_Class),
 		Class_ctor, Class_copy, Class_dtor, Object_str,
-		Object_differ, Object_puto
+		Object_equal, Object_puto
 	}
 };
 

@@ -25,7 +25,7 @@ static void	*Lexer_ctor(void *_self, va_list *app)
 
 	self = super_ctor(Lexer, _self, app);
 	self->peek = ' ';
-	self->words = new(UnorderedMap, Str_compare);
+	self->words = new(UnorderedMap);
 	Lexer_reserve(self, (struct s_Word *)Word_imag);	/* i as keyword */
 	return (self);
 }

@@ -128,12 +128,16 @@ char	*Str_str(const void *_self)
 
 /* Compares the value of the string object (or a substring) to the
  * sequence of characters specified by its arguments. */
-int	Str_compare(const void *_self, const void *_other)
+bool	Str_equal(const void *_self, const void *_other)
 {
 	const struct s_Str	*self = _self;
 	const struct s_Str	*other = _other;
+	bool				retval;
 
-	return strcmp(self->buffer, other->buffer);
+	retval = super_equal(Str, _self, _other);
+	if (retval)
+		return (strcmp(self->buffer, other->buffer) == 0);
+	return (false);
 }
 
 void	initStr(void)
@@ -145,6 +149,7 @@ void	initStr(void)
 				copy, Str_copy,
 				dtor, Str_dtor,
 				str, Str_str,
+				equal, Str_equal,
 				0);
 }
 
