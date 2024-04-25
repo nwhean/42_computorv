@@ -20,6 +20,12 @@ static struct s_Numeric	*Numeric_copy(const void *_self)
 	return (super_copy(Numeric, _self));
 }
 
+/* Return the equality of two Numeric. */
+static bool	Numeric_equal(const void *_self, const void *_other)
+{
+	return (super_equal(Numeric, _self, _other));
+}
+
 /* Return the addition of two Numerics. */
 void	*numeric_add(const void *self, const void *other)
 {
@@ -168,6 +174,7 @@ void	initNumeric(void)
 				Token, sizeof(struct s_Numeric),
 				ctor, Numeric_ctor,
 				copy, Numeric_copy,
+				equal, Numeric_equal,
 				0);
 }
 

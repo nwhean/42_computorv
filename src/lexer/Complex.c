@@ -344,6 +344,7 @@ void	initComplex(void)
 				copy, Complex_copy,
 				dtor, Complex_dtor,
 				str, Complex_str,
+				equal, Complex_equal,
 				numeric_add, Complex_add,
 				numeric_sub, Complex_sub,
 				numeric_mul, Complex_mul,

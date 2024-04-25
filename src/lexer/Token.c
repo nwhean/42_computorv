@@ -38,6 +38,17 @@ static char	*Token_str(const void *_self)
 	return retval;
 }
 
+/* Return the equality of Token. */
+static bool	Token_equal(const void *_self, const void *_other)
+{
+	const struct s_Token	*self = _self;
+	const struct s_Token	*other = _other;
+
+	if (!super_equal(Token, _self, _other))
+		return (false);
+	return (self->tag == other->tag);
+}
+
 /* TokenClass constructor method. */
 static void	*TokenClass_ctor(void *_self, va_list *app)
 {
@@ -76,5 +87,6 @@ void	initToken(void)
 				ctor, Token_ctor,
 				copy, Token_copy,
 				str, Token_str,
+				equal, Token_equal,
 				0);
 }

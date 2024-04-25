@@ -45,6 +45,34 @@ void test_copy(void) {
 	delete(v_copy);
 }
 
+void test_equal_true(void) {
+	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Vec		*v = new(Vec);
+
+	Vec_push_back(v, r0);
+	Vec_push_back(v, r1);
+	TEST_ASSERT_TRUE(equal(v, v));
+	delete(v);
+}
+
+void test_equal_false(void) {
+	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Vec		*v0 = new(Vec);
+	struct s_Rational	*r2 = new(Rational, RATIONAL, 5, 6);
+	struct s_Rational	*r3 = new(Rational, RATIONAL, 7, 8);
+	struct s_Vec		*v1 = new(Vec);
+
+	Vec_push_back(v0, r0);
+	Vec_push_back(v0, r1);
+	Vec_push_back(v1, r2);
+	Vec_push_back(v1, r3);
+	TEST_ASSERT_FALSE(equal(v0, v1));
+	delete(v0);
+	delete(v1);
+}
+
 void test_size(void) {
 	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
 	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
@@ -208,6 +236,8 @@ int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
 	RUN_TEST(test_copy);
+	RUN_TEST(test_equal_true);
+	RUN_TEST(test_equal_false);
 	RUN_TEST(test_size);
 	RUN_TEST(test_capacity);
 	RUN_TEST(test_empty);

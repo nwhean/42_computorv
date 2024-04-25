@@ -148,6 +148,13 @@ classDiagram
 		+String lexeme
 	}
 
+	Numeric <|-- Vector
+
+	class Vector {
+		-Vec vec
+		+size() size_t
+	}
+
 
 	%% parser
 

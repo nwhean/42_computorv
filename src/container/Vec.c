@@ -48,6 +48,25 @@ size_t	Vec_size(const void *_self)
 	return (self->size);
 }
 
+/* Returns the equality of two vectors. */
+static bool	Vec_equal(const void *_self, const void *_other)
+{
+	const struct s_Vec	*self = _self;
+	const struct s_Vec	*other = _other;
+	size_t				i;
+
+	if (!super_equal(Vec, _self, _other))
+		return (false);
+	if (self->size != other->size)
+		return (false);
+	for (i = 0; i < self->size; ++i)
+	{
+		if (!equal(self->data[i], other->data[i]))
+			return (false);
+	}
+	return (true);
+}
+
 /* Returns the size of the storage space currently allocated for the
  * vector, expressed in terms of elements.
  */
@@ -177,5 +196,6 @@ void	initVec(void)
 				ctor, Vec_ctor,
 				copy, Vec_copy,
 				dtor, Vec_dtor,
+				equal, Vec_equal,
 				0);
 }

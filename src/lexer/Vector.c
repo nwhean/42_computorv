@@ -6,6 +6,7 @@
 
 /* container */
 #include "Str.h"
+#include "Vec.h"
 
 /* lexer */
 #include "Vector.h"
@@ -15,21 +16,10 @@ const void	*Vector;
 /* Vector constructor method. */
 static void	*Vector_ctor(void *_self, va_list *app)
 {
-	size_t			i = -1;
 	struct s_Vector	*self;
-	void			**nums;
 
 	self = super_ctor(Vector, _self, app);
-	self->size = va_arg(*app, size_t);
-	nums = calloc(sizeof(void **), self->size);
-	if (!nums)
-	{
-		fprintf(stderr, "%s\n", "Vector_ctor: memory allocation failed.");
-		return (NULL);
-	}
-	while (++i < self->size)
-		nums[i] = va_arg(*app, void *);;
-	self->nums = nums;
+	self->vec = va_arg(*app, void *);
 	return (self);
 }
 
@@ -37,21 +27,10 @@ static void	*Vector_ctor(void *_self, va_list *app)
 static struct s_Vector	*Vector_copy(const void *_self)
 {
 	const struct s_Vector	*self = _self;
-	size_t					i = -1;
 	struct s_Vector			*retval;
-	void					**nums;
 
 	retval = super_copy(Vector, self);
-	retval->size = self->size;
-	nums = calloc(sizeof(void **), self->size);
-	if (!nums)
-	{
-		fprintf(stderr, "%s\n", "Vector_copy: memory allocation failed.");
-		return (NULL);
-	}
-	while (++i < self->size)
-		nums[i] = copy(self->nums[i]);
-	retval->nums = nums;
+	retval->vec = copy(self->vec);
 	return (retval);
 }
 
@@ -60,9 +39,7 @@ static void	*Vector_dtor(void *_self)
 {
 	struct s_Vector	*self = _self;
 
-	while (self->size--)
-		delete(self->nums[self->size]);
-	free(self->nums);
+	delete(self->vec);
 	return(super_dtor(Vector, _self));
 }
 
@@ -70,20 +47,20 @@ static void	*Vector_dtor(void *_self)
 static char	*Vector_str(const void *_self)
 {
 	const struct s_Vector	*self = _self;
-	size_t					size = 0;
+	size_t					size = Vector_size(self);
+	size_t					i;
 	struct s_Str			*s;
 	char					*s_append;
 	char					*retval;
 
 	s = new(Str, "[");
-	while (size < self->size)
+	for (i = 0; i < size; ++i)
 	{
-		s_append = str(self->nums[size]);
+		if (i != 0)
+			Str_append(s, ", ");
+		s_append = str(Vector_at(self, i));
 		Str_append(s, s_append);
 		free(s_append);
-		++size;
-		if (size < self->size)
-			Str_append(s, ", ");
 	}
 	Str_push_back(s, ']');
 	retval = str(s);
@@ -97,16 +74,12 @@ static void	*Vector_op_Scalar(const void *_self,
 							void* (*func)(const void *, const void *))
 {
 	const struct s_Vector	*self = _self;
-	struct s_Vector			*retval = copy(self);	/* inefficient */
-	void					*num;
+	size_t					size = Vector_size(self);
+	struct s_Vector			*retval = new(Vector, VECTOR, new(Vec));
 	size_t					i;
 
-	for (i = 0; i < self->size; ++i)
-	{
-		num = func(self->nums[i], _other);
-		delete(retval->nums[i]);
-		retval->nums[i] = num;
-	}
+	for (i = 0; i < size; ++i)
+		Vec_push_back(retval->vec, func(Vector_at(self, i), _other));
 	return (retval);
 }
 
@@ -117,20 +90,20 @@ static void	*Vector_op_Vector(const void *_self,
 {
 	const struct s_Vector	*self = _self;
 	const struct s_Vector	*other = _other;
-	struct s_Vector			*retval = copy(self);	/* inefficient */
-	void					*num;
+	size_t					size = Vector_size(self);
 	size_t					i;
+	struct s_Vector			*retval;
 
-	if (self->size != other->size)
+	if (size != Vector_size(other))
 	{
 		fprintf(stderr, "%s\n", "Vector_op_Vector: unequal sizes.");
 		return (NULL);
 	}
-	for (i = 0; i < self->size; ++i)
+	retval = new(Vector, VECTOR, new(Vec));
+	for (i = 0; i < size; ++i)
 	{
-		num = func(self->nums[i], other->nums[i]);
-		delete(retval->nums[i]);
-		retval->nums[i] = num;
+		Vec_push_back(retval->vec, func(Vector_at(self, i),
+										Vector_at(other, i)));
 	}
 	return (retval);
 }
@@ -226,16 +199,12 @@ static void	*Vector_mod(const void *_self, const void *_other)
 static struct s_Vector	*Vector_neg(const void *_self)
 {
 	const struct s_Vector	*self = _self;
-	struct s_Vector			*retval = copy(self);
-	void					*num;
+	struct s_Vector			*retval = new(Vector, VECTOR, new(Vec));
+	size_t					size = Vector_size(self);
 	size_t					i;
 
-	for (i = 0; i < self->size; ++i)
-	{
-		num = numeric_neg(self->nums[i]);
-		delete(retval->nums[i]);
-		retval->nums[i] = num;
-	}
+	for (i = 0; i < size; ++i)
+		Vec_push_back(retval->vec, numeric_neg(Vector_at(self, i)));
 	return (retval);
 }
 
@@ -249,22 +218,15 @@ static void	*Vector_pow(const void *_self, const void *_other)
 }
 
 /* Return true if two Vectors are the same, false otherwise. */
-static bool	Vector_equal(
-		const struct s_Vector *_self, const struct s_Vector *_other)
+static bool	Vector_equal(const void *_self, const void *_other)
 {
-	const struct s_Token	*self = (const struct s_Token *)_self;
-	const struct s_Token	*other = (const struct s_Token *)_other;
-	size_t					i;
+	const struct s_Vector	*self = _self;
+	const struct s_Vector	*other = _other;
 
-	if (self->tag != other->tag)
+	if (!super_equal(Vector, _self, _other))
 		return (false);
-	if (_self->size != _other->size)
+	if (!equal(self->vec, other->vec))
 		return (false);
-	for (i = 0; i < _self->size; ++i)
-	{
-		if (!numeric_equal(_self->nums[i], _other->nums[i]))
-			return (false);
-	}
 	return (true);
 }
 
@@ -290,6 +252,7 @@ static void	*Vector_promote(const void *_self, enum e_Tag tag)
 void	initVector(void)
 {
 	initStr();
+	initVec();
 	initNumeric();
 	if (!Vector)
 	{
@@ -299,6 +262,7 @@ void	initVector(void)
 				copy, Vector_copy,
 				dtor, Vector_dtor,
 				str, Vector_str,
+				equal, Vector_equal,
 				numeric_add, Vector_add,
 				numeric_sub, Vector_sub,
 				numeric_mul, Vector_mul,
@@ -311,4 +275,20 @@ void	initVector(void)
 				numeric_promote, Vector_promote,
 				0);
 	}
+}
+
+/* Return the size of the Vector. */
+size_t	Vector_size(const void *_self)
+{
+	const struct s_Vector	*self = _self;
+
+	return (Vec_size(self->vec));
+}
+
+/* Returns a reference to the element at position `n` in the vector. */
+void	*Vector_at(const void *_self, size_t n)
+{
+	const struct s_Vector	*self = _self;
+
+	return (Vec_at(self->vec, n));
 }

@@ -7,12 +7,17 @@
 struct s_Vector	/* Vector: Numeric */
 {
 	const struct s_Numeric	_;
-	size_t					size;
-	void					**nums;
+	void					*vec;
 };
 
-extern const void	*Vector;	/* new(Vector, VECTOR, size_t, void *, ...); */
+extern const void	*Vector;	/* new(Vector, VECTOR, Vec); */
 
 void	initVector(void);
+
+/* capacity */
+size_t	Vector_size(const void *self);
+
+/* element access */
+void	*Vector_at(const void *self, size_t n);
 
 #endif

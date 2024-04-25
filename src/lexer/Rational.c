@@ -418,6 +418,7 @@ void	initRational(void)
 				ctor, Rational_ctor,
 				copy, Rational_copy,
 				str, Rational_str,
+				equal, Rational_equal,
 				numeric_add, Rational_add,
 				numeric_sub, Rational_sub,
 				numeric_mul, Rational_mul,
