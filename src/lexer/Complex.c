@@ -353,7 +353,6 @@ void	initComplex(void)
 				numeric_pos, Complex_copy,
 				numeric_neg, Complex_neg,
 				numeric_pow, Complex_pow,
-				numeric_equal, Complex_equal,
 				0);
 	}
 }

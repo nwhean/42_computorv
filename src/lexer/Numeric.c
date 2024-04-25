@@ -101,10 +101,7 @@ void	*numeric_pow(const void *self, const void *other)
 /* Return true if two numerics are the same, false otherwise. */
 bool	numeric_equal(const void *self, const void *other)
 {
-	const struct s_NumericClass *const	*cp = self;
-
-	assert(self && *cp && (*cp)->equal);
-	return ((*cp)->equal(self, other));
+	return (equal(self, other));
 }
 
 /* Promote one Numeric type to another */
@@ -152,8 +149,6 @@ static void	*NumericClass_ctor(void *_self, va_list *app)
 			*(voidf *)&self->neg = method;
 		else if (selector == (voidf)numeric_pow)
 			*(voidf *)&self->pow = method;
-		else if (selector == (voidf)numeric_equal)
-			*(voidf *)&self->equal = method;
 		else if (selector == (voidf)numeric_promote)
 			*(voidf *)&self->promote = method;
 		#pragma GCC diagnostic pop

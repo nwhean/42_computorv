@@ -271,7 +271,6 @@ void	initVector(void)
 				numeric_pos, Vector_copy,
 				numeric_neg, Vector_neg,
 				numeric_pow, Vector_pow,
-				numeric_equal, Vector_equal,
 				numeric_promote, Vector_promote,
 				0);
 	}

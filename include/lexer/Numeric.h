@@ -24,7 +24,6 @@ struct	s_NumericClass	/* NumericClass: TokenClass */
 	struct s_Numeric			*(*pos)(const void *self);
 	struct s_Numeric			*(*neg)(const void *self);
 	struct s_Numeric			*(*pow)(const void *self, const void *other);
-	bool						(*equal)(const void *self, const void *other);
 	struct s_Numeric			*(*promote)(const void *self, enum e_Tag tag);
 };
 

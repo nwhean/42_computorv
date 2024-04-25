@@ -427,7 +427,6 @@ void	initRational(void)
 				numeric_pos, Rational_copy,
 				numeric_neg, Rational_neg,
 				numeric_pow, Rational_pow,
-				numeric_equal, Rational_equal,
 				numeric_promote, Rational_promote,
 				0);
 		initComplex();
