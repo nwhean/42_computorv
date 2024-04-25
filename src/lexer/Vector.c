@@ -5,7 +5,6 @@
 #include <stdio.h>
 
 /* container */
-#include "Str.h"
 #include "Vec.h"
 
 /* lexer */
@@ -47,25 +46,8 @@ static void	*Vector_dtor(void *_self)
 static char	*Vector_str(const void *_self)
 {
 	const struct s_Vector	*self = _self;
-	size_t					size = Vector_size(self);
-	size_t					i;
-	struct s_Str			*s;
-	char					*s_append;
-	char					*retval;
 
-	s = new(Str, "[");
-	for (i = 0; i < size; ++i)
-	{
-		if (i != 0)
-			Str_append(s, ", ");
-		s_append = str(Vector_at(self, i));
-		Str_append(s, s_append);
-		free(s_append);
-	}
-	Str_push_back(s, ']');
-	retval = str(s);
-	delete(s);
-	return (retval);
+	return (str(self->vec));
 }
 
 /* Element-by-element operation between a Vector and a Scalar.*/
@@ -251,7 +233,6 @@ static void	*Vector_promote(const void *_self, enum e_Tag tag)
 
 void	initVector(void)
 {
-	initStr();
 	initVec();
 	initNumeric();
 	if (!Vector)

@@ -1,5 +1,6 @@
 #include <string.h>
 
+#include "Str.h"
 #include "Vec.h"
 #include "Vec.r"
 
@@ -38,6 +39,29 @@ static void	*Vec_dtor(void *_self)
 	free(self->data);
 	self->data = NULL;
 	return (super_dtor(Vec, self));
+}
+
+/* Return the string representation of the vector. */
+char	*Vec_str(const void *_self)
+{
+	const struct s_Vec	*self = _self;
+	void				*s = new(Str, "[");	/* Str */
+	char				*s_append;
+	char				*retval;
+	size_t				i;
+
+	for (i = 0; i < self->size; ++i)
+	{
+		s_append = str(Vec_at(self, i));
+		Str_append(s, s_append);
+		free(s_append);
+		if (i < self->size - 1)
+			Str_append(s, ", ");
+	}
+	Str_push_back(s, ']');
+	retval = str(s);
+	delete(s);
+	return (retval);
 }
 
 /* Returns the number of elements in the vector. */
@@ -190,12 +214,14 @@ void	Vec_clear(void *_self)
 
 void	initVec(void)
 {
+	initStr();
 	if (!Vec)
 		Vec = new(Class, "Vec",
 				Object, sizeof(struct s_Vec),
 				ctor, Vec_ctor,
 				copy, Vec_copy,
 				dtor, Vec_dtor,
+				str, Vec_str,
 				equal, Vec_equal,
 				0);
 }

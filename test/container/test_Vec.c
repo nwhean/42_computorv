@@ -45,6 +45,20 @@ void test_copy(void) {
 	delete(v_copy);
 }
 
+void test_str(void) {
+	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r1 = new(Rational, RATIONAL, 2, 1);
+	struct s_Vec		*v = new(Vec);
+	char				*s;
+
+	Vec_push_back(v, r0);
+	Vec_push_back(v, r1);
+	s = str(v);
+	TEST_ASSERT_EQUAL_STRING_LEN(s, "[1, 2]", 6);
+	free(s);
+	delete(v);
+}
+
 void test_equal_true(void) {
 	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
 	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
@@ -236,6 +250,7 @@ int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
 	RUN_TEST(test_copy);
+	RUN_TEST(test_str);
 	RUN_TEST(test_equal_true);
 	RUN_TEST(test_equal_false);
 	RUN_TEST(test_size);
