@@ -17,14 +17,10 @@ extern const void	*Expr;	/* new(Expr, Token, Tag); */
 struct	s_ExprClass	/* ExprClass: NodeClass */
 {
 	const struct s_NodeClass	_;
-	struct s_Expr				*(*gen)(const void *self);
-	struct s_Expr				*(*reduce)(const void *self);
 	const struct s_Token		*(*eval)(const void *self);
 };
 
 extern const void		*ExprClass;
-struct s_Expr			*gen(const void *self);
-struct s_Expr			*reduce(const void *self);
 const struct s_Token	*eval(const void *self);
 const struct s_Token	*get_op(const void *self);
 void					set_tag(void *self, enum e_Tag tag);

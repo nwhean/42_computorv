@@ -33,22 +33,6 @@ static void	*VecExpr_dtor(void *_self)
 	return (super_dtor(VecExpr, _self));
 }
 
-static struct s_Expr	*VecExpr_gen(const void *_self)
-{
-	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_VecExpr		*self = _self;
-
-	return (super_gen(class, self));
-}
-
-static struct s_Expr	*VecExpr_reduce(const void *_self)
-{
-	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_VecExpr		*self = _self;
-
-	return (super_reduce(class, self));
-}
-
 static char	*VecExpr_str(const void *_self)
 {
 	const struct s_VecExpr	*self = _self;
@@ -78,8 +62,6 @@ void	initVecExpr(void)
 				ctor, VecExpr_ctor,
 				dtor, VecExpr_dtor,
 				str, VecExpr_str,
-				gen, VecExpr_gen,
-				reduce, VecExpr_reduce,
 				eval, VecExpr_eval,
 				0);
 }

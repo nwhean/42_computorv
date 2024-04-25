@@ -26,22 +26,6 @@ static void	*Id_dtor(void *_self)
 	return (self);
 }
 
-static struct s_Expr	*Id_gen(const void *_self)
-{
-	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Id			*self = _self;
-
-	return (super_gen(class, self));
-}
-
-static struct s_Expr	*Id_reduce(const void *_self)
-{
-	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Id			*self = _self;
-
-	return (super_reduce(class, self));
-}
-
 static char	*Id_str(const void *_self)
 {
 	const struct s_Id			*self = _self;
@@ -66,8 +50,6 @@ void	initId(void)
 				ctor, Id_ctor,
 				dtor, Id_dtor,
 				str, Id_str,
-				gen, Id_gen,
-				reduce, Id_reduce,
 				eval, Id_eval,
 				0);
 }

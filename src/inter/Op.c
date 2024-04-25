@@ -25,22 +25,6 @@ static void	*Op_dtor(void *_self)
 	return (self);
 }
 
-static struct s_Expr	*Op_gen(const void *_self)
-{
-	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Op			*self = _self;
-
-	return (super_gen(class, self));
-}
-
-static struct s_Expr	*Op_reduce(const void *_self)
-{
-	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Op			*self = _self;
-
-	return (super_reduce(class, self));
-}
-
 static char	*Op_str(const void *_self)
 {
 	const struct s_ExprClass	*class = classOf(_self);
@@ -66,8 +50,6 @@ void	initOp(void)
 				ctor, Op_ctor,
 				dtor, Op_dtor,
 				str, Op_str,
-				gen, Op_gen,
-				reduce, Op_reduce,
 				eval, Op_eval,
 				0);
 }

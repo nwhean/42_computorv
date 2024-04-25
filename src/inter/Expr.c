@@ -26,48 +26,6 @@ static void	*Expr_dtor(void *_self)
 	return (super_dtor(Expr, _self));
 }
 
-struct s_Expr	*gen(const void *self)
-{
-	const struct s_ExprClass *const	*cp = self;
-
-	assert(self && *cp && (*cp)->gen);
-	return ((*cp)->gen(self));
-}
-
-struct s_Expr	*super_gen(const void *_class, const void *_self)
-{
-	const struct s_ExprClass	*superclass = super(_class);
-
-	assert(_self && superclass->gen);
-	return (superclass->gen(_self));
-}
-
-static struct s_Expr	*Expr_gen(const void *self)
-{
-	return ((struct s_Expr *)self);
-}
-
-struct s_Expr	*reduce(const void *self)
-{
-	const struct s_ExprClass *const	*cp = self;
-
-	assert(self && *cp && (*cp)->reduce);
-	return ((*cp)->reduce(self));
-}
-
-struct s_Expr	*super_reduce(const void *_class, const void *_self)
-{
-	const struct s_ExprClass	*superclass = super(_class);
-
-	assert(_self && superclass->reduce);
-	return (superclass->reduce(_self));
-}
-
-static struct s_Expr	*Expr_reduce(const void *self)
-{
-	return ((struct s_Expr *)self);
-}
-
 static char	*Expr_str(const void *_self)
 {
 	const struct s_Expr	*self = _self;
@@ -143,11 +101,7 @@ static void	*ExprClass_ctor(void *_self, va_list *app)
 
 		#pragma GCC diagnostic ignored "-Wcast-function-type"
 		method = va_arg(ap, voidf);
-		if (selector == (voidf)gen)
-			*(voidf *)&self->gen = method;
-		else if (selector == (voidf)reduce)
-			*(voidf *)&self->reduce = method;
-		else if (selector == (voidf)eval)
+		if (selector == (voidf)eval)
 			*(voidf *)&self->eval = method;
 		#pragma GCC diagnostic pop
 	}
@@ -168,8 +122,6 @@ void	initExpr(void)
 				ctor, Expr_ctor,
 				dtor, Expr_dtor,
 				str, Expr_str,
-				gen, Expr_gen,
-				reduce, Expr_reduce,
 				eval, Expr_eval,
 				0);
 }

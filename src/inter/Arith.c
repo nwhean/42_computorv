@@ -38,22 +38,6 @@ static void	*Arith_dtor(void *_self)
 	return (self);
 }
 
-static struct s_Expr	*Arith_gen(const void *_self)
-{
-	const struct s_Arith		*self = _self;
-
-	return (new(Arith, get_op(self), NULL,
-			reduce(self->expr1), reduce(self->expr2)));
-}
-
-static struct s_Expr	*Arith_reduce(const void *_self)
-{
-	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Arith		*self = _self;
-
-	return (super_reduce(class, self));
-}
-
 /* Return the string representation in Reverse Polish Notation. */
 static char	*Arith_str(const void *_self)
 {
@@ -124,8 +108,6 @@ void	initArith(void)
 				ctor, Arith_ctor,
 				dtor, Arith_dtor,
 				str, Arith_str,
-				gen, Arith_gen,
-				reduce, Arith_reduce,
 				eval, Arith_eval,
 				0);
 }

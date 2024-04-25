@@ -25,22 +25,6 @@ static void	*Constant_dtor(void *_self)
 	return (self);
 }
 
-static struct s_Expr	*Constant_gen(const void *_self)
-{
-	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Constant		*self = _self;
-
-	return (super_gen(class, self));
-}
-
-static struct s_Expr	*Constant_reduce(const void *_self)
-{
-	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Constant		*self = _self;
-
-	return (super_reduce(class, self));
-}
-
 static char	*Constant_str(const void *_self)
 {
 	const struct s_ExprClass	*class = classOf(_self);
@@ -65,8 +49,6 @@ void	initConstant(void)
 				Expr, sizeof(struct s_Constant),
 				ctor, Constant_ctor,
 				dtor, Constant_dtor,
-				gen, Constant_gen,
-				reduce, Constant_reduce,
 				str, Constant_str,
 				eval, Constant_eval,
 				0);

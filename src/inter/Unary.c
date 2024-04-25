@@ -37,21 +37,6 @@ static void	*Unary_dtor(void *_self)
 	return (self);
 }
 
-static struct s_Expr	*Unary_gen(const void *_self)
-{
-	const struct s_Unary		*self = _self;
-
-	return (new(Unary, get_op(self), ZERO, reduce(self->expr)));
-}
-
-static struct s_Expr	*Unary_reduce(const void *_self)
-{
-	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Unary		*self = _self;
-
-	return (super_reduce(class, self));
-}
-
 /* Return the string representation in Reverse Polish Notation. */
 static char	*Unary_str(const void *_self)
 {
@@ -96,8 +81,6 @@ void	initUnary(void)
 				ctor, Unary_ctor,
 				dtor, Unary_dtor,
 				str, Unary_str,
-				gen, Unary_gen,
-				reduce, Unary_reduce,
 				eval, Unary_eval,
 				0);
 }
