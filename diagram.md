@@ -80,6 +80,12 @@ classDiagram
 		Expr expr
 	}
 
+	Expr <|-- VecExpr
+
+	class VecExpr {
+		+Vec vec~Expr~
+	}
+
 
 	%% lexer
 

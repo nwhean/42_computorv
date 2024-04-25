@@ -14,12 +14,14 @@
 #include "Node.h"
 #include "Op.h"
 #include "Unary.h"
+#include "VecExpr.h"
 
 /* lexer */
 #include "Complex.h"
 #include "Lexer.h"
 #include "Rational.h"
 #include "Token.h"
+#include "Vector.h"
 #include "Word.h"
 
 /* parser */
@@ -41,6 +43,7 @@ void	init_inter(void)
 	initNode();
 	initOp();
 	initUnary();
+	initVecExpr();
 }
 
 void	init_lexer(void)
@@ -49,6 +52,7 @@ void	init_lexer(void)
 	initLexer();
 	initRational();
 	initToken();
+	initVector();
 	initWord();
 }
 

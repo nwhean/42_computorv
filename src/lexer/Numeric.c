@@ -175,7 +175,7 @@ void	initNumeric(void)
 
 bool	numeric_is(enum e_Tag tag)
 {
-	if (tag == RATIONAL || tag == COMPLEX)
+	if (tag == RATIONAL || tag == COMPLEX || tag == VECTOR)
 		return true;
 	return false;
 }
@@ -184,6 +184,8 @@ enum e_Tag	numeric_max(enum e_Tag tag1, enum e_Tag tag2)
 {
 	if (!numeric_is(tag1) || !numeric_is(tag2))
 		return (0);
+	if (tag1 == VECTOR || tag2 == VECTOR)
+		return (VECTOR);
 	if (tag1 == COMPLEX || tag2 == COMPLEX)
 		return (COMPLEX);
 	return (RATIONAL);

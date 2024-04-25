@@ -8,6 +8,7 @@
 
 /* container */
 #include "UnorderedMap.h"
+#include "Vec.h"
 
 /* inter */
 #include "Arith.h"
@@ -15,6 +16,7 @@
 #include "Expr.h"
 #include "Id.h"
 #include "Unary.h"
+#include "VecExpr.h"
 
 /* lexer */
 #include "Complex.h"
@@ -42,6 +44,7 @@ static struct s_Expr	*term(void *_self);
 static struct s_Expr	*unary(void *_self);
 static struct s_Expr	*factor(void *_self);
 static struct s_Expr	*base(void *_self);
+static struct s_Expr	*vector(void *_self);
 
 /* Parser constructor method. */
 static void	*Parser_ctor(void *_self, va_list *app)
@@ -255,6 +258,11 @@ static struct s_Expr	*base(void *_self)
 			x = expr(self);
 			match(self, ')');
 			return (x);
+		case '[':
+			move(self);
+			x = vector(self);
+			match(self, ']');
+			return (x);
 		case RATIONAL:
 		case COMPLEX:
 			tok = copy(self->look);
@@ -283,6 +291,31 @@ static struct s_Expr	*base(void *_self)
 		default:
 			Parser_error("base: Syntax Error");
 	}
+	return (x);
+}
+
+/* <vector>			:== '[' <vector_tail> ']'
+ * <vector_tail>	:== <expr> ',' <vector_tail> | <expr>
+ */
+static struct s_Expr	*vector(void *_self)
+{
+	struct s_Parser	*self = _self;
+	void			*vec = new(Vec);	/* Vec container */
+	struct s_Expr	*x;
+
+	do {
+		if (self->look->tag == ',')
+			move(self);
+		x = expr(self);
+		if (!x)
+		{
+			delete(vec);
+			return (NULL);
+		}
+		Vec_push_back(vec, x);
+	} while (self->look->tag == ',');
+	x = new(VecExpr, NULL, VECTOR, vec);
+
 	return (x);
 }
 

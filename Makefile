@@ -32,6 +32,7 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 				Node.c \
 				Op.c \
 				Unary.c \
+				VecExpr.c \
 			) \
 			$(addprefix $(LEXER_DIR), \
 				Complex.c \

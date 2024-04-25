@@ -6,5 +6,7 @@
 <unary>			:== '+' <unary> | '-' <unary> | <factor>
 <factor>		:== <base> <factor_tail> | <base>
 <factor_tail>	:== '^' <unary>
-<base>			:== '(' <expr> ')' | Rational | Complex
+<base>			:== '(' <expr> ')' | <vector> | Rational | Complex
 <exponent>		:== <base>
+<vector>		:== '[' <vector_tail> ']'
+<vector_tail>	:== <expr> ',' <vector_tail> | <expr>
