@@ -3,48 +3,46 @@ classDiagram
 	%% container
 
 	class Str {
-		size_t	size
-		size_t	capacity
-		char	*buffer
-		Str_size() size_t
-		Str_capacity() size_t
-		Str_reserve(size_t n)
-		Str_clear()
-		Str_empty() bool
-		Str_append(const char *s) Str
-		Str_push_back(char c)
+		-size_t	size
+		-size_t	capacity
+		-char	*buffer
+		+Str_size() size_t
+		+Str_capacity() size_t
+		+Str_reserve(size_t n) void
+		+Str_clear() void
+		+Str_empty() bool
+		+Str_append(const char *s) Str
+		+Str_push_back(char c) void
 	}
 
 	class UnorderedMap {
-		-size_t size
-		-size_t capacity
-		-void **key
-		-void **value
-		UnorderedMap_empty() bool
-		UnorderedMap_size() size_t
-		UnorderedMap_clear()
-		UnorderedMap_insert()
-		UnorderedMap_erase(const void *key)
-		UnorderedMap_find(const void *key)
-		UnorderedMap_reserve(size_t count)
+		-Vec~Generic~ key
+		-Vec~Generic~ value
+		+UnorderedMap_empty() bool
+		+UnorderedMap_size() size_t
+		+UnorderedMap_find(const Generic key) Generic
+		+UnorderedMap_insert(const Generic key, const Generic value) bool
+		+UnorderedMap_erase(const Generic key) size_t
+		+UnorderedMap_clear() void
+		+UnorderedMap_reserve(size_t count) void
 	}
 
 	class Vec {
 		-size_t size
 		-size_t capacity
-		-void	**data
-		+size()	size_t
-		+capacity() size_t
-		+empty() bool
-		+reserve(size_t n) void
-		+at(size_t n) Generic
-		+front() Generic
-		+back() Generic
-		+data() Generic_ptr
-		+push_back(Generic value) void
-		+pop_back() void
-		+erase(size_t position) void
-		+clear() void
+		-Generic *data
+		+Vec_size()	size_t
+		+Vec_capacity() size_t
+		+Vec_empty() bool
+		+Vec_reserve(size_t n) void
+		+Vec_at(size_t n) Generic
+		+Vec_front() Generic
+		+Vec_back() Generic
+		+Vec_data() Generic_ptr
+		+Vec_push_back(Generic value) void
+		+Vec_pop_back() void
+		+Vec_erase(size_t position) void
+		+Vec_clear() void
 	}
 
 
@@ -63,11 +61,9 @@ classDiagram
 	class Expr {
 		+Token op
 		+Tag tag
-		+gen() Expr
-		+reduce() Expr
 		+eval() Token
 		+get_op() Token
-		+set_tag(Tag)
+		+set_tag(Tag) void
 		+get_tag() Tag
 	}
 
@@ -77,13 +73,13 @@ classDiagram
 	Op <|-- Unary
 
 	class Unary {
-		Expr expr
+		+Expr expr
 	}
 
 	Expr <|-- VecExpr
 
 	class VecExpr {
-		+Vec vec~Expr~
+		+Vec~Expr~ vec
 	}
 
 
@@ -92,22 +88,24 @@ classDiagram
 	Numeric <|-- Complex
 
 	class Complex {
-		Rational _real
-		Rational _imag
-		real() Rational
-		imag() Rational
-		conjugate() Rational
-		modulus() Rational
-		argument() Rational
+		+Rational real
+		+Rational imag
+		+Complex_real() Rational
+		+Complex_imag() Rational
+		+Complex_conjugate() Rational
+		+Complex_modulus() Rational
+		+Complex_argument() Rational
 	}
 
 	class Lexer {
 		-char peek
+		-UnorderedMap words
 		+scan() Token
 		-reachch() void
 		-generate_numeric(long n, long d) Token
-		-reserve(Word) void
-		-find(Str) Word
+		-Lexer_scan() Token
+		-Lexer_reserve(Word) void
+		-Lexer_find(Str) Word
 
 	}
 
@@ -115,16 +113,16 @@ classDiagram
 
 	class Numeric {
 		<<abstract>>
-		+add(Numeric) Numeric*
-		+sub(Numeric) Numeric*
-		+mul(Numeric) Numeric*
-		+div(Numeric) Numeric*
-		+mod(Numeric) Numeric*
-		+pos() Numeric*
-		+neg() Numeric*
-		+pow(Numeric) Numeric*
-		+equal(Numeric) bool
-		+promote(Tag tag) Numeric*
+		+numeric_add(Numeric) Numeric
+		+numeric_sub(Numeric) Numeric
+		+numeric_mul(Numeric) Numeric
+		+numeric_div(Numeric) Numeric
+		+numeric_mod(Numeric) Numeric
+		+numeric_pos() Numeric
+		+numeric_neg() Numeric
+		+numeric_pow(Numeric) Numeric
+		+numeric_equal(Numeric) bool
+		+numeric_promote(Tag tag) Numeric
 	}
 
 	Numeric <|-- Rational
@@ -132,15 +130,18 @@ classDiagram
 	class Rational {
 		+long numerator
 		+long denominator
-		to_double() double
+		+to_double() double
 	}
 
 	class Tag {
 		<<enumeration>>
 		PLUS
 		MINUS
+		IMAG
+		ZERO
 		RATIONAL
-		WORD
+		COMPLEX
+		VECTOR
 		ID
 	}
 
@@ -151,14 +152,15 @@ classDiagram
 	Token <|-- Word
 
 	class Word {
-		+String lexeme
+		+Str lexeme
 	}
 
 	Numeric <|-- Vector
 
 	class Vector {
-		-Vec vec
-		+size() size_t
+		+Vec~Numeric~ vec
+		+Vector_size() size_t
+		+Vector_at(size_t n) Numeric
 	}
 
 
@@ -167,14 +169,16 @@ classDiagram
 	class Parser {
 		-Lexer lexer
 		-Token look
+		-UnorderedMap top
 		+program() void
-		-symbol_add(Word)
-		-symbol_find(Str)
+		-symbol_add(Word) void
+		-symbol_find(Str) Word
 		-move() void
-		-expr() void
-		-term() void
-		-unary() void
-		-factor() void
-		-base() void
+		-expr() Expr
+		-term() Expr
+		-unary() Expr
+		-factor() Expr
+		-base() Expr
+		-vector() Expr
 	}
 ```
