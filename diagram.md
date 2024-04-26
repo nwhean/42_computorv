@@ -85,6 +85,14 @@ classDiagram
 
 	%% lexer
 
+	Numeric <|-- Rational
+
+	class Rational {
+		+long numerator
+		+long denominator
+		+to_double() double
+	}
+
 	Numeric <|-- Complex
 
 	class Complex {
@@ -125,14 +133,6 @@ classDiagram
 		+numeric_promote(Tag tag) Numeric
 	}
 
-	Numeric <|-- Rational
-
-	class Rational {
-		+long numerator
-		+long denominator
-		+to_double() double
-	}
-
 	class Tag {
 		<<enumeration>>
 		PLUS
@@ -142,6 +142,7 @@ classDiagram
 		RATIONAL
 		COMPLEX
 		VECTOR
+		MATRIX
 		ID
 	}
 
@@ -161,6 +162,17 @@ classDiagram
 		+Vec~Numeric~ vec
 		+Vector_size() size_t
 		+Vector_at(size_t n) Numeric
+	}
+
+	Numeric <|-- Matrix
+
+	class Matrix {
+		+size_t rows
+		+size_t cols
+		+Vec~Vector~Numeric~~ vec
+		+Matrix_rows() size_t
+		+Matrix_cols() size_t
+		+Matrix_at(size_t m, size_t n) Numeric
 	}
 
 
