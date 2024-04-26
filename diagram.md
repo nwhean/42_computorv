@@ -162,6 +162,12 @@ classDiagram
 		+Vec~Numeric~ vec
 		+Vector_size() size_t
 		+Vector_at(size_t n) Numeric
+		+Vector_conjugate() Vector
+		+Vector_cross(Vector other) Vector
+		+Vector_dot(Vocter other) Rational
+		+Vector_magnitude() Rational
+		+Vector_sum() Numeric
+		+Vector_sum_product(other) Numeric
 	}
 
 	Numeric <|-- Matrix
