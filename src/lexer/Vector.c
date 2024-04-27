@@ -11,6 +11,7 @@
 #include "Complex.h"
 #include "Rational.h"
 #include "Vector.h"
+#include "Matrix.h"
 
 const void	*Vector;
 
@@ -107,8 +108,13 @@ static void	*Vector_add(const void *_self, const void *_other)
 			return (NULL);
 		case VECTOR:
 			return Vector_op_Vector(_self, _other, numeric_add);
+		case MATRIX:
+			fprintf(stderr, "%s\n", "Vector_add: incompatible with Matrix.");
+			return (NULL);
+		default:
+			fprintf(stderr, "%s\n", "Vector_add: unexpected input type.");
+			return (NULL);
 	};
-	return (NULL);
 }
 
 /* Return the subtraction of one Numeric from another. */
@@ -125,9 +131,14 @@ static void	*Vector_sub(const void *_self, const void *_other)
 			fprintf(stderr, "%s\n", "Vector_sub: incompatible with Complex.");
 			return (NULL);
 		case VECTOR:
-			return Vector_op_Vector(_self, _other, numeric_sub);
+			return (Vector_op_Vector(_self, _other, numeric_sub));
+		case MATRIX:
+			fprintf(stderr, "%s\n", "Vector_sub: incompatible with Matrix.");
+			return (NULL);
+		default:
+			fprintf(stderr, "%s\n", "Vector_sub: unexpected input type.");
+			return (NULL);
 	};
-	return (NULL);
 }
 
 /* Return the multiplication of two Numerics. */
@@ -139,11 +150,16 @@ static void	*Vector_mul(const void *_self, const void *_other)
 	{
 		case RATIONAL:
 		case COMPLEX:
-			return Vector_op_Scalar(_self, _other, numeric_mul);
+			return (Vector_op_Scalar(_self, _other, numeric_mul));
 		case VECTOR:
-			return Vector_op_Vector(_self, _other, numeric_mul);
+			return (Vector_op_Vector(_self, _other, numeric_mul));
+		case MATRIX:
+			fprintf(stderr, "%s\n", "Vector_mul: incompatible with Matrix.");
+			return (NULL);
+		default:
+			fprintf(stderr, "%s\n", "Vector_mul: unexpected input type.");
+			return (NULL);
 	};
-	return (NULL);
 }
 
 /* Return the division of one Numeric from another. */
@@ -155,11 +171,16 @@ static void	*Vector_div(const void *_self, const void *_other)
 	{
 		case RATIONAL:
 		case COMPLEX:
-			return Vector_op_Scalar(_self, _other, numeric_div);
+			return (Vector_op_Scalar(_self, _other, numeric_div));
 		case VECTOR:
-			return Vector_op_Vector(_self, _other, numeric_div);
+			return (Vector_op_Vector(_self, _other, numeric_div));
+		case MATRIX:
+			fprintf(stderr, "%s\n", "Vector_div: incompatible with Matrix.");
+			return (NULL);
+		default:
+			fprintf(stderr, "%s\n", "Vector_div: unexpected input type.");
+			return (NULL);
 	};
-	return (NULL);
 }
 
 /* Return remainder from the division of one Numeric from another. */
@@ -175,8 +196,13 @@ static void	*Vector_mod(const void *_self, const void *_other)
 		case VECTOR:
 			fprintf(stderr, "%s\n", "Vector_mod: incompatible with Vector.");
 			return (NULL);
+		case MATRIX:
+			fprintf(stderr, "%s\n", "Vector_mod: incompatible with Matrix.");
+			return (NULL);
+		default:
+			fprintf(stderr, "%s\n", "Vector_mod: unexpected input type.");
+			return (NULL);
 	};
-	return (NULL);
 }
 
 /* Return a copy of the Vector with its value negated. */
@@ -218,27 +244,31 @@ static bool	Vector_equal(const void *_self, const void *_other)
 static void	*Vector_promote(const void *_self, enum e_Tag tag)
 {
 	const struct s_Vector	*self = _self;
+	void					*vec_m;
 
 	switch (tag)
 	{
 		case RATIONAL:
 		case COMPLEX:
-			fprintf(stderr, "%s\n", "Cannot demote Vector to scalar type.");
+			fprintf(stderr, "%s\n",
+					"Vector_promotion: cannot demote Vector to scalar type.");
 			return (NULL);
 		case VECTOR:
 			return Vector_copy(self);
+		case MATRIX:
+			vec_m = new(Vec);
+			Vec_push_back(vec_m, Vector_copy(self));
+			return (new(Matrix, MATRIX, vec_m));
 		default:
-			fprintf(stderr, "%s\n", "Other Vector promotion is not supported");
+			fprintf(stderr, "%s\n",
+					"Vector_promotion: unexpected input type.");
 			return (NULL);
 	};
 }
 
 void	initVector(void)
 {
-	initVec();
-	initComplex();
 	initNumeric();
-	initRational();
 	if (!Vector)
 	{
 		Vector = new(NumericClass, "Vector",
@@ -257,6 +287,10 @@ void	initVector(void)
 				numeric_pow, Vector_pow,
 				numeric_promote, Vector_promote,
 				0);
+		initVec();
+		initRational();
+		initComplex();
+		initMatrix();
 	}
 }
 
