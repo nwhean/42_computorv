@@ -4,8 +4,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+/* container */
+#include "Vec.h"
+
+/* lexer */
 #include "Rational.h"
 #include "Complex.h"
+#include "Vector.h"
+#include "Matrix.h"
 
 const void	*Rational;
 
@@ -158,11 +164,15 @@ static void	*Rational_add(const void *_self, const void *_other)
 	switch (other->tag)
 	{
 		case RATIONAL:
-			return Rational_add_Rational(_self, _other);
+			return (Rational_add_Rational(_self, _other));
 		case COMPLEX:
-			return numeric_add(_other, _self);
+		case VECTOR:
+		case MATRIX:
+			return (numeric_add(_other, _self));
+		default:
+			fprintf(stderr, "%s\n", "Rational_add: unexpected input type.");
+			return (NULL);
 	};
-	return (NULL);
 }
 
 /* Return the subtraction of one Rational from Rational. */
@@ -183,21 +193,21 @@ static void	*Rational_sub_Rational(const void *_self, const void *_other)
 static void	*Rational_sub(const void *_self, const void *_other)
 {
 	const struct s_Token	*other = _other;
-	struct s_Numeric	*temp = NULL;
-	struct s_Numeric	*retval = NULL;
+	void					*retval;
 
 	switch (other->tag)
 	{
 		case RATIONAL:
-			retval = Rational_sub_Rational(_self, _other);
-			break ;
+			return (Rational_sub_Rational(_self, _other));
 		case COMPLEX:
-			temp = numeric_sub(_other, _self);
-			retval = numeric_neg(temp);
-			break ;
+		case VECTOR:
+		case MATRIX:
+			retval = numeric_sub(_other, _self);
+			return (numeric_ineg(&retval));
+		default:
+			fprintf(stderr, "%s\n", "Rational_sub: unexpected input type.");
+			return (NULL);
 	};
-	delete(temp);
-	return (retval);
 }
 
 /* Return the multiplication of two Rationals. */
@@ -226,9 +236,13 @@ static void	*Rational_mul(const void *_self, const void *_other)
 		case RATIONAL:
 			return Rational_mul_Rational(self, other);
 		case COMPLEX:
+		case VECTOR:
+		case MATRIX:
 			return numeric_mul(_other, _self);
+		default:
+			fprintf(stderr, "%s\n", "Rational_mul: unexpected input type.");
+			return (NULL);
 	};
-	return (NULL);
 }
 
 /* Return the division of one Rational from another. */
@@ -251,20 +265,26 @@ static void	*Rational_div(const void *_self, const void *_other)
 {
 	const struct s_Rational	*self = _self;
 	const struct s_Token	*other = _other;
-	struct s_Numeric		*temp = NULL;
-	struct s_Numeric		*retval = NULL;
+	void					*retval;
 
 	switch (other->tag)
 	{
 		case RATIONAL:
-			retval = Rational_div_Rational(self, other);
+			return (Rational_div_Rational(self, other));
 			break ;
 		case COMPLEX:
-			temp = numeric_promote(self, COMPLEX);
-			retval = numeric_div(self, other);
+			retval = numeric_promote(self, COMPLEX);
+			return (numeric_idiv(&retval, other));
+		case VECTOR:
+			fprintf(stderr, "%s\n", "Rational_div: incompatible with Vector.");
+			return (NULL);
+		case MATRIX:
+			fprintf(stderr, "%s\n", "Rational_div: incompatible with Matrix.");
+			return (NULL);
+		default:
+			fprintf(stderr, "%s\n", "Rational_div: unexpected input type.");
+			return (NULL);
 	};
-	delete(temp);
-	return (retval);
 }
 
 /* Rounds a Rational down to an integer value. */
@@ -297,18 +317,24 @@ static void	*Rational_mod_Rational(const void *_self, const void *_other)
 static void	*Rational_mod(const void *_self, const void *_other)
 {
 	const struct s_Token	*other = _other;
-	struct s_Numeric		*retval = NULL;
 
 	switch (other->tag)
 	{
 		case RATIONAL:
-			retval = Rational_mod_Rational(_self, _other);
-			break ;
+			return (Rational_mod_Rational(_self, _other));
 		case COMPLEX:
-			fprintf(stderr, "%s\n", "Rational %% Complex is not supported");
-			break ;
+			fprintf(stderr, "%s\n", "Rational_mod: incompatible with Complex");
+			return (NULL);
+		case VECTOR:
+			fprintf(stderr, "%s\n", "Rational_mod: incompatible with Vector.");
+			return (NULL);
+		case MATRIX:
+			fprintf(stderr, "%s\n", "Rational_mod: incompatible with Matrix.");
+			return (NULL);
+		default:
+			fprintf(stderr, "%s\n", "Rational_mod: unexpected input type.");
+			return (NULL);
 	};
-	return (retval);
 }
 
 /* Return a copy of the Rational with its value negated. */
@@ -358,18 +384,25 @@ static void	*Rational_pow_Rational(const void *_self, const void *_other)
 static void	*Rational_pow(const void *_self, const void *_other)
 {
 	const struct s_Token	*other = _other;
-	struct s_Numeric		*retval = NULL;
+	void					*retval;
 
 	switch (other->tag)
 	{
 		case RATIONAL:
-			retval = Rational_pow_Rational(_self, _other);
-			break ;
+			return (Rational_pow_Rational(_self, _other));
 		case COMPLEX:
-			fprintf(stderr, "%s\n", "Rational^Complex is not supported");
-			break ;
+			retval = numeric_promote(_self, COMPLEX);
+			return (numeric_ipow(&retval, other));
+		case VECTOR:
+			fprintf(stderr, "%s\n", "Rational_pow: incompatible with Vector.");
+			return (NULL);
+		case MATRIX:
+			fprintf(stderr, "%s\n", "Rational_pow: incompatible with Matrix.");
+			return (NULL);
+		default:
+			fprintf(stderr, "%s\n", "Rational_pow: unexpected input type.");
+			return (NULL);
 	};
-	return (retval);
 }
 
 /* Return true if two Rationals are the same, false otherwise. */
@@ -392,6 +425,9 @@ static bool	Rational_equal(
 static void	*Rational_promote(const void *_self, enum e_Tag tag)
 {
 	const struct s_Rational	*self = _self;
+	void					*vec_v;
+	void					*vec_m;
+	struct s_Vector			*v;
 
 	switch (tag)
 	{
@@ -400,19 +436,32 @@ static void	*Rational_promote(const void *_self, enum e_Tag tag)
 		case COMPLEX:
 			return new(Complex, COMPLEX,
 					Rational_copy(self),
-					new(Rational, RATIONAL, (long)0, (long)1));
+					new(Rational, RATIONAL, 0, 1));
+		case VECTOR:
+		case MATRIX:
+			/* create the vector */
+			vec_v = new(Vec);
+			Vec_push_back(vec_v, Rational_copy(self));
+			v = new(Vector, VECTOR, vec_v);
+			if (tag == VECTOR)
+				return (v);
+
+			/* create the matrix */
+			vec_m = new(Vec);
+			Vec_push_back(vec_m, v);
+			return new(Matrix, MATRIX, vec_m);
 		default:
 			fprintf(stderr, "%s\n",
-					"Other Rational promotion is not supported");
+					"Rational_promotion: unexpected input type.");
 			return (NULL);
 	};
 }
 
 void	initRational(void)
 {
-	initNumeric();
 	if (!Rational)
 	{
+		initNumeric();
 		Rational = new(NumericClass, "Rational",
 				Numeric, sizeof(struct s_Rational),
 				ctor, Rational_ctor,
@@ -428,6 +477,9 @@ void	initRational(void)
 				numeric_pow, Rational_pow,
 				numeric_promote, Rational_promote,
 				0);
+		initVec();
 		initComplex();
+		initVector();
+		initMatrix();
 	}
 }
