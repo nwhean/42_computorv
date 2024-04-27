@@ -3,10 +3,13 @@
 
 /* container */
 #include "Str.h"
+#include "Vec.h"
 
 /* lexer */
-#include "Complex.h"
 #include "Rational.h"
+#include "Complex.h"
+#include "Vector.h"
+#include "Matrix.h"
 
 const void	*Complex;
 
@@ -91,21 +94,22 @@ static void	*Complex_add_Complex(const void *_self, const void *_other)
 static void	*Complex_add(const void *_self, const void *_other)
 {
 	const struct s_Token	*other = _other;
-	struct s_Numeric		*temp = NULL;
-	struct s_Numeric		*retval = NULL;
+	void					*retval = NULL;
 
 	switch (other->tag)
 	{
 		case RATIONAL:
-			temp = numeric_promote(_other, COMPLEX);
-			retval = Complex_add_Complex(_self, temp);
-			break ;
+			retval = numeric_promote(_other, COMPLEX);
+			return (numeric_iadd(&retval, _self));
 		case COMPLEX:
-			retval = Complex_add_Complex(_self, _other);
-			break ;
+			return (Complex_add_Complex(_self, _other));
+		case VECTOR:
+		case MATRIX:
+			return (numeric_add(_other, _self));
+		default:
+			fprintf(stderr, "%s\n", "Rational_add: unexpected input type.");
+			return (NULL);
 	};
-	delete(temp);
-	return (retval);
 }
 
 /* Return the subtraction of one Complex from Complex. */
@@ -125,21 +129,25 @@ static void	*Complex_sub_Complex(const void *_self, const void *_other)
 static void	*Complex_sub(const void *_self, const void *_other)
 {
 	const struct s_Token	*other = _other;
-	struct s_Numeric		*temp = NULL;
-	struct s_Numeric		*retval = NULL;
+	void					*retval;
 
 	switch (other->tag)
 	{
 		case RATIONAL:
-			temp = numeric_promote(_other, COMPLEX);
-			retval = Complex_sub_Complex(_self, temp);
-			break ;
+			retval = numeric_promote(_other, COMPLEX);
+			numeric_ineg(&retval);
+			numeric_isub(&retval, _self);
+			return (numeric_ineg(&retval));
 		case COMPLEX:
-			retval = Complex_sub_Complex(_self, _other);
-			break ;
+			return (Complex_sub_Complex(_self, _other));
+		case VECTOR:
+		case MATRIX:
+			retval = numeric_sub(_other, _self);
+			return (numeric_ineg(&retval));
+		default:
+			fprintf(stderr, "%s\n", "Rational_sub: unexpected input type.");
+			return (NULL);
 	};
-	delete(temp);
-	return (retval);
 }
 
 /* Return the multiplication of two Complexs. */
@@ -169,21 +177,22 @@ static void	*Complex_mul_Complex(const void *_self, const void *_other)
 static void	*Complex_mul(const void *_self, const void *_other)
 {
 	const struct s_Token	*other = _other;
-	struct s_Numeric		*temp = NULL;
-	struct s_Numeric		*retval = NULL;
+	void					*retval;
 
 	switch (other->tag)
 	{
 		case RATIONAL:
-			temp = numeric_promote(_other, COMPLEX);
-			retval = Complex_mul_Complex(_self, temp);
-			break ;
+			retval = numeric_promote(_other, COMPLEX);
+			return (numeric_imul(&retval, _self));
 		case COMPLEX:
-			retval = Complex_mul_Complex(_self, _other);
-			break ;
+			return (Complex_mul_Complex(_self, _other));
+		case VECTOR:
+		case MATRIX:
+			return numeric_mul(_other, _self);
+		default:
+			fprintf(stderr, "%s\n", "Complex_mul: unexpected input type.");
+			return (NULL);
 	};
-	delete(temp);
-	return (retval);
 }
 
 /* Return the division of one Complex and a Rational. */
@@ -220,17 +229,24 @@ static void	*Complex_div_Complex(const void *_self, const void *_other)
 /* Return the division of one Complex to another Numeric. */
 static void	*Complex_div(const void *_self, const void *_other)
 {
-	const struct s_Complex	*self = _self;
 	const struct s_Token	*other = _other;
 
 	switch (other->tag)
 	{
 		case RATIONAL:
-			return Complex_div_Rational(self, other);
+			return Complex_div_Rational(_self, other);
 		case COMPLEX:
-			return Complex_div_Complex(self, other);
+			return Complex_div_Complex(_self, other);
+		case VECTOR:
+			fprintf(stderr, "%s\n", "Complex_div: incompatible with Vector.");
+			return (NULL);
+		case MATRIX:
+			fprintf(stderr, "%s\n", "Complex_div: incompatible with Matrix.");
+			return (NULL);
+		default:
+			fprintf(stderr, "%s\n", "Complex_div: unexpected input type.");
+			return (NULL);
 	};
-	return (NULL);
 }
 
 static void	*Complex_mod(const void *_self, const void *_other)
@@ -245,12 +261,11 @@ static void	*Complex_mod(const void *_self, const void *_other)
 static struct s_Complex	*Complex_neg(const void *_self)
 {
 	const struct s_Complex	*self = _self;
-	struct s_Rational		*real = Complex_real(self);
-	struct s_Rational		*imag = Complex_imag(self);
+	struct s_Complex		*retval = copy(self);
 
-	real->numerator *= -1;
-	imag->numerator *= -1;
-	return (new(Complex, COMPLEX, real, imag));
+	numeric_ineg((void **)&retval->real);
+	numeric_ineg((void **)&retval->imag);
+	return (retval);
 }
 
 /* Return the exponentiation of a Complex to a Rational power. */
@@ -304,8 +319,16 @@ static void	*Complex_pow(const void *_self, const void *_other)
 			return (Complex_pow_Rational(_self, _other));
 		case COMPLEX:
 			return (Complex_pow_Complex(_self, _other));
+		case VECTOR:
+			fprintf(stderr, "%s\n", "Complex_pow: incompatible with Vector.");
+			return (NULL);
+		case MATRIX:
+			fprintf(stderr, "%s\n", "Complex_pow: incompatible with Matrix.");
+			return (NULL);
+		default:
+			fprintf(stderr, "%s\n", "Complex_pow: unexpected input type.");
+			return (NULL);
 	};
-	return (NULL);
 }
 
 /* Return true if two Complexes are the same, false otherwise. */
@@ -324,11 +347,45 @@ static bool	Complex_equal(
 	return (true);
 }
 
+/* Promote one Numeric type to another */
+static void	*Complex_promote(const void *_self, enum e_Tag tag)
+{
+	const struct s_Complex	*self = _self;
+	void					*vec_v;
+	void					*vec_m;
+	struct s_Vector			*v;
+
+	switch (tag)
+	{
+		case RATIONAL:
+			fprintf(stderr, "%s\n",
+					"Complex_promotion: cannot demote to Rational.");
+			return (NULL);
+		case COMPLEX:
+			return Complex_copy(self);
+		case VECTOR:
+		case MATRIX:
+			/* create the vector */
+			vec_v = new(Vec);
+			Vec_push_back(vec_v, Complex_copy(self));
+			v = new(Vector, VECTOR, vec_v);
+			if (tag == VECTOR)
+				return (v);
+
+			/* create the matrix */
+			vec_m = new(Vec);
+			Vec_push_back(vec_m, v);
+			return new(Matrix, MATRIX, vec_m);
+		default:
+			fprintf(stderr, "%s\n",
+					"Rational_promotion: unexpected input type.");
+			return (NULL);
+	};
+}
+
 void	initComplex(void)
 {
-	initStr();
 	initNumeric();
-	initRational();
 	if (!Complex)
 	{
 		Complex = new(NumericClass, "Complex",
@@ -345,7 +402,13 @@ void	initComplex(void)
 				numeric_mod, Complex_mod,
 				numeric_neg, Complex_neg,
 				numeric_pow, Complex_pow,
+				numeric_promote, Complex_promote,
 				0);
+		initStr();
+		initVec();
+		initRational();
+		initVector();
+		initMatrix();
 	}
 }
 
