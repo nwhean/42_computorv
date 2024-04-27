@@ -316,7 +316,6 @@ void	initMatrix(void)
 				numeric_mul, Matrix_mul,
 				numeric_div, Matrix_div,
 				numeric_mod, Matrix_mod,
-				numeric_pos, Matrix_copy,
 				numeric_neg, Matrix_neg,
 				numeric_pow, Matrix_pow,
 				numeric_promote, Matrix_promote,

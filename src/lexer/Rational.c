@@ -424,7 +424,6 @@ void	initRational(void)
 				numeric_mul, Rational_mul,
 				numeric_div, Rational_div,
 				numeric_mod, Rational_mod,
-				numeric_pos, Rational_copy,
 				numeric_neg, Rational_neg,
 				numeric_pow, Rational_pow,
 				numeric_promote, Rational_promote,

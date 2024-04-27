@@ -72,15 +72,6 @@ void	*numeric_mod(const void *self, const void *other)
 }
 
 /* Return a copy of the Numeric with its value negated. */
-void	*numeric_pos(const void *self)
-{
-	const struct s_NumericClass *const	*cp = self;
-
-	assert(self && *cp && (*cp)->pos);
-	return ((*cp)->pos(self));
-}
-
-/* Return a copy of the Numeric with its value negated. */
 void	*numeric_neg(const void *self)
 {
 	const struct s_NumericClass *const	*cp = self;
@@ -143,8 +134,6 @@ static void	*NumericClass_ctor(void *_self, va_list *app)
 			*(voidf *)&self->div = method;
 		else if (selector == (voidf)numeric_mod)
 			*(voidf *)&self->mod = method;
-		else if (selector == (voidf)numeric_pos)
-			*(voidf *)&self->pos = method;
 		else if (selector == (voidf)numeric_neg)
 			*(voidf *)&self->neg = method;
 		else if (selector == (voidf)numeric_pow)

@@ -64,7 +64,7 @@ static const struct s_Token	*Unary_eval(const void *_self)
 	if (!expr)
 		return (NULL);
 	if (get_op(self) == (struct s_Token *)Word_plus)
-		retval = numeric_pos(expr);
+		retval = copy(expr);
 	else
 		retval = numeric_neg(expr);
 	delete((void *)expr);

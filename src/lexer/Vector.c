@@ -253,7 +253,6 @@ void	initVector(void)
 				numeric_mul, Vector_mul,
 				numeric_div, Vector_div,
 				numeric_mod, Vector_mod,
-				numeric_pos, Vector_copy,
 				numeric_neg, Vector_neg,
 				numeric_pow, Vector_pow,
 				numeric_promote, Vector_promote,

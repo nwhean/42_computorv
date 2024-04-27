@@ -350,7 +350,6 @@ void	initComplex(void)
 				numeric_mul, Complex_mul,
 				numeric_div, Complex_div,
 				numeric_mod, Complex_mod,
-				numeric_pos, Complex_copy,
 				numeric_neg, Complex_neg,
 				numeric_pow, Complex_pow,
 				0);

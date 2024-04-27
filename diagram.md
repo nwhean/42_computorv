@@ -126,7 +126,6 @@ classDiagram
 		+numeric_mul(Numeric) Numeric
 		+numeric_div(Numeric) Numeric
 		+numeric_mod(Numeric) Numeric
-		+numeric_pos() Numeric
 		+numeric_neg() Numeric
 		+numeric_pow(Numeric) Numeric
 		+numeric_equal(Numeric) bool
