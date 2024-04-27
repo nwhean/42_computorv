@@ -122,14 +122,22 @@ classDiagram
 	class Numeric {
 		<<abstract>>
 		+numeric_add(Numeric) Numeric
+		+numeric_iadd(&Numeric, Numeric) Numeric
 		+numeric_sub(Numeric) Numeric
+		+numeric_isub(&Numeric, Numeric) Numeric
 		+numeric_mul(Numeric) Numeric
+		+numeric_imul(&Numeric, Numeric) Numeric
 		+numeric_div(Numeric) Numeric
+		+numeric_idiv(&Numeric, Numeric) Numeric
 		+numeric_mod(Numeric) Numeric
+		+numeric_imod(&Numeric, Numeric) Numeric
 		+numeric_neg() Numeric
+		+numeric_ineg(&Numeric) Numeric
 		+numeric_pow(Numeric) Numeric
+		+numeric_ipow(&Numeric, Numeric) Numeric
 		+numeric_equal(Numeric) bool
 		+numeric_promote(Tag tag) Numeric
+		+numeric_ipromote(&Numeric, Tag tag) Numeric
 	}
 
 	class Tag {

@@ -207,20 +207,13 @@ static void	*Complex_div_Complex(const void *_self, const void *_other)
 	const struct s_Complex	*self = _self;
 	const struct s_Complex	*other = _other;
 	struct s_Complex		*conj = Complex_conjugate(_other);
-	struct s_Complex		*numerator = numeric_mul(self, conj);
-	struct s_Rational		*c = other->real;
-	struct s_Rational		*d = other->imag;
-	struct s_Rational		*c2 = numeric_mul(c, c);
-	struct s_Rational		*d2 = numeric_mul(d, d);
-	struct s_Rational		*denominator = numeric_add(c2, d2);
-	struct s_Complex		*retval;
+	struct s_Complex		*num = numeric_mul(self, conj);
+	struct s_Complex		*den = numeric_mul(other, conj);
+	struct s_Complex		*retval = numeric_div(num, den->real);
 
-	retval = Complex_div_Rational(numerator, denominator);
 	delete(conj);
-	delete(numerator);
-	delete(c2);
-	delete(d2);
-	delete(denominator);
+	delete(num);
+	delete(den);
 	return (retval);
 }
 

@@ -28,14 +28,22 @@ struct	s_NumericClass	/* NumericClass: TokenClass */
 
 extern const void	*NumericClass;
 void				*numeric_add(const void *self, const void *other);
+void				*numeric_iadd(void **self, const void *other);
 void				*numeric_sub(const void *self, const void *other);
+void				*numeric_isub(void **self, const void *other);
 void				*numeric_mul(const void *self, const void *other);
+void				*numeric_imul(void **self, const void *other);
 void				*numeric_div(const void *self, const void *other);
+void				*numeric_idiv(void **self, const void *other);
 void				*numeric_mod(const void *self, const void *other);
+void				*numeric_imod(void **self, const void *other);
 void				*numeric_neg(const void *self);
+void				*numeric_ineg(void **self);
 void				*numeric_pow(const void *self, const void *other);
+void				*numeric_ipow(void **self, const void *other);
 bool				numeric_equal(const void *self, const void *other);
 void				*numeric_promote(const void *self, enum e_Tag tag);
+void				*numeric_ipromote(void **self, enum e_Tag tag);
 
 void				initNumeric(void);
 bool				numeric_is(enum e_Tag tag);

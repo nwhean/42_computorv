@@ -329,10 +329,9 @@ struct s_Vector	*Vector_cross(const void *_self, const void *_other)
 		temp0 = numeric_mul(Vector_at(self, j), Vector_at(other, k));
 		temp1 = numeric_mul(Vector_at(self, k), Vector_at(other, j));
 		temp2 = numeric_sub(temp0, temp1);
-		Vec_push_back(conj->vec, copy(temp2));
+		Vec_push_back(conj->vec, temp2);
 		delete(temp0);
 		delete(temp1);
-		delete(temp2);
 	}
 	retval = Vector_conjugate(conj);
 	delete(conj);
@@ -384,15 +383,10 @@ void				*Vector_sum(const void *_self)
 	size_t					size = Vector_size(self);
 	size_t					i;
 	void					*sum;
-	void					*temp;
 
 	sum = new(Rational, RATIONAL, 0, 1);
 	for (i = 0; i < size; ++i)
-	{
-		temp = numeric_add(sum, Vector_at(self, i));
-		delete(sum);
-		sum = temp;
-	}
+		numeric_iadd(&sum, Vector_at(self, i));
 	return (sum);
 }
 

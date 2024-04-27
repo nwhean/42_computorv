@@ -34,7 +34,7 @@ static char	*Expr_str(const void *_self)
 }
 
 /* Return Token representing the Expr. */
-const struct s_Token	*eval(const void *self)
+struct s_Token	*eval(const void *self)
 {
 	const struct s_ExprClass *const	*cp = self;
 
@@ -42,7 +42,7 @@ const struct s_Token	*eval(const void *self)
 	return ((*cp)->eval(self));
 }
 
-const struct s_Token	*super_eval(const void *_class, const void *_self)
+struct s_Token	*super_eval(const void *_class, const void *_self)
 {
 	const struct s_ExprClass	*superclass = super(_class);
 
@@ -50,7 +50,7 @@ const struct s_Token	*super_eval(const void *_class, const void *_self)
 	return (superclass->eval(_self));
 }
 
-static const struct s_Token	*Expr_eval(const void *_self)
+static struct s_Token	*Expr_eval(const void *_self)
 {
 	const struct s_Expr	*self = _self;
 

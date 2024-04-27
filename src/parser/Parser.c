@@ -88,10 +88,10 @@ static void	move(void *_self)
 /* Runs the parser. */
 void	Parser_program(void *_self)
 {
-	struct s_Parser			*self = _self;
-	void					*x = expr(self);	/* Expr or subclass */
-	const char				*s;
-	const struct s_Token	*token;
+	struct s_Parser		*self = _self;
+	void				*x = expr(self);	/* Expr or subclass */
+	const char			*s;
+	struct s_Token		*token;
 
 	if (!x)
 		return ;
@@ -108,7 +108,7 @@ void	Parser_program(void *_self)
 		printf("%s\n", result);
 		free((char *)result);
 		if (token->tag != ID)
-			delete((void *)token);
+			delete(token);
 	}
 	else
 	{

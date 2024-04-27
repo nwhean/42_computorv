@@ -34,11 +34,11 @@ static char	*Id_str(const void *_self)
 	return (str(token));
 }
 
-static const struct s_Token	*Id_eval(const void *_self)
+static struct s_Token	*Id_eval(const void *_self)
 {
 	const struct s_Id		*self = _self;
 
-	return (get_op(self));
+	return ((void *)get_op(self));
 }
 
 void	initId(void)

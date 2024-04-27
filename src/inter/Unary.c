@@ -55,20 +55,16 @@ static char	*Unary_str(const void *_self)
 	return (retval);
 }
 
-static const struct s_Token	*Unary_eval(const void *_self)
+static struct s_Token	*Unary_eval(const void *_self)
 {
 	const struct s_Unary	*self = _self;
-	const struct s_Token	*expr = eval(self->expr);
-	struct s_Token			*retval = NULL;
+	void					*expr = eval(self->expr);
 
 	if (!expr)
 		return (NULL);
-	if (get_op(self) == (struct s_Token *)Word_plus)
-		retval = copy(expr);
-	else
-		retval = numeric_neg(expr);
-	delete((void *)expr);
-	return (retval);
+	if (get_op(self) == (struct s_Token *)Word_minus)
+		numeric_ineg(&expr);
+	return (expr);
 }
 
 void	initUnary(void)

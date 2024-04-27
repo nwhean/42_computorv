@@ -33,7 +33,7 @@ static char	*Op_str(const void *_self)
 	return (super_str(class, self));
 }
 
-static const struct s_Token	*Op_eval(const void *_self)
+static struct s_Token	*Op_eval(const void *_self)
 {
 	const struct s_ExprClass	*class = classOf(_self);
 	const struct s_Op			*self = _self;
