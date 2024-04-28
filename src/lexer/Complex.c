@@ -456,9 +456,14 @@ struct s_Rational	*Complex_argument(const struct s_Complex *self)
 /* Return the conjugate of a Complex number. */
 struct s_Complex	*Complex_conjugate(const struct s_Complex *self)
 {
-	struct s_Rational	*real = Complex_real(self);
-	struct s_Rational	*imag = Complex_imag(self);
+	const struct s_Token	*_self = (const struct s_Token *)self;
+	void					*real;
+	void					*imag;
 
-	imag->numerator *= -1;
-	return new(Complex, COMPLEX, real, imag);
+	if (_self->tag == RATIONAL)
+		return (copy(self));
+	real = copy(self->real);
+	imag = copy(self->imag);
+	numeric_ineg(&imag);
+	return (new(Complex, COMPLEX, real, imag));
 }

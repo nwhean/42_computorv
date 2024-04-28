@@ -7,7 +7,8 @@
 struct s_Vector	/* Vector: Numeric */
 {
 	const struct s_Numeric	_;
-	void					*vec;
+	size_t					size;
+	void					**data;
 };
 
 extern const void	*Vector;	/* new(Vector, VECTOR, Vec); */

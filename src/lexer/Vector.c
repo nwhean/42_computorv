@@ -5,6 +5,7 @@
 #include <stdio.h>
 
 /* container */
+#include "Str.h"
 #include "Vec.h"
 
 /* lexer */
@@ -13,15 +14,33 @@
 #include "Vector.h"
 #include "Matrix.h"
 
+/* other */
+#include "utility.h"
+
 const void	*Vector;
 
 /* Vector constructor method. */
 static void	*Vector_ctor(void *_self, va_list *app)
 {
 	struct s_Vector	*self;
+	void			*vec;
+	void			**data;
+	size_t			i;
 
 	self = super_ctor(Vector, _self, app);
-	self->vec = va_arg(*app, void *);
+	vec = va_arg(*app, void *);
+	data = Vec_data(vec);
+	self->size = Vec_size(vec);
+	self->data = calloc(sizeof(void *), self->size);
+	if (!self->data)
+	{
+		delete(vec);
+		delete(self);
+		return (NULL);
+	}
+	for (i = 0; i < self->size; ++i)
+		swap_ptr(&self->data[i], &data[i]);
+	delete(vec);
 	return (self);
 }
 
@@ -30,9 +49,18 @@ static struct s_Vector	*Vector_copy(const void *_self)
 {
 	const struct s_Vector	*self = _self;
 	struct s_Vector			*retval;
+	size_t					i;
 
 	retval = super_copy(Vector, self);
-	retval->vec = copy(self->vec);
+	retval->size = self->size;
+	retval->data = calloc(sizeof(void *), retval->size);
+	if (retval->data == NULL)
+	{
+		delete(retval);
+		return (NULL);
+	}
+	for (i = 0; i < retval->size; ++i)
+		retval->data[i] = copy(self->data[i]);
 	return (retval);
 }
 
@@ -40,8 +68,11 @@ static struct s_Vector	*Vector_copy(const void *_self)
 static void	*Vector_dtor(void *_self)
 {
 	struct s_Vector	*self = _self;
+	size_t			i;
 
-	delete(self->vec);
+	for (i = 0; i < self->size; ++i)
+		delete(self->data[i]);
+	free(self->data);
 	return(super_dtor(Vector, _self));
 }
 
@@ -49,48 +80,59 @@ static void	*Vector_dtor(void *_self)
 static char	*Vector_str(const void *_self)
 {
 	const struct s_Vector	*self = _self;
+	void					*s = new(Str, "[");	/* Str */
+	char					*s_append;
+	char					*retval;
+	size_t					i;
 
-	return (str(self->vec));
+	for (i = 0; i < self->size; ++i)
+	{
+		s_append = str(self->data[i]);
+		Str_append(s, s_append);
+		free(s_append);
+		if (i < self->size - 1)
+			Str_append(s, ", ");
+	}
+	Str_push_back(s, ']');
+	retval = str(s);
+	delete(s);
+	return (retval);
 }
 
 /* Element-by-element operation between a Vector and a Scalar.*/
 static void	*Vector_op_Scalar(const void *_self,
 							const void *_other,
-							void* (*func)(const void *, const void *))
+							void *(*func)(const void *, const void *))
 {
 	const struct s_Vector	*self = _self;
-	size_t					size = Vector_size(self);
-	struct s_Vector			*retval = new(Vector, VECTOR, new(Vec));
+	void					*vec = new(Vec);
 	size_t					i;
 
-	for (i = 0; i < size; ++i)
-		Vec_push_back(retval->vec, func(Vector_at(self, i), _other));
-	return (retval);
+	for (i = 0; i < self->size; ++i)
+		Vec_push_back(vec, func(self->data[i], _other));
+	return (new(Vector, VECTOR, vec));
 }
 
 /* Element-by-element operation between two Vectors.*/
 static void	*Vector_op_Vector(const void *_self,
 							const void *_other,
-							void* (*func)(const void *, const void *))
+							void *(*func)(const void *, const void *))
 {
 	const struct s_Vector	*self = _self;
 	const struct s_Vector	*other = _other;
 	size_t					size = Vector_size(self);
 	size_t					i;
-	struct s_Vector			*retval;
+	void					*vec;
 
 	if (size != Vector_size(other))
 	{
 		fprintf(stderr, "%s\n", "Vector_op_Vector: unequal sizes.");
 		return (NULL);
 	}
-	retval = new(Vector, VECTOR, new(Vec));
+	vec = new(Vec);
 	for (i = 0; i < size; ++i)
-	{
-		Vec_push_back(retval->vec, func(Vector_at(self, i),
-										Vector_at(other, i)));
-	}
-	return (retval);
+		Vec_push_back(vec, func((self->data[i]), other->data[i]));
+	return (new(Vector, VECTOR, vec));
 }
 
 /* Return the addition of two Numerics. */
@@ -209,12 +251,11 @@ static void	*Vector_mod(const void *_self, const void *_other)
 static struct s_Vector	*Vector_neg(const void *_self)
 {
 	const struct s_Vector	*self = _self;
-	struct s_Vector			*retval = new(Vector, VECTOR, new(Vec));
-	size_t					size = Vector_size(self);
+	struct s_Vector			*retval = copy(self);
 	size_t					i;
 
-	for (i = 0; i < size; ++i)
-		Vec_push_back(retval->vec, numeric_neg(Vector_at(self, i)));
+	for (i = 0; i < self->size; ++i)
+		numeric_ineg(&(retval->data[i]));
 	return (retval);
 }
 
@@ -232,11 +273,17 @@ static bool	Vector_equal(const void *_self, const void *_other)
 {
 	const struct s_Vector	*self = _self;
 	const struct s_Vector	*other = _other;
+	size_t					i;
 
 	if (!super_equal(Vector, _self, _other))
 		return (false);
-	if (!equal(self->vec, other->vec))
+	if (self->size != other->size)
 		return (false);
+	for (i = 0; i < self->size; ++i)
+	{
+		if (!equal(self->data[i], other->data[i]))
+			return (false);
+	}
 	return (true);
 }
 
@@ -287,6 +334,7 @@ void	initVector(void)
 				numeric_pow, Vector_pow,
 				numeric_promote, Vector_promote,
 				0);
+		initStr();
 		initVec();
 		initRational();
 		initComplex();
@@ -299,7 +347,7 @@ size_t	Vector_size(const void *_self)
 {
 	const struct s_Vector	*self = _self;
 
-	return (Vec_size(self->vec));
+	return (self->size);
 }
 
 /* Returns a reference to the element at position `n` in the vector. */
@@ -307,31 +355,32 @@ void	*Vector_at(const void *_self, size_t n)
 {
 	const struct s_Vector	*self = _self;
 
-	return (Vec_at(self->vec, n));
+	return (self->data[n]);
 }
 
 /* Return the vector containing the conjugate of each of its elements. */
 struct s_Vector	*Vector_conjugate(const void *_self)
 {
 	const struct s_Vector	*self = _self;
-	struct s_Vector			*retval = new(Vector, VECTOR, new(Vec));
-	size_t					size = Vector_size(self);
+	void					*vec = new(Vec);
+	struct s_Vector			*retval;
 	size_t					i;
 
-	for (i = 0; i < size; ++i)
+	for (i = 0; i < self->size; ++i)
 	{
-		struct s_Token	*elem = Vector_at(self, i);
+		struct s_Token	*elem = self->data[i];
 		if (elem->tag == RATIONAL)
-			Vec_push_back(retval->vec, copy((void *)elem));
+			Vec_push_back(vec, copy((void *)elem));
 		else if (elem->tag == COMPLEX)
-			Vec_push_back(retval->vec, Complex_conjugate((void *)elem));
+			Vec_push_back(vec, Complex_conjugate((void *)elem));
 		else
 		{
 			fprintf(stderr, "%s\n", "Vector_conjugate: Unexpected input type");
-			delete(retval);
+			delete(vec);
 			return (NULL);
 		}
 	}
+	retval = new(Vector, VECTOR, vec);
 	return (retval);
 }
 
@@ -340,9 +389,8 @@ struct s_Vector	*Vector_cross(const void *_self, const void *_other)
 {
 	const struct s_Vector	*self = _self;
 	const struct s_Vector	*other = _other;
-	size_t					size = Vector_size(self);
+	void					*conj;
 	struct s_Vector			*retval;
-	struct s_Vector			*conj;
 	size_t					i;
 	size_t					j;
 	size_t					k;
@@ -350,25 +398,25 @@ struct s_Vector	*Vector_cross(const void *_self, const void *_other)
 	void					*temp1;
 	void					*temp2;
 
-	if (size != 3 || size != Vector_size(other))
+	if (self->size != 3 || self->size != other->size)
 	{
 		fprintf(stderr, "%s\n", "Vector_cross: vectors must be of len 3.");
 		return (NULL);
 	}
-	conj = new(Vector, VECTOR, new(Vec));
-	for (i = 0; i < size; ++i)
+	conj = new(Vec);
+	for (i = 0; i < self->size; ++i)
 	{
 		j = (i + 1) % 3;
 		k = (i + 2) % 3;
 		temp0 = numeric_mul(Vector_at(self, j), Vector_at(other, k));
 		temp1 = numeric_mul(Vector_at(self, k), Vector_at(other, j));
 		temp2 = numeric_sub(temp0, temp1);
-		Vec_push_back(conj->vec, temp2);
+		Vec_push_back(conj, Complex_conjugate(temp2));
 		delete(temp0);
 		delete(temp1);
+		delete(temp2);
 	}
-	retval = Vector_conjugate(conj);
-	delete(conj);
+	retval = new(Vector, VECTOR, conj);
 	return (retval);
 }
 

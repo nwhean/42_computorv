@@ -141,20 +141,24 @@ void test_mul_scalar(void) {
 	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
 	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
 	void				*vec0 = new(Vec);
+	struct s_Vector		*v0;
+
 	struct s_Rational	*r2 = new(Rational, RATIONAL, 7, 2);
 	struct s_Rational	*r3 = new(Rational, RATIONAL, 21, 4);
-	struct s_Rational	*r = new(Rational, RATIONAL, 7, 1);
 	void				*vec1 = new(Vec);
-	struct s_Vector		*v0;
 	struct s_Vector		*v1;
+
+	struct s_Rational	*r = new(Rational, RATIONAL, 7, 1);
 	struct s_Vector		*v;
 
 	Vec_push_back(vec0, r0);
 	Vec_push_back(vec0, r1);
 	v0 = new(Vector, VECTOR, vec0);
+
 	Vec_push_back(vec1, r2);
 	Vec_push_back(vec1, r3);
 	v1 = new(Vector, VECTOR, vec1);
+
 	v = numeric_mul(v0, r);
 	TEST_ASSERT_TRUE(equal(v, v1));
 	delete(v0);
@@ -379,6 +383,8 @@ void test_conjugate_complex(void) {
 								new(Rational, RATIONAL, 5, 6),
 								new(Rational, RATIONAL, 7, 8));
 	void				*vec0 = new(Vec);
+	struct s_Vector		*v0;
+
 	struct s_Complex	*r2 = new(Complex, COMPLEX,
 								new(Rational, RATIONAL, 1, 2),
 								new(Rational, RATIONAL, (long)-3, 4));
@@ -386,16 +392,18 @@ void test_conjugate_complex(void) {
 								new(Rational, RATIONAL, 5, 6),
 								new(Rational, RATIONAL, (long)-7, 8));
 	void				*vec1 = new(Vec);
-	struct s_Vector		*v0;
 	struct s_Vector		*v1;
+
 	struct s_Vector		*v;
 
 	Vec_push_back(vec0, r0);
 	Vec_push_back(vec0, r1);
 	v0 = new(Vector, VECTOR, vec0);
+
 	Vec_push_back(vec1, r2);
 	Vec_push_back(vec1, r3);
 	v1 = new(Vector, VECTOR, vec1);
+
 	v = Vector_conjugate(v0);
 	TEST_ASSERT_TRUE(equal(v, v1));
 	delete(v0);
