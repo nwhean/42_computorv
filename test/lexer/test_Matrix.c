@@ -11,12 +11,10 @@
 #include "Numeric.h"
 #include "Rational.h"
 #include "Matrix.h"
-#include "Vector.h"
 
 void setUp(void) {
 	initRational();
 	initMatrix();
-	initVector();
 }
 
 void tearDown(void) {
@@ -88,8 +86,8 @@ void test_add_scalar(void) {
 	Vec_push_back(v00, r01);
 	Vec_push_back(v01, r02);
 	Vec_push_back(v01, r03);
-	Vec_push_back(v0, new(Vector, VECTOR, v00));
-	Vec_push_back(v0, new(Vector, VECTOR, v01));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
 	TEST_ASSERT_NULL(numeric_add(m0, r));
@@ -122,16 +120,16 @@ void test_add_matrix(void) {
 	Vec_push_back(v00, r01);
 	Vec_push_back(v01, r02);
 	Vec_push_back(v01, r03);
-	Vec_push_back(v0, new(Vector, VECTOR, v00));
-	Vec_push_back(v0, new(Vector, VECTOR, v01));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
 	Vec_push_back(v10, r10);
 	Vec_push_back(v10, r11);
 	Vec_push_back(v11, r12);
 	Vec_push_back(v11, r13);
-	Vec_push_back(v1, new(Vector, VECTOR, v10));
-	Vec_push_back(v1, new(Vector, VECTOR, v11));
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
 	m1 = new(Matrix, MATRIX, v1);
 
 	m = numeric_add(m0, m0);
@@ -157,8 +155,8 @@ void test_sub_scalar(void) {
 	Vec_push_back(v00, r01);
 	Vec_push_back(v01, r02);
 	Vec_push_back(v01, r03);
-	Vec_push_back(v0, new(Vector, VECTOR, v00));
-	Vec_push_back(v0, new(Vector, VECTOR, v01));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
 	TEST_ASSERT_NULL(numeric_sub(m0, r));
@@ -191,16 +189,16 @@ void test_sub_matrix(void) {
 	Vec_push_back(v00, r01);
 	Vec_push_back(v01, r02);
 	Vec_push_back(v01, r03);
-	Vec_push_back(v0, new(Vector, VECTOR, v00));
-	Vec_push_back(v0, new(Vector, VECTOR, v01));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
 	Vec_push_back(v10, r10);
 	Vec_push_back(v10, r11);
 	Vec_push_back(v11, r12);
 	Vec_push_back(v11, r13);
-	Vec_push_back(v1, new(Vector, VECTOR, v10));
-	Vec_push_back(v1, new(Vector, VECTOR, v11));
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
 	m1 = new(Matrix, MATRIX, v1);
 
 	m = numeric_sub(m0, m0);
@@ -237,16 +235,16 @@ void test_mul_scalar(void) {
 	Vec_push_back(v00, r01);
 	Vec_push_back(v01, r02);
 	Vec_push_back(v01, r03);
-	Vec_push_back(v0, new(Vector, VECTOR, v00));
-	Vec_push_back(v0, new(Vector, VECTOR, v01));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
 	Vec_push_back(v10, r10);
 	Vec_push_back(v10, r11);
 	Vec_push_back(v11, r12);
 	Vec_push_back(v11, r13);
-	Vec_push_back(v1, new(Vector, VECTOR, v10));
-	Vec_push_back(v1, new(Vector, VECTOR, v11));
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
 	m1 = new(Matrix, MATRIX, v1);
 
 	m = numeric_mul(m0, r);
@@ -282,16 +280,16 @@ void test_mul_matrix(void) {
 	Vec_push_back(v00, r01);
 	Vec_push_back(v01, r02);
 	Vec_push_back(v01, r03);
-	Vec_push_back(v0, new(Vector, VECTOR, v00));
-	Vec_push_back(v0, new(Vector, VECTOR, v01));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
 	Vec_push_back(v10, r10);
 	Vec_push_back(v10, r11);
 	Vec_push_back(v11, r12);
 	Vec_push_back(v11, r13);
-	Vec_push_back(v1, new(Vector, VECTOR, v10));
-	Vec_push_back(v1, new(Vector, VECTOR, v11));
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
 	m1 = new(Matrix, MATRIX, v1);
 
 	m = numeric_mul(m0, m0);
@@ -328,16 +326,16 @@ void test_div_scalar(void) {
 	Vec_push_back(v00, r01);
 	Vec_push_back(v01, r02);
 	Vec_push_back(v01, r03);
-	Vec_push_back(v0, new(Vector, VECTOR, v00));
-	Vec_push_back(v0, new(Vector, VECTOR, v01));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
 	Vec_push_back(v10, r10);
 	Vec_push_back(v10, r11);
 	Vec_push_back(v11, r12);
 	Vec_push_back(v11, r13);
-	Vec_push_back(v1, new(Vector, VECTOR, v10));
-	Vec_push_back(v1, new(Vector, VECTOR, v11));
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
 	m1 = new(Matrix, MATRIX, v1);
 
 	m = numeric_div(m0, r);
@@ -373,16 +371,16 @@ void test_div_matrix(void) {
 	Vec_push_back(v00, r01);
 	Vec_push_back(v01, r02);
 	Vec_push_back(v01, r03);
-	Vec_push_back(v0, new(Vector, VECTOR, v00));
-	Vec_push_back(v0, new(Vector, VECTOR, v01));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
 	Vec_push_back(v10, r10);
 	Vec_push_back(v10, r11);
 	Vec_push_back(v11, r12);
 	Vec_push_back(v11, r13);
-	Vec_push_back(v1, new(Vector, VECTOR, v10));
-	Vec_push_back(v1, new(Vector, VECTOR, v11));
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
 	m1 = new(Matrix, MATRIX, v1);
 
 	m = numeric_div(m0, m0);
@@ -419,16 +417,16 @@ void test_mod_scalar(void) {
 	Vec_push_back(v00, r01);
 	Vec_push_back(v01, r02);
 	Vec_push_back(v01, r03);
-	Vec_push_back(v0, new(Vector, VECTOR, v00));
-	Vec_push_back(v0, new(Vector, VECTOR, v01));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
 	Vec_push_back(v10, r10);
 	Vec_push_back(v10, r11);
 	Vec_push_back(v11, r12);
 	Vec_push_back(v11, r13);
-	Vec_push_back(v1, new(Vector, VECTOR, v10));
-	Vec_push_back(v1, new(Vector, VECTOR, v11));
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
 	m1 = new(Matrix, MATRIX, v1);
 
 	m = numeric_mod(m0, r);
@@ -455,8 +453,8 @@ void test_mod_matrix(void) {
 	Vec_push_back(v00, r01);
 	Vec_push_back(v01, r02);
 	Vec_push_back(v01, r03);
-	Vec_push_back(v0, new(Vector, VECTOR, v00));
-	Vec_push_back(v0, new(Vector, VECTOR, v01));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
 	m = numeric_mod(m0, m0);
@@ -489,16 +487,16 @@ void test_neg(void) {
 	Vec_push_back(v00, r01);
 	Vec_push_back(v01, r02);
 	Vec_push_back(v01, r03);
-	Vec_push_back(v0, new(Vector, VECTOR, v00));
-	Vec_push_back(v0, new(Vector, VECTOR, v01));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
 	Vec_push_back(v10, r10);
 	Vec_push_back(v10, r11);
 	Vec_push_back(v11, r12);
 	Vec_push_back(v11, r13);
-	Vec_push_back(v1, new(Vector, VECTOR, v10));
-	Vec_push_back(v1, new(Vector, VECTOR, v11));
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
 	m1 = new(Matrix, MATRIX, v1);
 
 	m = numeric_neg(m0);
@@ -524,8 +522,8 @@ void test_pow(void) {
 	Vec_push_back(v00, r01);
 	Vec_push_back(v01, r02);
 	Vec_push_back(v01, r03);
-	Vec_push_back(v0, new(Vector, VECTOR, v00));
-	Vec_push_back(v0, new(Vector, VECTOR, v01));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
 	TEST_ASSERT_NULL(numeric_pow(m0, r));

@@ -9,7 +9,7 @@ struct s_Matrix	/* Matrix: Numeric */
 	const struct s_Numeric	_;
 	size_t					rows;
 	size_t					cols;
-	void					*vec;	/* Vec of Vector */
+	void					**data;
 };
 
 extern const void	*Matrix;	/* new(Matrix, MATRIX, Vec); */

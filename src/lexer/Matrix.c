@@ -11,7 +11,9 @@
 /* lexer */
 #include "Matrix.h"
 #include "Rational.h"
-#include "Vector.h"
+
+/* other */
+#include "utility.h"
 
 const void	*Matrix;
 
@@ -24,23 +26,38 @@ static long	max(long a, long b)
 static void	*Matrix_ctor(void *_self, va_list *app)
 {
 	struct s_Matrix	*self;
+	void			*vec;
 	size_t			i;
-	size_t			j;
 
 	self = super_ctor(Matrix, _self, app);
-	self->vec = va_arg(*app, void *);
-	self->rows = Vec_size(self->vec);
+	vec = va_arg(*app, void *);
+	self->rows = Vec_size(vec);
 	self->cols = 0;
 	for (i = 0; i < self->rows; ++i)
-		self->cols = max(self->cols, Vec_size(Vec_at(self->vec, i)));
+		self->cols = max(self->cols, Vec_size(Vec_at(vec, i)));
+	self->data = calloc(sizeof(void *), self->rows * self->cols);
+	if (!self->data)
+	{
+		delete(vec);
+		delete(self);
+		return (NULL);
+	}
 
-	/* ensure all rows have the same number of columns */
 	for (i = 0; i < self->rows; ++i)
 	{
-		void	*vec = Vec_at(self->vec, i);
-		for (j = Vec_size(vec); j < self->cols; ++j)
-			Vec_push_back(vec, new(Rational, RATIONAL, 0, 1));
+		void	*vec_i = Vec_at(vec, i);
+		void	**data = Vec_data(vec_i);
+		size_t	size = Vec_size(vec_i);
+		size_t	j;
+
+		for (j = 0; j < size; ++j)
+			swap_ptr(&self->data[i * self->cols + j], &data[j]);
+
+		/* handle different column sizes */
+		for (; j < self->cols; ++j)
+			self->data[i * self->cols + j] = new(Rational, RATIONAL, 0, 1);
 	}
+	delete(vec);
 	return (self);
 }
 
@@ -49,9 +66,19 @@ static struct s_Matrix	*Matrix_copy(const void *_self)
 {
 	const struct s_Matrix	*self = _self;
 	struct s_Matrix			*retval;
+	size_t					i;
 
 	retval = super_copy(Matrix, self);
-	retval->vec = copy(self->vec);
+	retval->rows = self->rows;
+	retval->cols = self->cols;
+	retval->data = calloc(sizeof(void *), self->rows * self->cols);
+	if (!retval->data)
+	{
+		delete(retval);
+		return (NULL);
+	}
+	for (i = 0; i < retval->rows * retval->cols; ++i)
+		retval->data[i] = copy(self->data[i]);
 	return (retval);
 }
 
@@ -59,8 +86,11 @@ static struct s_Matrix	*Matrix_copy(const void *_self)
 static void	*Matrix_dtor(void *_self)
 {
 	struct s_Matrix	*self = _self;
+	size_t			i;
 
-	delete(self->vec);
+	for (i = 0; i < self->rows * self->cols; ++i)
+		delete(self->data[i]);
+	free(self->data);
 	return(super_dtor(Matrix, _self));
 }
 
@@ -72,12 +102,20 @@ static char	*Matrix_str(const void *_self)
 	char				*s_append;
 	char				*retval;
 	size_t				i;
+	size_t				j;
 
 	for (i = 0; i < self->rows; ++i)
 	{
-		s_append = str(Vec_at(self->vec, i));
-		Str_append(s, s_append);
-		free(s_append);
+		Str_push_back(s, '[');
+		for (j = 0; j < self->cols; ++j)
+		{
+			s_append = str(Matrix_at(self, i, j));
+			Str_append(s, s_append);
+			free(s_append);
+			if (j < self->cols - 1)
+				Str_append(s, ", ");
+		}
+		Str_push_back(s, ']');
 		if (i < self->rows - 1)
 			Str_append(s, "\n");
 	}
@@ -92,15 +130,20 @@ static void	*Matrix_op_Scalar(const void *_self,
 							void* (*func)(const void *, const void *))
 {
 	const struct s_Matrix	*self = _self;
-	struct s_Matrix			*retval = new(Matrix, MATRIX, new(Vec));
+	struct s_Matrix			*retval;
 	size_t					i;
 
+	retval = super_copy(Matrix, self);
 	retval->rows = self->rows;
 	retval->cols = self->cols;
-	for (i = 0; i < self->rows; ++i)
+	retval->data = calloc(sizeof(void *), self->rows * self->cols);
+	if (!retval->data)
 	{
-		Vec_push_back(retval->vec, func(Vec_at(self->vec, i), _other));
+		delete(retval);
+		return (NULL);
 	}
+	for (i = 0; i < retval->rows * retval->cols; ++i)
+		retval->data[i] = func(self->data[i], _other);
 	return (retval);
 }
 
@@ -119,14 +162,17 @@ static void	*Matrix_op_Matrix(const void *_self,
 		fprintf(stderr, "%s\n", "Matrix_op_Matrix: incompatible sizes.");
 		return (NULL);
 	}
-	retval = new(Matrix, MATRIX, new(Vec));
+	retval = super_copy(Matrix, self);
 	retval->rows = self->rows;
 	retval->cols = self->cols;
-	for (i = 0; i < self->rows; ++i)
+	retval->data = calloc(sizeof(void *), self->rows * self->cols);
+	if (!retval->data)
 	{
-		Vec_push_back(retval->vec, func(Vec_at(self->vec, i),
-										Vec_at(other->vec, i)));
+		delete(retval);
+		return (NULL);
 	}
+	for (i = 0; i < retval->rows * retval->cols; ++i)
+		retval->data[i] = func(self->data[i], other->data[i]);
 	return (retval);
 }
 
@@ -263,6 +309,7 @@ static bool	Matrix_equal(const void *_self, const void *_other)
 {
 	const struct s_Matrix	*self = _self;
 	const struct s_Matrix	*other = _other;
+	size_t					i;
 
 	if (!super_equal(Matrix, _self, _other))
 		return (false);
@@ -270,7 +317,8 @@ static bool	Matrix_equal(const void *_self, const void *_other)
 		return (false);
 	if (self->cols != other->cols)
 		return (false);
-	if (!equal(self->vec, other->vec))
+	for (i = 0; i < self->rows * self->cols; ++i)
+	if (!equal(self->data[i], other->data[i]))
 		return (false);
 	return (true);
 }
@@ -323,7 +371,6 @@ void	initMatrix(void)
 		initStr();
 		initVec();
 		initRational();
-		initVector();
 	}
 }
 
@@ -349,5 +396,5 @@ void	*Matrix_at(const void *_self, size_t m, size_t n)
 {
 	const struct s_Matrix	*self = _self;
 
-	return (Vec_at(Vec_at(self->vec, m), n));
+	return (self->data[m * self->cols + n]);
 }
