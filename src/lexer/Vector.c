@@ -291,7 +291,9 @@ static bool	Vector_equal(const void *_self, const void *_other)
 static void	*Vector_promote(const void *_self, enum e_Tag tag)
 {
 	const struct s_Vector	*self = _self;
+	void					*vec_v;
 	void					*vec_m;
+	size_t					i;
 
 	switch (tag)
 	{
@@ -303,8 +305,11 @@ static void	*Vector_promote(const void *_self, enum e_Tag tag)
 		case VECTOR:
 			return Vector_copy(self);
 		case MATRIX:
+			vec_v = new(Vec);
+			for (i = 0; i < self->size; ++i)
+				Vec_push_back(vec_v, copy(self->data[i]));
 			vec_m = new(Vec);
-			Vec_push_back(vec_m, Vector_copy(self));
+			Vec_push_back(vec_m, vec_v);
 			return (new(Matrix, MATRIX, vec_m));
 		default:
 			fprintf(stderr, "%s\n",

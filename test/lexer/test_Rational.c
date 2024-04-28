@@ -1,8 +1,15 @@
 #include <string.h>
 
 #include "unity.h"
+
+/* container */
+#include "Vec.h"
+
+/* lexer */
 #include "Rational.h"
 #include "Complex.h"
+#include "Vector.h"
+#include "Matrix.h"
 
 void setUp(void) {
 	initRational();
@@ -185,6 +192,58 @@ void test_equal_false(void) {
 	delete(b);
 }
 
+void test_promote_rational(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, (long)22, (long)7);
+	struct s_Rational	*b = numeric_promote(a, RATIONAL);
+
+	TEST_ASSERT_TRUE(numeric_equal(a, b));
+	delete(a);
+	delete(b);
+}
+
+void test_promote_complex(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
+	struct s_Complex	*b = numeric_promote(a, COMPLEX);
+	struct s_Complex	*target = new(Complex, COMPLEX,
+									new(Rational, RATIONAL, 22, 7),
+									new(Rational, RATIONAL, 0, 1));
+
+	TEST_ASSERT_TRUE(numeric_equal(b, target));
+	delete(a);
+	delete(b);
+	delete(target);
+}
+
+void test_promote_vector(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
+	struct s_Vector		*b = numeric_promote(a, VECTOR);
+	void				*vec = new(Vec);
+	struct s_Vector		*target;
+
+	Vec_push_back(vec, copy(a));
+	target = new(Vector, VECTOR, vec);
+	TEST_ASSERT_TRUE(numeric_equal(b, target));
+	delete(a);
+	delete(b);
+	delete(target);
+}
+
+void test_promote_matrix(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
+	struct s_Matrix		*b = numeric_promote(a, MATRIX);
+	void				*vec_v = new(Vec);
+	void				*vec_m = new(Vec);
+	struct s_Matrix		*target;
+
+	Vec_push_back(vec_v, copy(a));
+	Vec_push_back(vec_m, vec_v);
+	target = new(Matrix, MATRIX, vec_m);
+	TEST_ASSERT_TRUE(numeric_equal(b, target));
+	delete(a);
+	delete(b);
+	delete(target);
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
@@ -204,5 +263,9 @@ int main(void) {
 	RUN_TEST(test_pow_neg_to_non_integer);
 	RUN_TEST(test_equal_true);
 	RUN_TEST(test_equal_false);
+	RUN_TEST(test_promote_rational);
+	RUN_TEST(test_promote_complex);
+	RUN_TEST(test_promote_vector);
+	RUN_TEST(test_promote_matrix);
 	return UNITY_END();
 }

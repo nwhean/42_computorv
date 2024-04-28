@@ -12,11 +12,13 @@
 #include "Numeric.h"
 #include "Rational.h"
 #include "Vector.h"
+#include "Matrix.h"
 
 void setUp(void) {
 	initComplex();
 	initRational();
 	initVector();
+	initMatrix();
 }
 
 void tearDown(void) {
@@ -359,6 +361,94 @@ void test_equal_false(void) {
 	delete(v1);
 }
 
+void test_promote_rational(void) {
+	struct s_Complex	*val = new(Complex, COMPLEX,
+								new(Rational, RATIONAL, 1, 2),
+								new(Rational, RATIONAL, 3, 4));
+	void				*vec = new(Vec);
+	void				*a;
+	struct s_Rational	*b;
+
+	Vec_push_back(vec, val);
+	a = new(Vector, VECTOR, vec);
+	b = numeric_promote(a, RATIONAL);
+	TEST_ASSERT_NULL(b);
+	delete(a);
+}
+
+void test_promote_complex(void) {
+	struct s_Complex	*val = new(Complex, COMPLEX,
+								new(Rational, RATIONAL, 1, 2),
+								new(Rational, RATIONAL, 3, 4));
+	void				*vec = new(Vec);
+	void				*a;
+	struct s_Complex	*b;
+
+	Vec_push_back(vec, val);
+	a = new(Vector, VECTOR, vec);
+	b = numeric_promote(a, COMPLEX);
+	TEST_ASSERT_NULL(b);
+	delete(a);
+}
+
+void test_promote_vector(void) {
+	struct s_Complex	*val = new(Complex, COMPLEX,
+								new(Rational, RATIONAL, 1, 2),
+								new(Rational, RATIONAL, 3, 4));
+	void				*vec = new(Vec);
+	void				*a;
+
+	struct s_Complex	*val_t = new(Complex, COMPLEX,
+								new(Rational, RATIONAL, 1, 2),
+								new(Rational, RATIONAL, 3, 4));
+	void				*vec_t = new(Vec);
+	void				*target;
+
+	struct s_Vector		*b;
+
+	Vec_push_back(vec, val);
+	a = new(Vector, VECTOR, vec);
+
+	Vec_push_back(vec_t, val_t);
+	target = new(Vector, VECTOR, vec_t);
+
+	b = numeric_promote(a, VECTOR);
+	TEST_ASSERT_TRUE(equal(b, target));
+	delete(a);
+	delete(b);
+	delete(target);
+}
+
+void test_promote_matrix(void) {
+	struct s_Complex	*val = new(Complex, COMPLEX,
+								new(Rational, RATIONAL, 1, 2),
+								new(Rational, RATIONAL, 3, 4));
+	void				*vec = new(Vec);
+	void				*a;
+
+	struct s_Complex	*val_t = new(Complex, COMPLEX,
+								new(Rational, RATIONAL, 1, 2),
+								new(Rational, RATIONAL, 3, 4));
+	void				*vec_t = new(Vec);
+	void				*vec_m = new(Vec);
+	void				*target;
+
+	struct s_Matrix		*b;
+
+	Vec_push_back(vec, val);
+	a = new(Vector, VECTOR, vec);
+
+	Vec_push_back(vec_t, val_t);
+	Vec_push_back(vec_m, vec_t);
+	target = new(Matrix, MATRIX, vec_m);
+
+	b = numeric_promote(a, MATRIX);
+	TEST_ASSERT_TRUE(equal(b, target));
+	delete(a);
+	delete(b);
+	delete(target);
+}
+
 void test_conjugate_rational(void) {
 	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
 	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
@@ -589,6 +679,10 @@ int main(void) {
 	RUN_TEST(test_pow);
 	RUN_TEST(test_equal_true);
 	RUN_TEST(test_equal_false);
+	RUN_TEST(test_promote_rational);
+	RUN_TEST(test_promote_complex);
+	RUN_TEST(test_promote_vector);
+	RUN_TEST(test_promote_matrix);
 	RUN_TEST(test_conjugate_rational);
 	RUN_TEST(test_conjugate_complex);
 	RUN_TEST(test_cross);

@@ -353,7 +353,6 @@ static void	*Complex_promote(const void *_self, enum e_Tag tag)
 	const struct s_Complex	*self = _self;
 	void					*vec_v;
 	void					*vec_m;
-	struct s_Vector			*v;
 
 	switch (tag)
 	{
@@ -368,13 +367,12 @@ static void	*Complex_promote(const void *_self, enum e_Tag tag)
 			/* create the vector */
 			vec_v = new(Vec);
 			Vec_push_back(vec_v, Complex_copy(self));
-			v = new(Vector, VECTOR, vec_v);
 			if (tag == VECTOR)
-				return (v);
+				return (new(Vector, VECTOR, vec_v));
 
 			/* create the matrix */
 			vec_m = new(Vec);
-			Vec_push_back(vec_m, v);
+			Vec_push_back(vec_m, vec_v);
 			return new(Matrix, MATRIX, vec_m);
 		default:
 			fprintf(stderr, "%s\n",
