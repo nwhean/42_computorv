@@ -13,6 +13,9 @@
 #include "Vector.h"
 #include "Matrix.h"
 
+/* other */
+#include "utility.h"
+
 const void	*Rational;
 
 /* Return the Greatest Common Divisor of two numbers. */
@@ -78,25 +81,21 @@ void	*Rational_from_double(double n)
 	{
 		unsigned long	q2;
 		unsigned long	a;
-		unsigned long	temp_l;
-		double	temp_d;
 
 		a = floor(n / d);
-		q2 = q0 + a * q1;
+		q2 = q0 + a * q1;				/* q2 = q0_prev + a * q1_prev */
 		if (q2 > max_denominator || d == 0)
 			break ;
 
 		/* update p and q values for next cycle */
-		temp_l = p0;
-		p0 = p1;
-		q0 = q1;
-		p1 = temp_l + a * p1;	/* p1 = p0 + a * p1 */
-		q1 = q2;				/* q1 = q0 + a * q1 */
+		swap_unsigned_long(&p0, &p1);	/* p0 = p1_prev */
+		q0 = q1;						/* q0 = q1_prev */
+		p1 += a * p0;					/* p1 = p0_prev + a * p1_prev */
+		q1 = q2;						/* q1 = q0_prev + a * q1_prev = q2*/
 
 		/* update n and d values for next cycle */
-		temp_d = n;
-		n = d;
-		d = temp_d - a * d;
+		swap_double(&n, &d);			/* n = d_prev */
+		d -= a * n;						/* d = n_prev - a * d_prev */
 	}
 	return new(Rational, RATIONAL, sign * p1, q1);
 }

@@ -4,6 +4,7 @@ INCLUDE	=	-Iinclude \
 			-Iinclude/container \
 			-Iinclude/inter \
 			-Iinclude/lexer \
+			-Iinclude/other \
 			-Iinclude/parser \
 			-Iliboop/include
 LDFLAGS	=	-L. -Lliboop
@@ -16,6 +17,7 @@ LIBCOMP	=	libcomputorv.a
 CONTAINER_DIR	=	container/
 INTER_DIR		=	inter/
 LEXER_DIR		=	lexer/
+OTHER_DIR		=	other/
 PARSER_DIR		=	parser/
 
 SRCDIR	=	src
@@ -43,6 +45,9 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 				Token.c \
 				Vector.c \
 				Word.c \
+			) \
+			$(addprefix $(OTHER_DIR), \
+				utility.c \
 			) \
 			$(addprefix $(PARSER_DIR), \
 				Parser.c \
