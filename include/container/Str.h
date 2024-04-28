@@ -14,8 +14,13 @@ size_t		Str_capacity(const void *self);
 void		Str_reserve(void *self, size_t n);
 void		Str_clear(void *self);
 bool		Str_empty(const void *self);
-void		*Str_append(void *self, const char *s);
+
+/* modifiers */
 void		Str_push_back(void *self, char c);
+void		*Str_append(void *self, const char *s);
+
+/* non-member function */
+void		swap_Str(void *self, void *other);
 
 void	initStr(void);
 char	*strdup(const char *s);

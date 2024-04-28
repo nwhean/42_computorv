@@ -28,4 +28,7 @@ void	Vec_pop_back(void *self);
 void	Vec_erase(void *self, size_t position);
 void	Vec_clear(void *self);
 
+/* non-member function */
+void	swap_Vec(void *self, void *other);
+
 #endif

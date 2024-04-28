@@ -24,11 +24,10 @@ void test_swap_ptr(void) {
 	size_t	*x = &a;
 	size_t	*y = &b;
 
-	swap_ptr((void **)&x, (void **)&y);
+	swap_ptr(&x, &y);
 	TEST_ASSERT_EQUAL(*x, 2);
 	TEST_ASSERT_EQUAL(*y, 1);
 }
-
 
 int main(void) {
 	UNITY_BEGIN();

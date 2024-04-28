@@ -246,6 +246,34 @@ void test_clear(void) {
 	delete(v);
 }
 
+void test_swap(void) {
+	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Vec		*v0 = new(Vec);
+	struct s_Vec		*v0_copy;
+
+	struct s_Rational	*r2 = new(Rational, RATIONAL, 5, 6);
+	struct s_Rational	*r3 = new(Rational, RATIONAL, 7, 8);
+	struct s_Vec		*v1 = new(Vec);
+	struct s_Vec		*v1_copy;
+
+	Vec_push_back(v0, r0);
+	Vec_push_back(v0, r1);
+	v0_copy = copy(v0);
+
+	Vec_push_back(v1, r2);
+	Vec_push_back(v1, r3);
+	v1_copy = copy(v1);
+
+	swap_Vec(v0, v1);
+	TEST_ASSERT_TRUE(equal(v0, v1_copy));
+	TEST_ASSERT_TRUE(equal(v1, v0_copy));
+	delete(v0);
+	delete(v1);
+	delete(v0_copy);
+	delete(v1_copy);
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
@@ -265,5 +293,6 @@ int main(void) {
 	RUN_TEST(test_pop_back);
 	RUN_TEST(test_erase);
 	RUN_TEST(test_clear);
+	RUN_TEST(test_swap);
 	return UNITY_END();
 }

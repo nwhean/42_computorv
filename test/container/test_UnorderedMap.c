@@ -134,6 +134,28 @@ void test_reserve(void) {
 	delete(m);
 }
 
+void test_swap(void) {
+	void						*str0 = new(Str, "Hello");
+	void						*str1 = new(Str, "World");
+	struct s_UnorderedMap		*m0 = new(UnorderedMap);
+	struct s_UnorderedMap		*m1 = new(UnorderedMap);
+	struct s_UnorderedMap		*m0_copy;
+	struct s_UnorderedMap		*m1_copy;
+
+	UnorderedMap_insert(m0, str0, copy(str0));
+	UnorderedMap_insert(m0, str1, copy(str1));
+	m0_copy = copy(m0);
+	m1_copy = copy(m1);
+
+	swap_UnorderedMap(m0, m1);
+	TEST_ASSERT_TRUE(equal(m0_copy, m1));
+	TEST_ASSERT_TRUE(equal(m1_copy, m0));
+	delete(m0);
+	delete(m1);
+	delete(m0_copy);
+	delete(m1_copy);
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
@@ -145,5 +167,6 @@ int main(void) {
 	RUN_TEST(test_erase);
 	RUN_TEST(test_clear);
 	RUN_TEST(test_reserve);
+	RUN_TEST(test_swap);
 	return UNITY_END();
 }

@@ -25,4 +25,7 @@ void	UnorderedMap_clear(void *self);
 /* hash policy */
 void	UnorderedMap_reserve(void *self, size_t count);
 
+/* non-member function */
+void	swap_UnorderedMap(void *self, void *other);
+
 #endif

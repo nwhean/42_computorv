@@ -126,6 +126,17 @@ void	UnorderedMap_reserve(void *_self, size_t count)
 	Vec_reserve(self->value, count);
 }
 
+/* The contents of container `self` are exchanged with those of `other`.
+ */
+void	swap_UnorderedMap(void *_self, void *_other)
+{
+	struct s_UnorderedMap	*self = _self;
+	struct s_UnorderedMap	*other = _other;
+
+	swap_Vec(self->key, other->key);
+	swap_Vec(self->value, other->value);
+}
+
 void	initUnorderedMap(void)
 {
 	initVec();

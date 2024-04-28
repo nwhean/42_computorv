@@ -1,8 +1,12 @@
 #include <stdarg.h>
 #include <string.h>
 
+/* container */
 #include "Str.h"
 #include "Str.r"
+
+/* other */
+#include "utility.h"
 
 const void	*Str;
 
@@ -138,6 +142,17 @@ bool	Str_equal(const void *_self, const void *_other)
 	if (retval)
 		return (strcmp(self->buffer, other->buffer) == 0);
 	return (false);
+}
+
+/* Exchanges the content of the Str containers. */
+void	swap_Str(void *_self, void *_other)
+{
+	struct s_Str	*self = _self;
+	struct s_Str	*other = _other;
+
+	swap_size_t(&self->size, &other->size);
+	swap_size_t(&self->capacity, &other->capacity);
+	swap_ptr((void**)&self->buffer, (void**)&other->buffer);
 }
 
 void	initStr(void)

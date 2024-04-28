@@ -1,8 +1,12 @@
 #include <string.h>
 
+/* containter */
 #include "Str.h"
 #include "Vec.h"
 #include "Vec.r"
+
+/* other */
+#include "utility.h"
 
 const void	*Vec;
 
@@ -210,6 +214,17 @@ void	Vec_clear(void *_self)
 	for (i = 0; i < self->size; ++i)
 		delete((void *)self->data[i]);
 	self->size = 0;
+}
+
+/* The contents of container x are exchanged with those of y. */
+void	swap_Vec(void *_self, void *_other)
+{
+	struct s_Vec	*self = _self;
+	struct s_Vec	*other = _other;
+
+	swap_size_t(&self->size, &other->size);
+	swap_size_t(&self->capacity, &other->capacity);
+	swap_ptr(&self->data, &other->data);
 }
 
 void	initVec(void)

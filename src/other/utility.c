@@ -28,8 +28,10 @@ void	swap_size_t(size_t *x, size_t *y)
 }
 
 /* Exchanges the content pointed to by of x and y. */
-void	swap_ptr(void **x, void **y)
+void	swap_ptr(void *_x, void *_y)
 {
+	void	**x = _x;
+	void	**y = _y;
 	void	*z = *x;
 
 	*x = *y;
