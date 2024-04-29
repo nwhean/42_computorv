@@ -23,4 +23,11 @@ size_t	Matrix_cols(const void *self);
 /* element access */
 void	*Matrix_at(const void *self, size_t m, size_t n);
 
+/* matrix operations */
+void	*Matrix_mmul(const void *self, const void *other);
+void	*Matrix_transpose(const void *self);
+void	*Matrix_invert(const void *self);
+void	*Matrix_solve(const void *_self, const void *b);
+void	*Matrix_determinant(const struct s_Matrix *self);
+
 #endif

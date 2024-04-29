@@ -11,10 +11,12 @@
 #include "Numeric.h"
 #include "Rational.h"
 #include "Matrix.h"
+#include "Vector.h"
 
 void setUp(void) {
 	initRational();
 	initMatrix();
+	initVector();
 }
 
 void tearDown(void) {
@@ -728,6 +730,266 @@ void test_promote_matrix(void) {
 	delete(target);
 }
 
+void test_mmul(void) {
+	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r01 = new(Rational, RATIONAL, 2, 1);
+	void				*v00 = new(Vec);
+	void				*v0 = new(Vec);
+	struct s_Matrix		*m0;
+
+	struct s_Rational	*r10 = new(Rational, RATIONAL, 3, 1);
+	struct s_Rational	*r11 = new(Rational, RATIONAL, 4, 1);
+	struct s_Rational	*r12 = new(Rational, RATIONAL, 5, 1);
+	struct s_Rational	*r13 = new(Rational, RATIONAL, 6, 1);
+	struct s_Rational	*r14 = new(Rational, RATIONAL, 7, 1);
+	struct s_Rational	*r15 = new(Rational, RATIONAL, 8, 1);
+	void				*v10 = new(Vec);
+	void				*v11 = new(Vec);
+	void				*v1 = new(Vec);
+	struct s_Matrix		*m1;
+
+	struct s_Rational	*r20 = new(Rational, RATIONAL, 15, 1);
+	struct s_Rational	*r21 = new(Rational, RATIONAL, 18, 1);
+	struct s_Rational	*r22 = new(Rational, RATIONAL, 21, 1);
+	void				*v20 = new(Vec);
+	void				*v2 = new(Vec);
+	struct s_Matrix		*m2;
+
+	struct s_Matrix		*m;
+
+	Vec_push_back(v00, r00);
+	Vec_push_back(v00, r01);
+	Vec_push_back(v0, v00);
+	m0 = new(Matrix, MATRIX, v0);
+
+	Vec_push_back(v10, r10);
+	Vec_push_back(v10, r11);
+	Vec_push_back(v10, r12);
+	Vec_push_back(v11, r13);
+	Vec_push_back(v11, r14);
+	Vec_push_back(v11, r15);
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
+	m1 = new(Matrix, MATRIX, v1);
+
+	Vec_push_back(v20, r20);
+	Vec_push_back(v20, r21);
+	Vec_push_back(v20, r22);
+	Vec_push_back(v2, v20);
+	m2 = new(Matrix, MATRIX, v2);
+
+	m = Matrix_mmul(m0, m1);
+	TEST_ASSERT_TRUE(numeric_equal(m, m2));
+	delete(m0);
+	delete(m1);
+	delete(m2);
+	delete(m);
+}
+
+void test_transpose(void) {
+	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r01 = new(Rational, RATIONAL, 2, 1);
+	void				*v00 = new(Vec);
+	void				*v0 = new(Vec);
+	struct s_Matrix		*m0;
+
+	struct s_Rational	*r10 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r11 = new(Rational, RATIONAL, 2, 1);
+	void				*v10 = new(Vec);
+	void				*v11 = new(Vec);
+	void				*v1 = new(Vec);
+	struct s_Matrix		*m1;
+
+	struct s_Matrix		*m;
+
+	Vec_push_back(v00, r00);
+	Vec_push_back(v00, r01);
+	Vec_push_back(v0, v00);
+	m0 = new(Matrix, MATRIX, v0);
+
+	Vec_push_back(v10, r10);
+	Vec_push_back(v11, r11);
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
+	m1 = new(Matrix, MATRIX, v1);
+
+	m = Matrix_transpose(m0);
+	TEST_ASSERT_TRUE(numeric_equal(m, m1));
+	delete(m0);
+	delete(m1);
+	delete(m);
+}
+
+void test_solve(void) {
+	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r01 = new(Rational, RATIONAL, 2, 1);
+	struct s_Rational	*r02 = new(Rational, RATIONAL, 3, 1);
+	struct s_Rational	*r03 = new(Rational, RATIONAL, 4, 1);
+	struct s_Rational	*r04 = new(Rational, RATIONAL, 5, 1);
+	struct s_Rational	*r05 = new(Rational, RATIONAL, 6, 1);
+	struct s_Rational	*r06 = new(Rational, RATIONAL, 7, 1);
+	struct s_Rational	*r07 = new(Rational, RATIONAL, 8, 1);
+	struct s_Rational	*r08 = new(Rational, RATIONAL, 10, 1);
+	void				*v00 = new(Vec);
+	void				*v01 = new(Vec);
+	void				*v02 = new(Vec);
+	void				*v0 = new(Vec);
+	struct s_Matrix		*m0;
+
+	struct s_Rational	*r10 = new(Rational, RATIONAL, 2, 1);
+	struct s_Rational	*r11 = new(Rational, RATIONAL, 4, 1);
+	struct s_Rational	*r12 = new(Rational, RATIONAL, 6, 1);
+	void				*v1 = new(Vec);
+	struct s_Vector		*b;
+
+	struct s_Rational	*r20 = new(Rational, RATIONAL, (long)-2, 3);
+	struct s_Rational	*r21 = new(Rational, RATIONAL, 4, 3);
+	struct s_Rational	*r22 = new(Rational, RATIONAL, 0, 1);
+	void				*v2 = new(Vec);
+	struct s_Vector		*target;
+
+	struct s_Vector		*x;
+
+	Vec_push_back(v00, r00);
+	Vec_push_back(v00, r01);
+	Vec_push_back(v00, r02);
+	Vec_push_back(v01, r03);
+	Vec_push_back(v01, r04);
+	Vec_push_back(v01, r05);
+	Vec_push_back(v02, r06);
+	Vec_push_back(v02, r07);
+	Vec_push_back(v02, r08);
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
+	Vec_push_back(v0, v02);
+	m0 = new(Matrix, MATRIX, v0);
+
+	Vec_push_back(v1, r10);
+	Vec_push_back(v1, r11);
+	Vec_push_back(v1, r12);
+	b = new(Vector, VECTOR, v1);
+
+	Vec_push_back(v2, r20);
+	Vec_push_back(v2, r21);
+	Vec_push_back(v2, r22);
+	target = new(Vector, VECTOR, v2);
+
+	x = Matrix_solve(m0, b);
+	TEST_ASSERT_TRUE(numeric_equal(x, target));
+	delete(m0);
+	delete(b);
+	delete(target);
+	delete(x);
+}
+
+void test_inverse(void) {
+	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r01 = new(Rational, RATIONAL, 2, 1);
+	struct s_Rational	*r02 = new(Rational, RATIONAL, 3, 1);
+	struct s_Rational	*r03 = new(Rational, RATIONAL, 4, 1);
+	struct s_Rational	*r04 = new(Rational, RATIONAL, 5, 1);
+	struct s_Rational	*r05 = new(Rational, RATIONAL, 6, 1);
+	struct s_Rational	*r06 = new(Rational, RATIONAL, 7, 1);
+	struct s_Rational	*r07 = new(Rational, RATIONAL, 8, 1);
+	struct s_Rational	*r08 = new(Rational, RATIONAL, 10, 1);
+	void				*v00 = new(Vec);
+	void				*v01 = new(Vec);
+	void				*v02 = new(Vec);
+	void				*v0 = new(Vec);
+	struct s_Matrix		*m0;
+
+	struct s_Rational	*r10 = new(Rational, RATIONAL, (long)-2, 3);
+	struct s_Rational	*r11 = new(Rational, RATIONAL, (long)-4, 3);
+	struct s_Rational	*r12 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r13 = new(Rational, RATIONAL, (long)-2, 3);
+	struct s_Rational	*r14 = new(Rational, RATIONAL, 11, 3);
+	struct s_Rational	*r15 = new(Rational, RATIONAL, (long)-2, 1);
+	struct s_Rational	*r16 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r17 = new(Rational, RATIONAL, (long)-2, 1);
+	struct s_Rational	*r18 = new(Rational, RATIONAL, 1, 1);
+	void				*v10 = new(Vec);
+	void				*v11 = new(Vec);
+	void				*v12 = new(Vec);
+	void				*v1 = new(Vec);
+	struct s_Matrix		*m1;
+
+	struct s_Matrix		*m;
+
+	Vec_push_back(v00, r00);
+	Vec_push_back(v00, r01);
+	Vec_push_back(v00, r02);
+	Vec_push_back(v01, r03);
+	Vec_push_back(v01, r04);
+	Vec_push_back(v01, r05);
+	Vec_push_back(v02, r06);
+	Vec_push_back(v02, r07);
+	Vec_push_back(v02, r08);
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
+	Vec_push_back(v0, v02);
+	m0 = new(Matrix, MATRIX, v0);
+
+	Vec_push_back(v10, r10);
+	Vec_push_back(v10, r11);
+	Vec_push_back(v10, r12);
+	Vec_push_back(v11, r13);
+	Vec_push_back(v11, r14);
+	Vec_push_back(v11, r15);
+	Vec_push_back(v12, r16);
+	Vec_push_back(v12, r17);
+	Vec_push_back(v12, r18);
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
+	Vec_push_back(v1, v12);
+	m1 = new(Matrix, MATRIX, v1);
+
+	m = Matrix_invert(m0);
+	TEST_ASSERT_TRUE(numeric_equal(m, m1));
+	delete(m0);
+	delete(m1);
+	delete(m);
+}
+
+void test_determinant(void) {
+	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r01 = new(Rational, RATIONAL, 2, 1);
+	struct s_Rational	*r02 = new(Rational, RATIONAL, 3, 1);
+	struct s_Rational	*r03 = new(Rational, RATIONAL, 4, 1);
+	struct s_Rational	*r04 = new(Rational, RATIONAL, 5, 1);
+	struct s_Rational	*r05 = new(Rational, RATIONAL, 6, 1);
+	struct s_Rational	*r06 = new(Rational, RATIONAL, 7, 1);
+	struct s_Rational	*r07 = new(Rational, RATIONAL, 8, 1);
+	struct s_Rational	*r08 = new(Rational, RATIONAL, 10, 1);
+	void				*v00 = new(Vec);
+	void				*v01 = new(Vec);
+	void				*v02 = new(Vec);
+	void				*v0 = new(Vec);
+	struct s_Matrix		*m0;
+
+	struct s_Rational	*target = new(Rational, RATIONAL, (long)-3, 1);
+	struct s_Rational	*r;
+
+	Vec_push_back(v00, r00);
+	Vec_push_back(v00, r01);
+	Vec_push_back(v00, r02);
+	Vec_push_back(v01, r03);
+	Vec_push_back(v01, r04);
+	Vec_push_back(v01, r05);
+	Vec_push_back(v02, r06);
+	Vec_push_back(v02, r07);
+	Vec_push_back(v02, r08);
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
+	Vec_push_back(v0, v02);
+	m0 = new(Matrix, MATRIX, v0);
+
+	r = Matrix_determinant(m0);
+	TEST_ASSERT_TRUE(numeric_equal(r, target));
+	delete(m0);
+	delete(r);
+	delete(target);
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
@@ -750,5 +1012,10 @@ int main(void) {
 	RUN_TEST(test_promote_complex);
 	RUN_TEST(test_promote_vector);
 	RUN_TEST(test_promote_matrix);
+	RUN_TEST(test_mmul);
+	RUN_TEST(test_transpose);
+	RUN_TEST(test_solve);
+	RUN_TEST(test_inverse);
+	RUN_TEST(test_determinant);
 	return UNITY_END();
 }

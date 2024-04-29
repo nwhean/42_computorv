@@ -11,6 +11,7 @@
 /* lexer */
 #include "Matrix.h"
 #include "Rational.h"
+#include "Vector.h"
 
 /* other */
 #include "utility.h"
@@ -61,6 +62,23 @@ static void	*Matrix_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* initialise the data structure for Matrix */
+static struct s_Matrix	*Matrix_init(const struct s_Matrix *self,
+									size_t rows, size_t cols)
+{
+	struct s_Matrix	*retval = super_copy(Matrix, self);
+
+	retval->rows = rows;
+	retval->cols = cols;
+	retval->data = calloc(sizeof(void *), rows * cols);
+	if (!retval->data)
+	{
+		delete(retval);
+		return (NULL);
+	}
+	return (retval);
+}
+
 /* Return a copy of the Matrix. */
 static struct s_Matrix	*Matrix_copy(const void *_self)
 {
@@ -68,15 +86,7 @@ static struct s_Matrix	*Matrix_copy(const void *_self)
 	struct s_Matrix			*retval;
 	size_t					i;
 
-	retval = super_copy(Matrix, self);
-	retval->rows = self->rows;
-	retval->cols = self->cols;
-	retval->data = calloc(sizeof(void *), self->rows * self->cols);
-	if (!retval->data)
-	{
-		delete(retval);
-		return (NULL);
-	}
+	retval = Matrix_init(self, self->rows, self->cols);
 	for (i = 0; i < retval->rows * retval->cols; ++i)
 		retval->data[i] = copy(self->data[i]);
 	return (retval);
@@ -130,18 +140,11 @@ static void	*Matrix_op_Scalar(const void *_self,
 							void* (*func)(const void *, const void *))
 {
 	const struct s_Matrix	*self = _self;
-	struct s_Matrix			*retval;
+	struct s_Matrix			*retval = Matrix_init(self, self->rows, self->cols);
 	size_t					i;
 
-	retval = super_copy(Matrix, self);
-	retval->rows = self->rows;
-	retval->cols = self->cols;
-	retval->data = calloc(sizeof(void *), self->rows * self->cols);
-	if (!retval->data)
-	{
-		delete(retval);
+	if (!retval)
 		return (NULL);
-	}
 	for (i = 0; i < retval->rows * retval->cols; ++i)
 		retval->data[i] = func(self->data[i], _other);
 	return (retval);
@@ -162,15 +165,9 @@ static void	*Matrix_op_Matrix(const void *_self,
 		fprintf(stderr, "%s\n", "Matrix_op_Matrix: incompatible sizes.");
 		return (NULL);
 	}
-	retval = super_copy(Matrix, self);
-	retval->rows = self->rows;
-	retval->cols = self->cols;
-	retval->data = calloc(sizeof(void *), self->rows * self->cols);
-	if (!retval->data)
-	{
-		delete(retval);
+	retval = Matrix_init(self, self->rows, self->cols);
+	if (!retval)
 		return (NULL);
-	}
 	for (i = 0; i < retval->rows * retval->cols; ++i)
 		retval->data[i] = func(self->data[i], other->data[i]);
 	return (retval);
@@ -386,4 +383,349 @@ void	*Matrix_at(const void *_self, size_t m, size_t n)
 	const struct s_Matrix	*self = _self;
 
 	return (self->data[m * self->cols + n]);
+}
+
+/* Return the matrix multiplication of two Matrices. */
+void	*Matrix_mmul(const void *_self, const void *_other)
+{
+	const struct s_Matrix	*self = _self;
+	const struct s_Matrix	*other = _other;
+	struct s_Matrix			*retval = NULL;
+	size_t					i;
+	size_t					j;
+	size_t					k;
+
+	if (Token_get_tag(_other) != MATRIX)
+	{
+		fprintf(stderr, "%s\n", "Matrix_mmul: only Matrix input allowed.");
+		return (NULL);
+	}
+	if (self->cols != other->rows)
+	{
+		fprintf(stderr, "%s\n", "Matrix_mmul: Incompatible matrix sizes.");
+		return (NULL);
+	}
+	retval = Matrix_init(self, self->rows, other->cols);
+	if (!retval)
+		return (NULL);
+	for (i = 0; i < retval->rows * retval->cols; ++i)
+		retval->data[i] = new(Rational, RATIONAL, 0, 1);
+	for (i = 0; i < self->rows; ++i)
+	{
+		for (k = 0; k < self->cols; ++k)
+		{
+			for (j = 0; j < other->cols; ++j)
+			{
+				void	*mul= numeric_mul(self->data[i * self->cols + k],
+								  		other->data[k * other->cols + j]);
+				numeric_iadd(&retval->data[i * other->cols + j], mul);
+				delete(mul);
+			}
+		}
+	}
+	return (retval);
+}
+
+/* Return the transpose of a Matrix. */
+void	*Matrix_transpose(const void *_self)
+{
+	const struct s_Matrix	*self = _self;
+	struct s_Matrix			*retval = Matrix_init(self, self->cols, self->rows);
+	size_t					i;
+	size_t					j;
+
+	for (i = 0; i < retval->rows; ++i)
+	{
+		for (j = 0; j < retval->cols; ++j)
+		{
+			retval->data[i * retval->cols + j]
+				= copy(self->data[j * self->cols + i]);
+		}
+	}
+	return (retval);
+}
+
+/* swap the row `i` and row `j` of matrix `A`.*/
+static void	swap_row(struct s_Matrix *A, size_t i, size_t j)
+{
+	size_t	k;
+
+	for (k = 0; k < A->cols; ++k)
+		swap_ptr(&A->data[i * A->cols + k], &A->data[j * A->cols + k]);
+}
+
+/* INPUT:
+ * `A` - array of pointers to rows of a square matrix having dimension N
+ * `Tol` - small tolerance number to detect failure when the matrix is
+ *		 near degenerate
+ * OUTPUT:
+ * Matrix `A` is changed, it contains a copy of both matrices L-E and U
+ * as A=(L-E)+U such that P*A=L*U. The permutation matrix is not stored
+ * as a matrix, but in an integer vector P of size N+1 containing column
+ * indexes where the permutation matrix has "1". The last element P[N] = S+N,
+ * where S is the number of row exchanges needed for determinant computation, det(P)=(-1)^S
+ *
+ * Reference: https://en.wikipedia.org/wiki/LU_decomposition
+ */
+static bool	LUP_decompose(struct s_Matrix *A, size_t *P)
+{
+	size_t				i;
+	size_t				j;
+	size_t				k;
+	size_t				imax;
+	size_t				N = A->cols;
+	struct s_Rational	*maxA = NULL;
+	struct s_Rational	*absA = NULL;
+	struct s_Rational	*Tol = new(Rational, RATIONAL, 1, (long)1e8);
+
+	/* Unit permutation matrix, P[N] initialized with N */
+	for (i = 0; i <= N; ++i)
+		P[i] = i;
+
+	for (i = 0; i < N; i++)
+	{
+		delete(maxA);
+		maxA = new(Rational, RATIONAL, 0, 1);
+		imax = i;
+
+		for (k = i; k < N; k++)
+		{
+			delete(absA);
+			absA = copy(Matrix_at(A, k, i));
+			if (absA->numerator < 0)
+				absA->numerator *= -1;
+			if (Rational_gt(absA, maxA))
+			{
+				delete(maxA);
+				maxA = copy(absA);
+				imax = k;
+			}
+		}
+
+		/* failure, matrix is degenerate */
+		if (Rational_lt(maxA, Tol))
+		{
+			delete(absA);
+			delete(maxA);
+			delete(Tol);
+			return (false);
+		}
+
+		if (imax != i)
+		{
+			/* pivoting P */
+			j = P[i];
+			P[i] = P[imax];
+			P[imax] = j;
+
+			/* pivoting rows of A */
+			swap_row(A, i, imax);
+
+			/* counting pivots starting from N (for determinant) */
+			P[N]++;
+		}
+
+		for (j = i + 1; j < N; j++)
+		{
+			numeric_idiv(&A->data[j * A->cols + i],  A->data[i * A->cols + i]);
+
+			for (k = i + 1; k < N; k++)
+			{
+				void	*temp = numeric_mul(A->data[j * A->cols + i],
+											A->data[i * A->cols + k]);
+				numeric_isub(&A->data[j * A->cols + k], temp);
+				delete(temp);
+			}
+		}
+	}
+	delete(absA);
+	delete(maxA);
+	delete(Tol);
+	return (true);
+}
+
+/* INPUT: A,P filled in LUP_decompose; b - rhs vector; N - dimension
+ * OUTPUT: x - solution vector of A*x=b
+ *
+ * Reference: https://en.wikipedia.org/wiki/LU_decomposition
+ */
+static struct s_Vector	*LUP_solve(
+	struct s_Matrix *A, size_t *P, const struct s_Vector *b)
+{
+	struct s_Vector	*x = copy(b);
+	size_t			N = A->cols;
+	size_t			i;
+	size_t			k;
+
+	for (i = 0; i < N; i++)
+	{
+		delete(x->data[i]);
+		x->data[i] = copy(Vector_at(b, P[i]));
+
+		for (k = 0; k < i; k++)
+		{
+			void	*temp = numeric_mul(Matrix_at(A, i, k), Vector_at(x, k));
+
+			numeric_isub(&x->data[i], temp);
+			delete(temp);
+		}
+	}
+
+	for (i = N - 1; i + 1 > 0; i--)
+	{
+		for (k = i + 1; k < N; k++)
+		{
+			void	*temp = numeric_mul(Matrix_at(A, i, k), Vector_at(x, k));
+
+			numeric_isub(&x->data[i], temp);
+			delete(temp);
+		}
+		numeric_idiv(&x->data[i], Matrix_at(A, i, i));
+	}
+
+	return (x);
+}
+
+/* Solve the system of equations A * x = b */
+void	*Matrix_solve(const void *_self, const void *b)
+{
+	const struct s_Matrix	*self = _self;
+	struct s_Matrix			*A;
+	struct s_Vector			*retval = NULL;
+	size_t					*P;
+
+	if (self->rows != self->cols)
+	{
+		fprintf(stderr, "%s\n", "Matrix_solve: input is not square.");
+		return (NULL);
+	}
+	if (self->cols != Vector_size(b))
+	{
+		fprintf(stderr, "%s\n",
+				"Matrix_solve: incompatible Matrix and Vector size.");
+		return (NULL);
+	}
+	A = copy(self);
+	P = calloc(sizeof(size_t), self->cols + 1);
+	if (!P)
+		return (NULL);
+	if (LUP_decompose(A, P))
+		retval = LUP_solve(A, P, b);
+	delete(A);
+	free(P);
+	return (retval);
+}
+
+/* INPUT: A,P filled in LUP_decompose; N - dimension
+ * OUTPUT: IA is the inverse of the initial matrix
+ *
+ * Reference: https://en.wikipedia.org/wiki/LU_decomposition
+ */
+static struct s_Matrix	*LUP_invert(struct s_Matrix *A, size_t *P)
+{
+	size_t			N = A->cols;
+	struct s_Matrix	*IA = Matrix_init(A, N, N);
+	size_t			i;
+	size_t			j;
+	size_t			k;
+
+	if (!IA)
+		return (NULL);
+
+	for (j = 0; j < N; j++)
+	{
+		for (i = 0; i < N; i++)
+		{
+			IA->data[i * N + j] = new(Rational, RATIONAL, P[i] == j ? 1 : 0, 1);
+
+			for (k = 0; k < i; k++)
+			{
+				void	*temp;
+
+				temp = numeric_mul(Matrix_at(A, i, k), Matrix_at(IA, k, j));
+				numeric_isub(&IA->data[i * N + j], temp);
+				delete(temp);
+			}
+		}
+
+		for (i = N - 1; i + 1 > 0; i--)
+		{
+			for (k = i + 1; k < N; k++)
+			{
+				void	*temp;
+
+				temp = numeric_mul(Matrix_at(A, i, k), Matrix_at(IA, k, j));
+				numeric_isub(&IA->data[i * N + j], temp);
+				delete(temp);
+			}
+
+			numeric_idiv(&IA->data[i * N + j], Matrix_at(A, i, i));
+		}
+	}
+
+	return (IA);
+}
+
+/* Return the inverse of a Matrix. */
+void	*Matrix_invert(const void *_self)
+{
+	const struct s_Matrix	*self = _self;
+	struct s_Matrix			*A;
+	struct s_Matrix			*retval = NULL;
+	size_t					*P;
+
+	if (self->rows != self->cols)
+	{
+		fprintf(stderr, "%s\n", "Matrix_invert: input is not square.");
+		return (NULL);
+	}
+	A = copy(self);
+	P = calloc(sizeof(size_t), self->cols + 1);
+	if (!P)
+		return (NULL);
+	if (LUP_decompose(A, P))
+		retval = LUP_invert(A, P);
+	delete(A);
+	free(P);
+	return (retval);
+}
+
+/* INPUT: A,P filled in LUPDecompose; N - dimension.
+ * OUTPUT: Function returns the determinant of the initial matrix
+ *
+ * Reference: https://en.wikipedia.org/wiki/LU_decomposition
+ */
+void	*LUP_determinant(struct s_Matrix *A, size_t *P)
+{
+	size_t	N = A->cols;
+	void	*det = copy(Matrix_at(A, 0, 0));
+	size_t	i;
+
+	for (i = 1; i < N; i++)
+		numeric_imul(&det, Matrix_at(A, i, i));
+
+	return (P[N] - N) % 2 == 0 ? det : numeric_ineg(&det);
+}
+
+void	*Matrix_determinant(const struct s_Matrix *_self)
+{
+	const struct s_Matrix	*self = _self;
+	struct s_Matrix			*A;
+	void					*retval = NULL;
+	size_t					*P;
+
+	if (self->rows != self->cols)
+	{
+		fprintf(stderr, "%s\n", "Matrix_determinant: input is not square.");
+		return (NULL);
+	}
+	A = copy(self);
+	P = calloc(sizeof(size_t), self->cols + 1);
+	if (!P)
+		return (NULL);
+	if (LUP_decompose(A, P))
+		retval = LUP_determinant(A, P);
+	delete(A);
+	free(P);
+	return (retval);
 }
