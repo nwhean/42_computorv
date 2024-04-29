@@ -164,9 +164,7 @@ static void	*Rational_add_Rational(const void *_self, const void *_other)
 /* Return the addition of two Numerics. */
 static void	*Rational_add(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 			return (Rational_add_Rational(_self, _other));
@@ -197,10 +195,9 @@ static void	*Rational_sub_Rational(const void *_self, const void *_other)
 /* Return the subtraction of one Numeric from another. */
 static void	*Rational_sub(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
 	void					*retval;
 
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 			return (Rational_sub_Rational(_self, _other));
@@ -233,13 +230,10 @@ static void	*Rational_mul_Rational(const void *_self, const void *_other)
 /* Return the multiplication of two Numerics. */
 static void	*Rational_mul(const void *_self, const void *_other)
 {
-	const struct s_Rational	*self = _self;
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
-			return Rational_mul_Rational(self, other);
+			return Rational_mul_Rational(_self, _other);
 		case COMPLEX:
 		case VECTOR:
 		case MATRIX:
@@ -268,18 +262,16 @@ static void	*Rational_div_Rational(const void *_self, const void *_other)
 /* Return the division of one Numeric from another. */
 static void	*Rational_div(const void *_self, const void *_other)
 {
-	const struct s_Rational	*self = _self;
-	const struct s_Token	*other = _other;
-	void					*retval;
+	void	*retval;
 
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
-			return (Rational_div_Rational(self, other));
+			return (Rational_div_Rational(_self, _other));
 			break ;
 		case COMPLEX:
-			retval = numeric_promote(self, COMPLEX);
-			return (numeric_idiv(&retval, other));
+			retval = numeric_promote(_self, COMPLEX);
+			return (numeric_idiv(&retval, _other));
 		case VECTOR:
 			fprintf(stderr, "%s\n", "Rational_div: incompatible with Vector.");
 			return (NULL);
@@ -321,9 +313,7 @@ static void	*Rational_mod_Rational(const void *_self, const void *_other)
 /* Return remainder from the division of one Numeric from another. */
 static void	*Rational_mod(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 			return (Rational_mod_Rational(_self, _other));
@@ -388,16 +378,15 @@ static void	*Rational_pow_Rational(const void *_self, const void *_other)
 /* Return the exponentiation of one Numeric to another. */
 static void	*Rational_pow(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-	void					*retval;
+	void	*retval;
 
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 			return (Rational_pow_Rational(_self, _other));
 		case COMPLEX:
 			retval = numeric_promote(_self, COMPLEX);
-			return (numeric_ipow(&retval, other));
+			return (numeric_ipow(&retval, _other));
 		case VECTOR:
 			fprintf(stderr, "%s\n", "Rational_pow: incompatible with Vector.");
 			return (NULL);

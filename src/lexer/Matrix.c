@@ -179,9 +179,7 @@ static void	*Matrix_op_Matrix(const void *_self,
 /* Return the addition of two Numerics. */
 static void	*Matrix_add(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 		case COMPLEX:
@@ -201,9 +199,7 @@ static void	*Matrix_add(const void *_self, const void *_other)
 /* Return the subtraction of one Numeric from another. */
 static void	*Matrix_sub(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 		case COMPLEX:
@@ -223,9 +219,7 @@ static void	*Matrix_sub(const void *_self, const void *_other)
 /* Return the multiplication of two Numerics. */
 static void	*Matrix_mul(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 		case COMPLEX:
@@ -244,9 +238,7 @@ static void	*Matrix_mul(const void *_self, const void *_other)
 /* Return the division of one Numeric from another. */
 static void	*Matrix_div(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 		case COMPLEX:
@@ -265,9 +257,7 @@ static void	*Matrix_div(const void *_self, const void *_other)
 /* Return remainder from the division of one Numeric from another. */
 static void	*Matrix_mod(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 		case COMPLEX:
@@ -373,7 +363,6 @@ void	initMatrix(void)
 		initRational();
 	}
 }
-
 
 /* Return the row size of the Matrix. */
 size_t	Matrix_rows(const void *_self)

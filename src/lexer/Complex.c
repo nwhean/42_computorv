@@ -93,10 +93,9 @@ static void	*Complex_add_Complex(const void *_self, const void *_other)
 /* Return the addition of two Numerics. */
 static void	*Complex_add(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
 	void					*retval = NULL;
 
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 			retval = numeric_promote(_other, COMPLEX);
@@ -128,10 +127,9 @@ static void	*Complex_sub_Complex(const void *_self, const void *_other)
 /* Return the subtraction of one Numeric from another. */
 static void	*Complex_sub(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
 	void					*retval;
 
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 			retval = numeric_promote(_other, COMPLEX);
@@ -176,10 +174,9 @@ static void	*Complex_mul_Complex(const void *_self, const void *_other)
 /* Return the multiplication of two Numerics. */
 static void	*Complex_mul(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
 	void					*retval;
 
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 			retval = numeric_promote(_other, COMPLEX);
@@ -229,14 +226,12 @@ static void	*Complex_div_Complex(const void *_self, const void *_other)
 /* Return the division of one Complex to another Numeric. */
 static void	*Complex_div(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
-			return Complex_div_Rational(_self, other);
+			return Complex_div_Rational(_self, _other);
 		case COMPLEX:
-			return Complex_div_Complex(_self, other);
+			return Complex_div_Complex(_self, _other);
 		case VECTOR:
 			fprintf(stderr, "%s\n", "Complex_div: incompatible with Vector.");
 			return (NULL);
@@ -311,9 +306,7 @@ static void	*Complex_pow_Complex(const void *_self, const void *_other)
 /* Return the exponentiation of one Numeric to another. */
 static void	*Complex_pow(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 			return (Complex_pow_Rational(_self, _other));
@@ -335,10 +328,7 @@ static void	*Complex_pow(const void *_self, const void *_other)
 static bool	Complex_equal(
 		const struct s_Complex *_self, const struct s_Complex *_other)
 {
-	const struct s_Token	*self = (const struct s_Token *)_self;
-	const struct s_Token	*other = (const struct s_Token *)_other;
-
-	if (self->tag != other->tag)
+	if (Token_get_tag(_self) != Token_get_tag(_other))
 		return (false);
 	if (!numeric_equal(_self->real, _other->real))
 		return (false);
@@ -454,11 +444,10 @@ struct s_Rational	*Complex_argument(const struct s_Complex *self)
 /* Return the conjugate of a Complex number. */
 struct s_Complex	*Complex_conjugate(const struct s_Complex *self)
 {
-	const struct s_Token	*_self = (const struct s_Token *)self;
 	void					*real;
 	void					*imag;
 
-	if (_self->tag == RATIONAL)
+	if (Token_get_tag(self) == RATIONAL)
 		return (copy(self));
 	real = copy(self->real);
 	imag = copy(self->imag);

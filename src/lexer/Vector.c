@@ -138,9 +138,7 @@ static void	*Vector_op_Vector(const void *_self,
 /* Return the addition of two Numerics. */
 static void	*Vector_add(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 			fprintf(stderr, "%s\n", "Vector_add: incompatible with Rational.");
@@ -162,9 +160,7 @@ static void	*Vector_add(const void *_self, const void *_other)
 /* Return the subtraction of one Numeric from another. */
 static void	*Vector_sub(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 			fprintf(stderr, "%s\n", "Vector_sub: incompatible with Rational.");
@@ -186,9 +182,7 @@ static void	*Vector_sub(const void *_self, const void *_other)
 /* Return the multiplication of two Numerics. */
 static void	*Vector_mul(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 		case COMPLEX:
@@ -207,9 +201,7 @@ static void	*Vector_mul(const void *_self, const void *_other)
 /* Return the division of one Numeric from another. */
 static void	*Vector_div(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 		case COMPLEX:
@@ -228,9 +220,7 @@ static void	*Vector_div(const void *_self, const void *_other)
 /* Return remainder from the division of one Numeric from another. */
 static void	*Vector_mod(const void *_self, const void *_other)
 {
-	const struct s_Token	*other = _other;
-
-	switch (other->tag)
+	switch (Token_get_tag(_other))
 	{
 		case RATIONAL:
 		case COMPLEX:
@@ -373,11 +363,11 @@ struct s_Vector	*Vector_conjugate(const void *_self)
 
 	for (i = 0; i < self->size; ++i)
 	{
-		struct s_Token	*elem = self->data[i];
-		if (elem->tag == RATIONAL)
-			Vec_push_back(vec, copy((void *)elem));
-		else if (elem->tag == COMPLEX)
-			Vec_push_back(vec, Complex_conjugate((void *)elem));
+		void	*elem = self->data[i];
+		if (Token_get_tag(elem) == RATIONAL)
+			Vec_push_back(vec, copy(elem));
+		else if (Token_get_tag(elem) == COMPLEX)
+			Vec_push_back(vec, Complex_conjugate(elem));
 		else
 		{
 			fprintf(stderr, "%s\n", "Vector_conjugate: Unexpected input type");
