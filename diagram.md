@@ -91,6 +91,11 @@ classDiagram
 		+long numerator
 		+long denominator
 		+to_double() double
+		+Rational_neq(Rational a, Rational b) bool;
+		+Rational_lt(Rational a, Rational b) bool;
+		+Rational_gt(Rational a, Rational b) bool;
+		+Rational_le(Rational a, Rational b) bool;
+		+Rational_ge(Rational a, Rational b) bool;
 	}
 
 	Numeric <|-- Complex
@@ -155,6 +160,7 @@ classDiagram
 
 	class Token {
 		+Tag tag
+		Token_get_tag(const void *) Tag;
 	}
 
 	Token <|-- Word

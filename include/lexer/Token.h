@@ -33,5 +33,6 @@ struct	s_TokenClass	/* TokenClass: Class */
 extern const void	*TokenClass;
 
 void		initToken(void);
+enum e_Tag	Token_get_tag(const void *);
 
 #endif

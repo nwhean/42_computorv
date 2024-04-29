@@ -17,4 +17,11 @@ void	initRational(void);
 void	*Rational_from_double(double n);
 double	Rational_to_double(const struct s_Rational *self);
 
+/* relational */
+bool	Rational_neq(const struct s_Rational *a, const struct s_Rational *b);
+bool	Rational_lt(const struct s_Rational *a, const struct s_Rational *b);
+bool	Rational_gt(const struct s_Rational *a, const struct s_Rational *b);
+bool	Rational_le(const struct s_Rational *a, const struct s_Rational *b);
+bool	Rational_ge(const struct s_Rational *a, const struct s_Rational *b);
+
 #endif

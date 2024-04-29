@@ -35,6 +35,12 @@ static long	gcd(long a, long b)
 	return (a);
 }
 
+/* Return the Least Common Multiple of two numbers. */
+static long	lcm(long a, long b)
+{
+	return (labs(a * b) / gcd(a, b));
+}
+
 /* Rational constructor method. */
 static void	*Rational_ctor(void *_self, va_list *app)
 {
@@ -405,19 +411,110 @@ static void	*Rational_pow(const void *_self, const void *_other)
 }
 
 /* Return true if two Rationals are the same, false otherwise. */
-static bool	Rational_equal(
-		const struct s_Rational *_self, const struct s_Rational *_other)
+static bool	Rational_eq(const struct s_Rational *a, const struct s_Rational *b)
 {
-	const struct s_Token	*self = (const struct s_Token *)_self;
-	const struct s_Token	*other = (const struct s_Token *)_other;
+	long	n1 = a->numerator;
+	long	d1 = a->denominator;
+	long	n2 = b->numerator;
+	long	d2 = b->denominator;
 
-	if (self->tag != other->tag)
+	if (Token_get_tag(a) != Token_get_tag(b))
 		return (false);
-	if (_self->numerator != _other->numerator)
+	if (n1 != n2)
 		return (false);
-	if (_self->denominator != _other->denominator)
+	if (d1 != d2)
 		return (false);
 	return (true);
+}
+
+/* Return true if two Rational are not equal, false otherwise. */
+bool	Rational_neq(const struct s_Rational *a, const struct s_Rational *b)
+{
+	return (!Rational_eq(a, b));
+}
+
+/* Return true if a is less than b. */
+bool	Rational_lt(const struct s_Rational *a, const struct s_Rational *b)
+{
+	long	n1 = a->numerator;
+	long	d1 = a->denominator;
+	long	n2 = b->numerator;
+	long	d2 = b->denominator;
+	long	f;
+
+	if (Token_get_tag(a) != Token_get_tag(b))
+		return (false);
+	if (n1 == 0 && n2 == 0)
+		return (false);
+	if (n1 < 0 && n2 > 0)
+		return (true);
+	f = lcm(d1, d2);
+	n1 *= f / d1;
+	n2 *= f / d2;
+	return (n1 < n2);
+}
+
+/* Return true if a is greater than b. */
+bool	Rational_gt(const struct s_Rational *a, const struct s_Rational *b)
+{
+	long	n1 = a->numerator;
+	long	d1 = a->denominator;
+	long	n2 = b->numerator;
+	long	d2 = b->denominator;
+	long	f;
+
+	if (Token_get_tag(a) != Token_get_tag(b))
+		return (false);
+	if (n1 == 0 && n2 == 0)
+		return (false);
+	if (n1 > 0 && n2 < 0)
+		return (true);
+	f = lcm(d1, d2);
+	n1 *= f / d1;
+	n2 *= f / d2;
+	return (n1 > n2);
+}
+
+/* Return true if a is less than or equal to b, false otherwise. */
+bool	Rational_le(const struct s_Rational *a, const struct s_Rational *b)
+{
+	long	n1 = a->numerator;
+	long	d1 = a->denominator;
+	long	n2 = b->numerator;
+	long	d2 = b->denominator;
+	long	f;
+
+	if (Token_get_tag(a) != Token_get_tag(b))
+		return (false);
+	if (n1 == 0 && n2 == 0)
+		return (true);
+	if (n1 < 0 && n2 > 0)
+		return (true);
+	f = lcm(d1, d2);
+	n1 *= f / d1;
+	n2 *= f / d2;
+	return (n1 <= n2);
+}
+
+/* Return true if a is greater than or equal to b, false otherwise. */
+bool	Rational_ge(const struct s_Rational *a, const struct s_Rational *b)
+{
+	long	n1 = a->numerator;
+	long	d1 = a->denominator;
+	long	n2 = b->numerator;
+	long	d2 = b->denominator;
+	long	f;
+
+	if (Token_get_tag(a) != Token_get_tag(b))
+		return (false);
+	if (n1 == 0 && n2 == 0)
+		return (true);
+	if (n1 > 0 && n2 < 0)
+		return (true);
+	f = lcm(d1, d2);
+	n1 *= f / d1;
+	n2 *= f / d2;
+	return (n1 >= n2);
 }
 
 /* Promote one Numeric type to another */
@@ -464,7 +561,7 @@ void	initRational(void)
 				ctor, Rational_ctor,
 				copy, Rational_copy,
 				str, Rational_str,
-				equal, Rational_equal,
+				equal, Rational_eq,
 				numeric_add, Rational_add,
 				numeric_sub, Rational_sub,
 				numeric_mul, Rational_mul,

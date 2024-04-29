@@ -90,3 +90,11 @@ void	initToken(void)
 				equal, Token_equal,
 				0);
 }
+
+/* return the tag of a Token. */
+enum e_Tag	Token_get_tag(const void *_self)
+{
+	const struct s_Token	*self = _self;
+
+	return (self->tag);
+}

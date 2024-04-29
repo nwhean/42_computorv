@@ -19,7 +19,7 @@ void tearDown(void) {
 }
 
 void test_ctor(void) {
-	struct s_Rational	*rational = new(Rational, RATIONAL, (long)-3, (long)5);
+	struct s_Rational	*rational = new(Rational, RATIONAL, (long)-3, 5);
 	TEST_ASSERT_EQUAL(rational->numerator, -3);
 	TEST_ASSERT_EQUAL(rational->denominator, 5);
 	delete(rational);
@@ -56,7 +56,7 @@ void test_from_double4(void) {
 }
 
 void test_to_double(void) {
-	struct s_Rational	*rational = new(Rational, RATIONAL, (long)1, (long)-1);
+	struct s_Rational	*rational = new(Rational, RATIONAL, 1, (long)-1);
 	double				val = Rational_to_double(rational);
 	double				target = -0.1;
 	TEST_ASSERT_FLOAT_WITHIN(1e-7, target, val);
@@ -74,8 +74,8 @@ void test_str(void) {
 }
 
 void test_add(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, (long)1, (long)2);
-	struct s_Rational	*b = new(Rational, RATIONAL, (long)3, (long)5);
+	struct s_Rational	*a = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*b = new(Rational, RATIONAL, 3, 5);
 	struct s_Rational	*target = numeric_add(a, b);
 	TEST_ASSERT_EQUAL(target->numerator, 11);
 	TEST_ASSERT_EQUAL(target->denominator, 10);
@@ -85,8 +85,8 @@ void test_add(void) {
 }
 
 void test_sub(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, (long)1, (long)2);
-	struct s_Rational	*b = new(Rational, RATIONAL, (long)3, (long)5);
+	struct s_Rational	*a = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*b = new(Rational, RATIONAL, 3, 5);
 	struct s_Rational	*target = numeric_sub(a, b);
 	TEST_ASSERT_EQUAL(target->numerator, -1);
 	TEST_ASSERT_EQUAL(target->denominator, 10);
@@ -96,8 +96,8 @@ void test_sub(void) {
 }
 
 void test_mul(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, (long)22, (long)7);
-	struct s_Rational	*b = new(Rational, RATIONAL, (long)3, (long)5);
+	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
+	struct s_Rational	*b = new(Rational, RATIONAL, 3, 5);
 	struct s_Rational	*target = numeric_mul(a, b);
 	TEST_ASSERT_EQUAL(target->numerator, 66);
 	TEST_ASSERT_EQUAL(target->denominator, 35);
@@ -107,8 +107,8 @@ void test_mul(void) {
 }
 
 void test_div(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, (long)22, (long)7);
-	struct s_Rational	*b = new(Rational, RATIONAL, (long)-3, (long)5);
+	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
+	struct s_Rational	*b = new(Rational, RATIONAL, (long)-3, 5);
 	struct s_Rational	*target = numeric_div(a, b);
 	TEST_ASSERT_EQUAL(target->numerator, -110);
 	TEST_ASSERT_EQUAL(target->denominator, 21);
@@ -118,8 +118,8 @@ void test_div(void) {
 }
 
 void test_mod1(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, (long)22, (long)7);
-	struct s_Rational	*b = new(Rational, RATIONAL, (long)3, (long)5);
+	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
+	struct s_Rational	*b = new(Rational, RATIONAL, 3, 5);
 	struct s_Rational	*target = numeric_mod(a, b);
 	TEST_ASSERT_EQUAL(target->numerator, 1);
 	TEST_ASSERT_EQUAL(target->denominator, 7);
@@ -129,8 +129,8 @@ void test_mod1(void) {
 }
 
 void test_mod2(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, (long)22, (long)7);
-	struct s_Rational	*b = new(Rational, RATIONAL, (long)-3, (long)5);
+	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
+	struct s_Rational	*b = new(Rational, RATIONAL, (long)-3, 5);
 	struct s_Rational	*target = numeric_mod(a, b);
 	TEST_ASSERT_EQUAL(target->numerator, -16);
 	TEST_ASSERT_EQUAL(target->denominator, 35);
@@ -140,7 +140,7 @@ void test_mod2(void) {
 }
 
 void test_neg(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, (long)1, (long)2);
+	struct s_Rational	*a = new(Rational, RATIONAL, 1, 2);
 	struct s_Rational	*target = numeric_neg(a);
 
 	TEST_ASSERT_EQUAL(target->numerator, -1);
@@ -150,8 +150,8 @@ void test_neg(void) {
 }
 
 void test_pow(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, (long)22, (long)7);
-	struct s_Rational	*b = new(Rational, RATIONAL, (long)3, (long)5);
+	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
+	struct s_Rational	*b = new(Rational, RATIONAL, 3, 5);
 	struct s_Rational	*target = numeric_pow(a, b);
 	double				val = Rational_to_double(target);
 	TEST_ASSERT_FLOAT_WITHIN(1e-7, val, 1.9879011478604334);
@@ -161,8 +161,8 @@ void test_pow(void) {
 }
 
 void test_pow_neg_to_non_integer(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, (long)-1, (long)2);
-	struct s_Rational	*b = new(Rational, RATIONAL, (long)21, (long)10);
+	struct s_Rational	*a = new(Rational, RATIONAL, (long)-1, 2);
+	struct s_Rational	*b = new(Rational, RATIONAL, 21, 10);
 	struct s_Complex	*target = numeric_pow(a, b);
 	double				real = Rational_to_double(target->real);
 	double				imag = Rational_to_double(target->imag);
@@ -174,26 +174,76 @@ void test_pow_neg_to_non_integer(void) {
 	delete(target);
 }
 
-void test_equal_true(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, (long)22, (long)7);
-	struct s_Rational	*b = new(Rational, RATIONAL, (long)22, (long)7);
+void test_equal(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
+	struct s_Rational	*b = new(Rational, RATIONAL, 22, 7);
+	struct s_Rational	*c = new(Rational, RATIONAL, 3, 5);
 
 	TEST_ASSERT_TRUE(numeric_equal(a, b));
+	TEST_ASSERT_FALSE(numeric_equal(a, c));
+	delete(a);
+	delete(b);
+	delete(c);
+}
+
+void test_neq(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
+	struct s_Rational	*b = new(Rational, RATIONAL, 22, 7);
+	struct s_Rational	*c = new(Rational, RATIONAL, 3, 5);
+
+	TEST_ASSERT_TRUE(Rational_neq(b, c));
+	TEST_ASSERT_FALSE(Rational_neq(a, b));
+	delete(a);
+	delete(b);
+	delete(c);
+}
+
+void test_lt(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*b = new(Rational, RATIONAL, 1, 3);
+
+	TEST_ASSERT_TRUE(Rational_lt(b, a));
+	TEST_ASSERT_FALSE(Rational_lt(a, b));
+	TEST_ASSERT_FALSE(Rational_lt(a, a));
 	delete(a);
 	delete(b);
 }
 
-void test_equal_false(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, (long)22, (long)7);
-	struct s_Rational	*b = new(Rational, RATIONAL, (long)3, (long)5);
+void test_gt(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*b = new(Rational, RATIONAL, 1, 3);
 
-	TEST_ASSERT_FALSE(numeric_equal(a, b));
+	TEST_ASSERT_TRUE(Rational_gt(a, b));
+	TEST_ASSERT_FALSE(Rational_gt(b, a));
+	TEST_ASSERT_FALSE(Rational_gt(a, a));
+	delete(a);
+	delete(b);
+}
+
+void test_le(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*b = new(Rational, RATIONAL, 1, 3);
+
+	TEST_ASSERT_TRUE(Rational_le(b, a));
+	TEST_ASSERT_FALSE(Rational_le(a, b));
+	TEST_ASSERT_TRUE(Rational_le(a, a));
+	delete(a);
+	delete(b);
+}
+
+void test_ge(void) {
+	struct s_Rational	*a = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*b = new(Rational, RATIONAL, 1, 3);
+
+	TEST_ASSERT_TRUE(Rational_ge(a, b));
+	TEST_ASSERT_FALSE(Rational_ge(b, a));
+	TEST_ASSERT_TRUE(Rational_ge(a, a));
 	delete(a);
 	delete(b);
 }
 
 void test_promote_rational(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, (long)22, (long)7);
+	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
 	struct s_Rational	*b = numeric_promote(a, RATIONAL);
 
 	TEST_ASSERT_TRUE(numeric_equal(a, b));
@@ -261,8 +311,12 @@ int main(void) {
 	RUN_TEST(test_neg);
 	RUN_TEST(test_pow);
 	RUN_TEST(test_pow_neg_to_non_integer);
-	RUN_TEST(test_equal_true);
-	RUN_TEST(test_equal_false);
+	RUN_TEST(test_equal);
+	RUN_TEST(test_neq);
+	RUN_TEST(test_lt);
+	RUN_TEST(test_gt);
+	RUN_TEST(test_le);
+	RUN_TEST(test_ge);
 	RUN_TEST(test_promote_rational);
 	RUN_TEST(test_promote_complex);
 	RUN_TEST(test_promote_vector);
