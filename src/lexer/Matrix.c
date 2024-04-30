@@ -282,13 +282,67 @@ static struct s_Matrix	*Matrix_neg(const void *_self)
 	return (retval);
 }
 
+static void	*Matrix_pow_Rational(const void *_self, const void *_other)
+{
+	const struct s_Matrix	*self = _self;
+	const struct s_Rational	*other = _other;
+	struct s_Matrix			*retval = NULL;
+
+	if (self->rows != self->cols)
+	{
+		fprintf(stderr, "%s\n", "Matrix_pow_Rational: matrix is not square.");
+		return (NULL);
+	}
+	if (other->denominator != 1)
+	{
+		fprintf(stderr, "%s\n",
+				"Matrix_pow_Rational: only support integer exponent.");
+		return (NULL);
+	}
+	if (other->numerator < 0)
+	{
+		fprintf(stderr, "%s\n",
+				"Matrix_pow_Rational: only support positive integer exponent.");
+		return (NULL);
+	}
+	if (other->numerator == 0)
+		return (Matrix_eye(self->rows));
+	else
+	{
+		struct s_Matrix	*temp;
+		long			exponent = other->numerator;
+
+		retval = copy(self);
+		while (exponent-- > 1)
+		{
+			temp = retval;
+			retval = Matrix_mmul(temp, self);
+			delete(temp);
+		}
+		return (retval);
+	}
+}
+
 /* Return the exponentiation of one Numeric to another. */
 static void	*Matrix_pow(const void *_self, const void *_other)
 {
-	(void)_self;
-	(void)_other;
-	fprintf(stderr, "%s\n", "Matrix_pow: Undefined.");
-	return (NULL);
+	switch (Token_get_tag(_other))
+	{
+		case RATIONAL:
+			return Matrix_pow_Rational(_self, _other);
+		case COMPLEX:
+			fprintf(stderr, "%s\n", "Matrix_pow: incompatible with Complex.");
+			return (NULL);
+		case VECTOR:
+			fprintf(stderr, "%s\n", "Matrix_pow: incompatible with Vector.");
+			return (NULL);
+		case MATRIX:
+			fprintf(stderr, "%s\n", "Matrix_pow: incompatible with Matrix.");
+			return (NULL);
+		default:
+			fprintf(stderr, "%s\n", "Matrix_pow: unexpected input type.");
+			return (NULL);
+	};
 }
 
 /* Return true if two Matrixs are the same, false otherwise. */
@@ -383,6 +437,36 @@ void	*Matrix_at(const void *_self, size_t m, size_t n)
 	const struct s_Matrix	*self = _self;
 
 	return (self->data[m * self->cols + n]);
+}
+
+/* Return the size n identity matrix. */
+void	*Matrix_eye(size_t n)
+{
+	struct s_Matrix	*template;
+	struct s_Matrix	*retval;
+	size_t			i;
+	size_t			j;
+
+	if (n == 0)
+	{
+		fprintf(stderr, "%s\n", "Matrix_eye: n cannot be 0.");
+		return (NULL);
+	}
+	template = new(Matrix, MATRIX, new(Vec));
+	retval = Matrix_init(template, n, n);
+	if (retval)
+	{
+		for (i = 0; i < n; i++)
+		{
+			for (j = 0; j < n; j++)
+			{
+				retval->data[i * n + j]
+					= new(Rational, RATIONAL, i == j ? 1: 0, 1);
+			}
+		}
+	}
+	delete(template);
+	return (retval);
 }
 
 /* Return the matrix multiplication of two Matrices. */

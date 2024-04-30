@@ -509,16 +509,26 @@ void test_neg(void) {
 }
 
 void test_pow(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r01 = new(Rational, RATIONAL, 2, 1);
+	struct s_Rational	*r02 = new(Rational, RATIONAL, 3, 1);
+	struct s_Rational	*r03 = new(Rational, RATIONAL, 4, 1);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*r10 = new(Rational, RATIONAL, 37, 1);
+	struct s_Rational	*r11 = new(Rational, RATIONAL, 54, 1);
+	struct s_Rational	*r12 = new(Rational, RATIONAL, 81, 1);
+	struct s_Rational	*r13 = new(Rational, RATIONAL, 118, 1);
+	void				*v10 = new(Vec);
+	void				*v11 = new(Vec);
+	void				*v1 = new(Vec);
+	struct s_Matrix		*m1;
+
+	struct s_Rational	*r = new(Rational, RATIONAL, 3, 1);
+	struct s_Matrix		*m;
 
 	Vec_push_back(v00, r00);
 	Vec_push_back(v00, r01);
@@ -528,8 +538,19 @@ void test_pow(void) {
 	Vec_push_back(v0, v01);
 	m0 = new(Matrix, MATRIX, v0);
 
-	TEST_ASSERT_NULL(numeric_pow(m0, r));
+	Vec_push_back(v10, r10);
+	Vec_push_back(v10, r11);
+	Vec_push_back(v11, r12);
+	Vec_push_back(v11, r13);
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
+	m1 = new(Matrix, MATRIX, v1);
+
+	m = numeric_pow(m0, r);
+	TEST_ASSERT_TRUE(numeric_equal(m, m1));
 	delete(m0);
+	delete(m1);
+	delete(m);
 	delete(r);
 }
 
@@ -728,6 +749,32 @@ void test_promote_matrix(void) {
 	delete(m0);
 	delete(m1);
 	delete(target);
+}
+
+void test_eye(void) {
+	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r01 = new(Rational, RATIONAL, 0, 1);
+	struct s_Rational	*r02 = new(Rational, RATIONAL, 0, 1);
+	struct s_Rational	*r03 = new(Rational, RATIONAL, 1, 1);
+	void				*v00 = new(Vec);
+	void				*v01 = new(Vec);
+	void				*v0 = new(Vec);
+	struct s_Matrix		*m0;
+
+	struct s_Matrix		*m;
+
+	Vec_push_back(v00, r00);
+	Vec_push_back(v00, r01);
+	Vec_push_back(v01, r02);
+	Vec_push_back(v01, r03);
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
+	m0 = new(Matrix, MATRIX, v0);
+
+	m = Matrix_eye(2);
+	TEST_ASSERT_TRUE(numeric_equal(m0, m));
+	delete(m0);
+	delete(m);
 }
 
 void test_mmul(void) {
@@ -1005,13 +1052,14 @@ int main(void) {
 	RUN_TEST(test_mod_scalar);
 	RUN_TEST(test_mod_matrix);
 	RUN_TEST(test_neg);
-	// RUN_TEST(test_pow);
+	RUN_TEST(test_pow);
 	RUN_TEST(test_equal_true);
 	RUN_TEST(test_equal_false);
 	RUN_TEST(test_promote_rational);
 	RUN_TEST(test_promote_complex);
 	RUN_TEST(test_promote_vector);
 	RUN_TEST(test_promote_matrix);
+	RUN_TEST(test_eye);
 	RUN_TEST(test_mmul);
 	RUN_TEST(test_transpose);
 	RUN_TEST(test_solve);
