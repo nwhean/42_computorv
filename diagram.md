@@ -82,6 +82,14 @@ classDiagram
 		+Vec~Expr~ vec
 	}
 
+	Expr <|-- MatExpr
+
+	class MatExpr {
+		+size_t rows
+		+size_t cols
+		+Vec~Vec~Expr~~ vec
+	}
+
 
 	%% lexer
 

@@ -11,6 +11,7 @@
 #include "Expr.h"
 #include "Constant.h"
 #include "Id.h"
+#include "MatExpr.h"
 #include "Node.h"
 #include "Op.h"
 #include "Unary.h"
@@ -40,6 +41,7 @@ void	init_inter(void)
 	initConstant();
 	initExpr();
 	initId();
+	initMatExpr();
 	initNode();
 	initOp();
 	initUnary();

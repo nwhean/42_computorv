@@ -14,14 +14,10 @@
 #include "Vector.h"
 
 /* other */
+#include "mathematics.h"
 #include "utility.h"
 
 const void	*Matrix;
-
-static long	max(long a, long b)
-{
-	return (a > b ? a : b);
-}
 
 /* Matrix constructor method. */
 static void	*Matrix_ctor(void *_self, va_list *app)

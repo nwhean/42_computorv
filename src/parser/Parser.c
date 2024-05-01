@@ -15,6 +15,7 @@
 #include "Constant.h"
 #include "Expr.h"
 #include "Id.h"
+#include "MatExpr.h"
 #include "Unary.h"
 #include "VecExpr.h"
 
@@ -45,6 +46,7 @@ static struct s_Expr	*unary(void *_self);
 static struct s_Expr	*factor(void *_self);
 static struct s_Expr	*base(void *_self);
 static struct s_Expr	*vector(void *_self);
+static struct s_Expr	*matrix(void *_self);
 
 /* Parser constructor method. */
 static void	*Parser_ctor(void *_self, va_list *app)
@@ -130,7 +132,8 @@ static void	match(void *_self, int t)
 	if (self->look->tag == t)
 		move(self);
 	else
-		Parser_error("match: Syntax Error");
+		fprintf(stderr, "match: Syntax Error: expecting '%c', get '%c'\n",
+				t, self->look->tag);
 }
 
 /* <expr>		::= <term> <expr_tail>
@@ -243,7 +246,8 @@ static struct s_Expr	*factor(void *_self)
 	return (x);
 }
 
-/* <base>	:== '(' <expr> ')' | Rational | Complex | Id */
+/* <base>	:== '(' <expr> ')' | <vector> | <matrix> | Rational | Complex | Id
+ */
 static struct s_Expr	*base(void *_self)
 {
 	struct s_Parser	*self = _self;
@@ -260,7 +264,10 @@ static struct s_Expr	*base(void *_self)
 			return (x);
 		case '[':
 			move(self);
-			x = vector(self);
+			if (self->look->tag != '[')
+				x = vector(self);
+			else
+				x = matrix(self);
 			match(self, ']');
 			return (x);
 		case RATIONAL:
@@ -315,6 +322,33 @@ static struct s_Expr	*vector(void *_self)
 		Vec_push_back(vec, x);
 	} while (self->look->tag == ',');
 	x = new(VecExpr, NULL, VECTOR, vec);
+
+	return (x);
+}
+
+/* <matrix>		:== '[' <matrix_tail> ']'
+ * <matrix_tail>	:== <vector> ',' <matrix_tail> | <vector>
+ */
+static struct s_Expr	*matrix(void *_self)
+{
+	struct s_Parser	*self = _self;
+	void			*vec = new(Vec);	/* Vec container */
+	struct s_Expr	*x;
+
+	do {
+		if (self->look->tag == ';')
+			move(self);
+		match(self, '[');	/* opening bracket of vector */
+		x = vector(self);
+		if (!x)
+		{
+			delete(vec);
+			return (NULL);
+		}
+		match(self, ']');	/* closing bracket of a vector */
+		Vec_push_back(vec, x);
+	} while (self->look->tag == ';');
+	x = new(MatExpr, NULL, MATRIX, vec);
 
 	return (x);
 }

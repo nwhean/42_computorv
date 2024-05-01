@@ -31,6 +31,7 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 				Constant.c \
 				Expr.c \
 				Id.c \
+				MatExpr.c \
 				Node.c \
 				Op.c \
 				Unary.c \
@@ -47,6 +48,7 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 				Word.c \
 			) \
 			$(addprefix $(OTHER_DIR), \
+				mathematics.c \
 				utility.c \
 			) \
 			$(addprefix $(PARSER_DIR), \
