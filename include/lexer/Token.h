@@ -7,6 +7,7 @@
 enum e_Tag {
 	PLUS = 256,	/* unary '+' */
 	MINUS,		/* unary '-' */
+	MMULT,		/* matrix multiplication "**" */
 	IMAG,		/* i */
 	ZERO,		/* an empty tag */
 	RATIONAL,	/* Rational number */

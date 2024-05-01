@@ -158,7 +158,7 @@ static struct s_Expr	*expr(void *_self)
 			delete(x);
 			return (NULL);
 		}
-		x = new(Arith, new(Token, tag_bak), 0, x, rhs);
+		x = new(Arith, new(Token, tag_bak), ZERO, x, rhs);
 	}
 	if (numeric_is(self->look->tag))
 	{
@@ -171,7 +171,8 @@ static struct s_Expr	*expr(void *_self)
 
 /*
  * <term>		:== <unary> <term_tail>
- * <term_tail>	:== '*' <unary> <term_tail> | '/' <unary> <term_tail> | epsilon
+ * <term_tail>	:== '*' <unary> <term_tail> | '**' <unary> <term_tail> |
+ * 					'/' <unary> <term_tail> | '%' <unary> <term_tail> | epsilon
  */
 static struct s_Expr	*term(void *_self)
 {
@@ -181,7 +182,7 @@ static struct s_Expr	*term(void *_self)
 
 	if (!x)
 		return (NULL);
-	while (tag == '*' || tag == '/' || tag == '%')
+	while (tag == '*' || tag == MMULT || tag == '/' || tag == '%')
 	{
 		struct s_Expr	*rhs;
 		enum e_Tag		tag_bak = self->look->tag;
@@ -193,7 +194,10 @@ static struct s_Expr	*term(void *_self)
 			delete(x);
 			return (NULL);
 		}
-		x = new(Arith, new(Token, tag_bak), 0, x, rhs);
+		if (tag_bak == MMULT)
+			x = new(Arith, Word_mmult, ZERO, x, rhs);
+		else
+			x = new(Arith, new(Token, tag_bak), ZERO, x, rhs);
 		tag = self->look->tag;
 	}
 	return (x);
@@ -241,7 +245,7 @@ static struct s_Expr	*factor(void *_self)
 			delete(x);
 			return (NULL);
 		}
-		x = new(Arith, new(Token, tag_bak), 0, x, rhs);
+		x = new(Arith, new(Token, tag_bak), ZERO, x, rhs);
 	}
 	return (x);
 }

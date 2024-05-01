@@ -127,6 +127,18 @@ struct s_Token	*Lexer_scan(void *_self)
 		return (word);
 	}
 
+	/* '*' and "**" tokens "*/
+	if (self->peek == '*')
+	{
+		readch(_self);
+		if (self->peek == '*')
+		{
+			readch(_self);
+			return new(Token, MMULT);
+		}
+		return new(Token, '*');
+	}
+
 	/* other tokens */
 	token = new(Token, self->peek);
 	self->peek = ' ';

@@ -825,7 +825,7 @@ void test_mmul(void) {
 	Vec_push_back(v2, v20);
 	m2 = new(Matrix, MATRIX, v2);
 
-	m = Matrix_mmul(m0, m1);
+	m = Matrix_mmult(m0, m1);
 	TEST_ASSERT_TRUE(numeric_equal(m, m2));
 	delete(m0);
 	delete(m1);

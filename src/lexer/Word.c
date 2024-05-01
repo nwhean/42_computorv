@@ -7,6 +7,7 @@
 const struct s_Word	*Word;
 const struct s_Word	*Word_plus;
 const struct s_Word	*Word_minus;
+const struct s_Word	*Word_mmult;
 const struct s_Word	*Word_imag;
 const void			*Word_reserved;
 
@@ -103,11 +104,13 @@ void	initWord(void)
 		Word_reserved = new(UnorderedMap);
 		Word_plus = new(Word, PLUS, "plus");
 		Word_minus = new(Word, MINUS, "minus");
+		Word_mmult = new(Word, MMULT, "mmult");
 		Word_imag = new(Word, IMAG, "i");
 
 		/* Insert data into reserve. */
 		reserve_add(Word_plus);
 		reserve_add(Word_minus);
+		reserve_add(Word_mmult);
 		reserve_add(Word_imag);
 	}
 }

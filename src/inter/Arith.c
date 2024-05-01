@@ -11,6 +11,8 @@
 
 /* lexer */
 #include "Numeric.h"
+#include "Matrix.h"
+#include "Word.h"
 
 const void	*Arith;
 
@@ -81,6 +83,9 @@ static struct s_Token	*Arith_eval(const void *_self)
 				break ;
 			case '*':
 				retval = numeric_imul(&expr1, expr2);
+				break ;
+			case MMULT:
+				retval = Matrix_immult(&expr1, expr2);
 				break ;
 			case '/':
 				retval = numeric_idiv(&expr1, expr2);

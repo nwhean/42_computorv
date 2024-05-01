@@ -312,7 +312,7 @@ static void	*Matrix_pow_Rational(const void *_self, const void *_other)
 		while (exponent-- > 1)
 		{
 			temp = retval;
-			retval = Matrix_mmul(temp, self);
+			retval = Matrix_mmult(temp, self);
 			delete(temp);
 		}
 		return (retval);
@@ -466,7 +466,7 @@ void	*Matrix_eye(size_t n)
 }
 
 /* Return the matrix multiplication of two Matrices. */
-void	*Matrix_mmul(const void *_self, const void *_other)
+void	*Matrix_mmult(const void *_self, const void *_other)
 {
 	const struct s_Matrix	*self = _self;
 	const struct s_Matrix	*other = _other;
@@ -477,12 +477,12 @@ void	*Matrix_mmul(const void *_self, const void *_other)
 
 	if (Token_get_tag(_other) != MATRIX)
 	{
-		fprintf(stderr, "%s\n", "Matrix_mmul: only Matrix input allowed.");
+		fprintf(stderr, "%s\n", "Matrix_mmult: only Matrix input allowed.");
 		return (NULL);
 	}
 	if (self->cols != other->rows)
 	{
-		fprintf(stderr, "%s\n", "Matrix_mmul: Incompatible matrix sizes.");
+		fprintf(stderr, "%s\n", "Matrix_mmult: Incompatible matrix sizes.");
 		return (NULL);
 	}
 	retval = Matrix_init(self, self->rows, other->cols);
@@ -503,6 +503,17 @@ void	*Matrix_mmul(const void *_self, const void *_other)
 			}
 		}
 	}
+	return (retval);
+}
+
+/* Perform inplace multiplication of two Matrices. */
+void	*Matrix_immult(void **self, const void *other)
+{
+	void	*retval;
+
+	retval = Matrix_mmult(*self, other);
+	delete(*self);
+	*self = retval;
 	return (retval);
 }
 
