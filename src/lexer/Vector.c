@@ -249,15 +249,6 @@ static struct s_Vector	*Vector_neg(const void *_self)
 	return (retval);
 }
 
-/* Return the exponentiation of one Numeric to another. */
-static void	*Vector_pow(const void *_self, const void *_other)
-{
-	(void)_self;
-	(void)_other;
-	fprintf(stderr, "%s\n", "Vector_pow: Undefined.");
-	return (NULL);
-}
-
 /* Return true if two Vectors are the same, false otherwise. */
 static bool	Vector_equal(const void *_self, const void *_other)
 {
@@ -326,7 +317,6 @@ void	initVector(void)
 				numeric_div, Vector_div,
 				numeric_mod, Vector_mod,
 				numeric_neg, Vector_neg,
-				numeric_pow, Vector_pow,
 				numeric_promote, Vector_promote,
 				0);
 		initStr();

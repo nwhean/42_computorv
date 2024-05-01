@@ -244,14 +244,6 @@ static void	*Complex_div(const void *_self, const void *_other)
 	};
 }
 
-static void	*Complex_mod(const void *_self, const void *_other)
-{
-	(void)_self;
-	(void)_other;
-	fprintf(stderr, "%s\n", "%% operator is not defined for Complex.");
-	return (NULL);
-}
-
 /* Return a copy of the Complex with its value negated. */
 static struct s_Complex	*Complex_neg(const void *_self)
 {
@@ -387,7 +379,6 @@ void	initComplex(void)
 				numeric_sub, Complex_sub,
 				numeric_mul, Complex_mul,
 				numeric_div, Complex_div,
-				numeric_mod, Complex_mod,
 				numeric_neg, Complex_neg,
 				numeric_pow, Complex_pow,
 				numeric_promote, Complex_promote,

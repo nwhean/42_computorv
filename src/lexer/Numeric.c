@@ -31,18 +31,29 @@ void	*numeric_add(const void *self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = self;
 
-	assert(self && *cp && (*cp)->add);
-	return ((*cp)->add(self, other));
+	if (self && *cp)
+	{
+		if ((*cp)->add)
+			return ((*cp)->add(self, other));
+		else
+			fprintf(stderr, "%s\n", "operator '+' undefined for input type");
+	}
+	return (NULL);
 }
 
 /* Perform inplace addition of two Numerics. */
 void	*numeric_iadd(void **self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = *self;
-	void								*retval;
+	void								*retval = NULL;
 
-	assert(*self && *cp && (*cp)->add);
-	retval = (*cp)->add(*self, other);
+	if (*self && *cp)
+	{
+		if ((*cp)->add)
+			retval = (*cp)->add(*self, other);
+		else
+			fprintf(stderr, "%s\n", "operator '+' undefined for input type");
+	}
 	delete(*self);
 	*self = retval;
 	return (retval);
@@ -53,18 +64,29 @@ void	*numeric_sub(const void *self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = self;
 
-	assert(self && *cp && (*cp)->sub);
-	return ((*cp)->sub(self, other));
+	if (self && *cp)
+	{
+		if ((*cp)->sub)
+			return ((*cp)->sub(self, other));
+		else
+			fprintf(stderr, "%s\n", "operator '-' undefined for input type");
+	}
+	return (NULL);
 }
 
 /* Perform inplace subtraction of two Numerics. */
 void	*numeric_isub(void **self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = *self;
-	void								*retval;
+	void								*retval = NULL;
 
-	assert(*self && *cp && (*cp)->sub);
-	retval = (*cp)->sub(*self, other);
+	if (*self && *cp)
+	{
+		if ((*cp)->sub)
+			retval = (*cp)->sub(*self, other);
+		else
+			fprintf(stderr, "%s\n", "operator '-' undefined for input type");
+	}
 	delete(*self);
 	*self = retval;
 	return (retval);
@@ -75,18 +97,29 @@ void	*numeric_mul(const void *self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = self;
 
-	assert(self && *cp && (*cp)->mul);
-	return ((*cp)->mul(self, other));
+	if (self && *cp)
+	{
+		if ((*cp)->mul)
+			return ((*cp)->mul(self, other));
+		else
+			fprintf(stderr, "%s\n", "operator '*' undefined for input type");
+	}
+	return (NULL);
 }
 
 /* Perform inplace multiplication of two Numerics. */
 void	*numeric_imul(void **self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = *self;
-	void								*retval;
+	void								*retval = NULL;
 
-	assert(*self && *cp && (*cp)->mul);
-	retval = (*cp)->mul(*self, other);
+	if (*self && *cp)
+	{
+		if ((*cp)->mul)
+			retval = (*cp)->mul(*self, other);
+		else
+			fprintf(stderr, "%s\n", "operator '*' undefined for input type");
+	}
 	delete(*self);
 	*self = retval;
 	return (retval);
@@ -102,7 +135,7 @@ void	*numeric_mmult(const void *self, const void *other)
 		if ((*cp)->mmult)
 			return ((*cp)->mmult(self, other));
 		else
-			fprintf(stderr, "%s\n", "numeric_mmult: undefined for input type");
+			fprintf(stderr, "%s\n", "operator '**' undefined for input type");
 	}
 	return (NULL);
 }
@@ -118,7 +151,7 @@ void	*numeric_immult(void **self, const void *other)
 		if ((*cp)->mmult)
 			retval = (*cp)->mmult(*self, other);
 		else
-			fprintf(stderr, "%s\n", "numeric_immult: undefined for input type");
+			fprintf(stderr, "%s\n", "operator '**' undefined for input type");
 	}
 	delete(*self);
 	*self = retval;
@@ -130,18 +163,29 @@ void	*numeric_div(const void *self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = self;
 
-	assert(self && *cp && (*cp)->div);
-	return ((*cp)->div(self, other));
+	if (self && *cp)
+	{
+		if ((*cp)->div)
+			return ((*cp)->div(self, other));
+		else
+			fprintf(stderr, "%s\n", "operator '/' undefined for input type");
+	}
+	return (NULL);
 }
 
 /* Perform inplace division of two Numerics. */
 void	*numeric_idiv(void **self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = *self;
-	void								*retval;
+	void								*retval = NULL;
 
-	assert(*self && *cp && (*cp)->div);
-	retval = (*cp)->div(*self, other);
+	if (*self && *cp)
+	{
+		if ((*cp)->div)
+			retval = (*cp)->div(*self, other);
+		else
+			fprintf(stderr, "%s\n", "operator '/' undefined for input type");
+	}
 	delete(*self);
 	*self = retval;
 	return (retval);
@@ -152,18 +196,29 @@ void	*numeric_mod(const void *self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = self;
 
-	assert(self && *cp && (*cp)->mod);
-	return ((*cp)->mod(self, other));
+	if (self && *cp)
+	{
+		if ((*cp)->mod)
+			return ((*cp)->mod(self, other));
+		else
+			fprintf(stderr, "%s\n", "operator '%' undefined for input type");
+	}
+	return (NULL);
 }
 
 /* Perform inplace modulo operation of two Numerics. */
 void	*numeric_imod(void **self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = *self;
-	void								*retval;
+	void								*retval = NULL;
 
-	assert(*self && *cp && (*cp)->mod);
-	retval = (*cp)->mod(*self, other);
+	if (*self && *cp)
+	{
+		if ((*cp)->mod)
+			retval = (*cp)->mod(*self, other);
+		else
+			fprintf(stderr, "%s\n", "operator '%' undefined for input type");
+	}
 	delete(*self);
 	*self = retval;
 	return (retval);
@@ -174,18 +229,29 @@ void	*numeric_neg(const void *self)
 {
 	const struct s_NumericClass *const	*cp = self;
 
-	assert(self && *cp && (*cp)->neg);
-	return ((*cp)->neg(self));
+	if (self && *cp)
+	{
+		if ((*cp)->neg)
+			return ((*cp)->neg(self));
+		else
+			fprintf(stderr, "%s\n", "unary '-' undefined for input type");
+	}
+	return (NULL);
 }
 
 /* Perform inplace negation of a Numerics. */
 void	*numeric_ineg(void **self)
 {
 	const struct s_NumericClass *const	*cp = *self;
-	void								*retval;
+	void								*retval = NULL;
 
-	assert(*self && *cp && (*cp)->neg);
-	retval = (*cp)->neg(*self);
+	if (*self && *cp)
+	{
+		if ((*cp)->neg)
+			retval = (*cp)->neg(*self);
+		else
+			fprintf(stderr, "%s\n", "unary '-' undefined for input type");
+	}
 	delete(*self);
 	*self = retval;
 	return (retval);
@@ -196,18 +262,29 @@ void	*numeric_pow(const void *self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = self;
 
-	assert(self && *cp && (*cp)->pow);
-	return ((*cp)->pow(self, other));
+	if (self && *cp)
+	{
+		if ((*cp)->pow)
+			return ((*cp)->pow(self, other));
+		else
+			fprintf(stderr, "%s\n", "operator '^' undefined for input type");
+	}
+	return (NULL);
 }
 
 /* Perform inplace exponentiation of one Numeric to another. */
 void	*numeric_ipow(void **self, const void *other)
 {
 	const struct s_NumericClass *const	*cp = *self;
-	void								*retval;
+	void								*retval = NULL;
 
-	assert(*self && *cp && (*cp)->pow);
-	retval = (*cp)->pow(*self, other);
+	if (*self && *cp)
+	{
+		if ((*cp)->pow)
+			retval = (*cp)->pow(*self, other);
+		else
+			fprintf(stderr, "%s\n", "operator '^' undefined for input type");
+	}
 	delete(*self);
 	*self = retval;
 	return (retval);
@@ -216,7 +293,16 @@ void	*numeric_ipow(void **self, const void *other)
 /* Return true if two numerics are the same, false otherwise. */
 bool	numeric_equal(const void *self, const void *other)
 {
-	return (equal(self, other));
+	const struct s_Class *const	*cp = self;
+
+	if (self && *cp)
+	{
+		if ((*cp)->equal)
+			return ((*cp)->equal(self, other));
+		else
+			fprintf(stderr, "%s\n", "'equal' undefined for input type");
+	}
+	return (NULL);
 }
 
 /* Promote one Numeric type to another */
@@ -224,18 +310,29 @@ void	*numeric_promote(const void *self, enum e_Tag tag)
 {
 	const struct s_NumericClass *const	*cp = self;
 
-	assert(self && *cp && (*cp)->promote);
-	return ((*cp)->promote(self, tag));
+	if (self && *cp)
+	{
+		if ((*cp)->promote)
+			return ((*cp)->promote(self, tag));
+		else
+			fprintf(stderr, "%s\n", "'promote' undefined for input type");
+	}
+	return (NULL);
 }
 
 /* Promote inplace one Numeric type to another */
 void	*numeric_ipromote(void **self, enum e_Tag tag)
 {
 	const struct s_NumericClass *const	*cp = *self;
-	void								*retval;
+	void								*retval = NULL;
 
-	assert(*self && *cp && (*cp)->promote);
-	retval = (*cp)->promote(*self, tag);
+	if (*self && *cp)
+	{
+		if ((*cp)->promote)
+			retval = (*cp)->promote(*self, tag);
+		else
+			fprintf(stderr, "%s\n", "'promote' undefined for input type");
+	}
 	delete(*self);
 	*self = retval;
 	return (retval);
