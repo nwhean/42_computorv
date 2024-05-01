@@ -85,7 +85,7 @@ static struct s_Token	*Arith_eval(const void *_self)
 				retval = numeric_imul(&expr1, expr2);
 				break ;
 			case MMULT:
-				retval = Matrix_immult(&expr1, expr2);
+				retval = numeric_immult(&expr1, expr2);
 				break ;
 			case '/':
 				retval = numeric_idiv(&expr1, expr2);

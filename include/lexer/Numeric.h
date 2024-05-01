@@ -19,6 +19,7 @@ struct	s_NumericClass	/* NumericClass: TokenClass */
 	struct s_Numeric			*(*add)(const void *self, const void *other);
 	struct s_Numeric			*(*sub)(const void *self, const void *other);
 	struct s_Numeric			*(*mul)(const void *self, const void *other);
+	struct s_Numeric			*(*mmult)(const void *self, const void *other);
 	struct s_Numeric			*(*div)(const void *self, const void *other);
 	struct s_Numeric			*(*mod)(const void *self, const void *other);
 	struct s_Numeric			*(*neg)(const void *self);
@@ -33,6 +34,8 @@ void				*numeric_sub(const void *self, const void *other);
 void				*numeric_isub(void **self, const void *other);
 void				*numeric_mul(const void *self, const void *other);
 void				*numeric_imul(void **self, const void *other);
+void				*numeric_mmult(const void *self, const void *other);
+void				*numeric_immult(void **self, const void *other);
 void				*numeric_div(const void *self, const void *other);
 void				*numeric_idiv(void **self, const void *other);
 void				*numeric_mod(const void *self, const void *other);

@@ -26,7 +26,6 @@ void	*Matrix_at(const void *self, size_t m, size_t n);
 /* matrix operations */
 void	*Matrix_eye(size_t n);
 void	*Matrix_mmult(const void *self, const void *other);
-void	*Matrix_immult(void **self, const void *other);
 void	*Matrix_transpose(const void *self);
 void	*Matrix_invert(const void *self);
 void	*Matrix_solve(const void *_self, const void *b);

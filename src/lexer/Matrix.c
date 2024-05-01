@@ -228,6 +228,47 @@ static void	*Matrix_mul(const void *_self, const void *_other)
 	};
 }
 
+/* Return the matrix multiplication of two Matrices. */
+void	*Matrix_mmult(const void *_self, const void *_other)
+{
+	const struct s_Matrix	*self = _self;
+	const struct s_Matrix	*other = _other;
+	struct s_Matrix			*retval = NULL;
+	size_t					i;
+	size_t					j;
+	size_t					k;
+
+	if (Token_get_tag(_other) != MATRIX)
+	{
+		fprintf(stderr, "%s\n", "Matrix_mmult: only Matrix input allowed.");
+		return (NULL);
+	}
+	if (self->cols != other->rows)
+	{
+		fprintf(stderr, "%s\n", "Matrix_mmult: Incompatible matrix sizes.");
+		return (NULL);
+	}
+	retval = Matrix_init(self, self->rows, other->cols);
+	if (!retval)
+		return (NULL);
+	for (i = 0; i < retval->rows * retval->cols; ++i)
+		retval->data[i] = new(Rational, RATIONAL, 0, 1);
+	for (i = 0; i < self->rows; ++i)
+	{
+		for (k = 0; k < self->cols; ++k)
+		{
+			for (j = 0; j < other->cols; ++j)
+			{
+				void	*mul= numeric_mul(self->data[i * self->cols + k],
+										other->data[k * other->cols + j]);
+				numeric_iadd(&retval->data[i * other->cols + j], mul);
+				delete(mul);
+			}
+		}
+	}
+	return (retval);
+}
+
 /* Return the division of one Numeric from another. */
 static void	*Matrix_div(const void *_self, const void *_other)
 {
@@ -399,6 +440,7 @@ void	initMatrix(void)
 				numeric_add, Matrix_add,
 				numeric_sub, Matrix_sub,
 				numeric_mul, Matrix_mul,
+				numeric_mmult, Matrix_mmult,
 				numeric_div, Matrix_div,
 				numeric_mod, Matrix_mod,
 				numeric_neg, Matrix_neg,
@@ -462,58 +504,6 @@ void	*Matrix_eye(size_t n)
 		}
 	}
 	delete(template);
-	return (retval);
-}
-
-/* Return the matrix multiplication of two Matrices. */
-void	*Matrix_mmult(const void *_self, const void *_other)
-{
-	const struct s_Matrix	*self = _self;
-	const struct s_Matrix	*other = _other;
-	struct s_Matrix			*retval = NULL;
-	size_t					i;
-	size_t					j;
-	size_t					k;
-
-	if (Token_get_tag(_other) != MATRIX)
-	{
-		fprintf(stderr, "%s\n", "Matrix_mmult: only Matrix input allowed.");
-		return (NULL);
-	}
-	if (self->cols != other->rows)
-	{
-		fprintf(stderr, "%s\n", "Matrix_mmult: Incompatible matrix sizes.");
-		return (NULL);
-	}
-	retval = Matrix_init(self, self->rows, other->cols);
-	if (!retval)
-		return (NULL);
-	for (i = 0; i < retval->rows * retval->cols; ++i)
-		retval->data[i] = new(Rational, RATIONAL, 0, 1);
-	for (i = 0; i < self->rows; ++i)
-	{
-		for (k = 0; k < self->cols; ++k)
-		{
-			for (j = 0; j < other->cols; ++j)
-			{
-				void	*mul= numeric_mul(self->data[i * self->cols + k],
-								  		other->data[k * other->cols + j]);
-				numeric_iadd(&retval->data[i * other->cols + j], mul);
-				delete(mul);
-			}
-		}
-	}
-	return (retval);
-}
-
-/* Perform inplace multiplication of two Matrices. */
-void	*Matrix_immult(void **self, const void *other)
-{
-	void	*retval;
-
-	retval = Matrix_mmult(*self, other);
-	delete(*self);
-	*self = retval;
 	return (retval);
 }
 

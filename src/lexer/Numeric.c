@@ -92,6 +92,39 @@ void	*numeric_imul(void **self, const void *other)
 	return (retval);
 }
 
+/* Return the matrix multiplication of two Numerics. */
+void	*numeric_mmult(const void *self, const void *other)
+{
+	const struct s_NumericClass *const	*cp = self;
+
+	if (self && *cp)
+	{
+		if ((*cp)->mmult)
+			return ((*cp)->mmult(self, other));
+		else
+			fprintf(stderr, "%s\n", "numeric_mmult: undefined for input type");
+	}
+	return (NULL);
+}
+
+/* Perform inplace matrix multiplication of two Numerics. */
+void	*numeric_immult(void **self, const void *other)
+{
+	const struct s_NumericClass *const	*cp = *self;
+	void								*retval = NULL;
+
+	if (*self && *cp)
+	{
+		if ((*cp)->mmult)
+			retval = (*cp)->mmult(*self, other);
+		else
+			fprintf(stderr, "%s\n", "numeric_immult: undefined for input type");
+	}
+	delete(*self);
+	*self = retval;
+	return (retval);
+}
+
 /* Return the division of one Numeric from another. */
 void	*numeric_div(const void *self, const void *other)
 {
@@ -234,6 +267,8 @@ static void	*NumericClass_ctor(void *_self, va_list *app)
 			*(voidf *)&self->sub = method;
 		else if (selector == (voidf)numeric_mul)
 			*(voidf *)&self->mul = method;
+		else if (selector == (voidf)numeric_mmult)
+			*(voidf *)&self->mmult = method;
 		else if (selector == (voidf)numeric_div)
 			*(voidf *)&self->div = method;
 		else if (selector == (voidf)numeric_mod)
