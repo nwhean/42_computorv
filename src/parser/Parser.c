@@ -40,6 +40,7 @@ static struct s_Word	*symbol_find(
 							const struct s_Parser *self,
 							const void *str);
 static void				move(void *_self);
+static struct s_Expr	*stmt(void *_self);
 static struct s_Expr	*expr(void *_self);
 static struct s_Expr	*term(void *_self);
 static struct s_Expr	*unary(void *_self);
@@ -91,7 +92,7 @@ static void	move(void *_self)
 void	Parser_program(void *_self)
 {
 	struct s_Parser		*self = _self;
-	void				*x = expr(self);	/* Expr or subclass */
+	void				*x = stmt(self);	/* Expr or subclass */
 	const char			*s;
 	struct s_Token		*token;
 
@@ -119,25 +120,39 @@ void	Parser_program(void *_self)
 	delete(x);
 }
 
-static void	Parser_error(char *s)
-{
-	fprintf(stderr, "%s\n", s);
-}
-
 /* Compares 't' with the lookahead symbol, and advances to the next input. */
-static void	match(void *_self, int t)
+static bool	match(void *_self, int t)
 {
 	struct s_Parser	*self = _self;
 
 	if (self->look->tag == t)
+	{
 		move(self);
-	else
-		fprintf(stderr, "match: Syntax Error: expecting '%c', get '%c'\n",
-				t, self->look->tag);
+		return (true);
+	}
+	fprintf(stderr, "match: Syntax Error: expect '%c' (%d), get '%c' (%d)\n",
+			t, t, self->look->tag, self->look->tag);
+	return (false);
+}
+
+/* <stmt>	::= <expr> | epsilon */
+static struct s_Expr	*stmt(void *_self)
+{
+	struct s_Parser	*self = _self;
+	struct s_Expr	*x = expr(self);
+
+	if (self->look->tag == '\n')
+		return (x);
+	fprintf(stderr, "match: Syntax Error: expect '\\n' (%d), get '%c' (%d)\n",
+			'\n', self->look->tag, self->look->tag);
+	delete(x);
+	return (NULL);
+
 }
 
 /* <expr>		::= <term> <expr_tail>
- * <expr_tail>	::= + <term> <expr_tail> | - <term> <expr_tail> | epsilon
+ * <expr_tail>	::= <add_op> <term> <expr_tail>
+ * <add_op>		::= '+' | '-'
  */
 static struct s_Expr	*expr(void *_self)
 {
@@ -160,19 +175,12 @@ static struct s_Expr	*expr(void *_self)
 		}
 		x = new(Arith, new(Token, tag_bak), ZERO, x, rhs);
 	}
-	if (numeric_is(self->look->tag))
-	{
-		Parser_error("term: Syntax Error");
-		delete(x);
-		return (NULL);
-	}
 	return (x);
 }
 
-/*
- * <term>		:== <unary> <term_tail>
- * <term_tail>	:== '*' <unary> <term_tail> | '**' <unary> <term_tail> |
- * 					'/' <unary> <term_tail> | '%' <unary> <term_tail> | epsilon
+/* <term>		::= <unary> <term_tail>
+ * <term_tail>	::= <mult_op> <unary> <term_tail>
+ * <mult_op>	::= '*' | '**' | '/' | '%'
  */
 static struct s_Expr	*term(void *_self)
 {
@@ -203,7 +211,9 @@ static struct s_Expr	*term(void *_self)
 	return (x);
 }
 
-/* <unary>		:== '+' <unary> | '-' <unary> | <factor> */
+/* <unary>		::= <unary_ops> <unary> | <factor>
+ * <unary_ops>	::= '+' | '-'
+ */
 static struct s_Expr	*unary(void *_self)
 {
 	struct s_Parser	*self = _self;
@@ -222,9 +232,9 @@ static struct s_Expr	*unary(void *_self)
 	return (factor(self));
 }
 
-/*
- * <factor>			:== <base> <factor_tail> | <base>
- * <factor_tail>	:== '^' <unary>
+/* <factor>			::= <base> <factor_tail> | <base>
+ * <factor_tail>	::= '^' <exponent>
+ * <exponent>		::= <unary>
  */
 static struct s_Expr	*factor(void *_self)
 {
@@ -250,7 +260,10 @@ static struct s_Expr	*factor(void *_self)
 	return (x);
 }
 
-/* <base>	:== '(' <expr> ')' | <vector> | <matrix> | Rational | Complex | Id
+/* <base>	::= '(' <expr> ')'
+ *				| <rational> | <complex>
+ *				| <vector> | <matrix>
+ *				| <id>
  */
 static struct s_Expr	*base(void *_self)
 {
@@ -264,16 +277,20 @@ static struct s_Expr	*base(void *_self)
 		case '(':
 			move(self);
 			x = expr(self);
-			match(self, ')');
-			return (x);
+			if (x && match(self, ')'))
+				return (x);
+			delete(x);
+			return (NULL);
 		case '[':
 			move(self);
 			if (self->look->tag != '[')
 				x = vector(self);
 			else
 				x = matrix(self);
-			match(self, ']');
-			return (x);
+			if (x && match(self, ']'))
+				return (x);
+			delete(x);
+			return (NULL);
 		case RATIONAL:
 		case COMPLEX:
 			tok = copy(self->look);
@@ -300,13 +317,14 @@ static struct s_Expr	*base(void *_self)
 			move(self);
 			return (x);
 		default:
-			Parser_error("base: Syntax Error");
+			fprintf(stderr, "base: Unexpected token '%c' (%d)\n",
+					self->look->tag, self->look->tag);
+			return (NULL);
 	}
-	return (x);
 }
 
-/* <vector>			:== '[' <vector_tail> ']'
- * <vector_tail>	:== <expr> ',' <vector_tail> | <expr>
+/* <vector>			::= '[' <vector_tail> ']'
+ * <vector_tail>	::= <expr> ',' <vector_tail> | <expr>
  */
 static struct s_Expr	*vector(void *_self)
 {
@@ -330,26 +348,26 @@ static struct s_Expr	*vector(void *_self)
 	return (x);
 }
 
-/* <matrix>		:== '[' <matrix_tail> ']'
- * <matrix_tail>	:== <vector> ',' <matrix_tail> | <vector>
+/* <matrix>			::= '[' <matrix_tail> ']'
+ * <matrix_tail>	::= <vector> ';' <matrix_tail> | <vector>
  */
 static struct s_Expr	*matrix(void *_self)
 {
 	struct s_Parser	*self = _self;
 	void			*vec = new(Vec);	/* Vec container */
-	struct s_Expr	*x;
+	struct s_Expr	*x = NULL;
 
 	do {
 		if (self->look->tag == ';')
 			move(self);
-		match(self, '[');	/* opening bracket of vector */
-		x = vector(self);
-		if (!x)
+		if (!(match(self, '[')		/* opening bracket of vector */
+			&& (x = vector(self))
+			&& match(self, ']')))	/* closing bracket of a vector */
 		{
 			delete(vec);
+			delete(x);
 			return (NULL);
 		}
-		match(self, ']');	/* closing bracket of a vector */
 		Vec_push_back(vec, x);
 	} while (self->look->tag == ';');
 	x = new(MatExpr, NULL, MATRIX, vec);

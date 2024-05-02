@@ -1,14 +1,46 @@
-<expr>			:== <term> <expr_tail>
-<expr_tail>		:== '+' <term> <expr_tail> | '-' <term> <expr_tail> | epsilon
-<term>			:== <unary> <term_tail>
-<term_tail>		:== '*' <unary> <term_tail> | '**' <unary> <term_tail> |
-					'/' <unary> <term_tail> | '%' <unary> <term_tail> | epsilon
-<unary>			:== '+' <unary> | '-' <unary> | <factor>
-<factor>		:== <base> <factor_tail> | <base>
-<factor_tail>	:== '^' <unary>
-<base>			:== '(' <expr> ')' | <vector> | <matrix> | Rational | Complex
-<exponent>		:== <base>
-<vector>		:== '[' <vector_tail> ']'
-<vector_tail>	:== <expr> ',' <vector_tail> | <expr>
-<matrix>		:== '[' <matrix_tail> ']'
-<matrix_tail>	:== <vector> ';' <matrix_tail> | <vector>
+<stmt>			::= <expr> | epsilon
+
+<expr>			::= <term> <expr_tail>
+<expr_tail>		::= <add_op> <term> <expr_tail>
+<add_op>		::= '+' | '-'
+
+<term>			::= <unary> <term_tail>
+<term_tail>		::= <mult_op> <unary> <term_tail>
+<mult_op>		::= '*' | '**' | '/' | '%'
+
+<unary>			::= <unary_ops> <unary> | <factor>
+<unary_ops>		::= '+' | '-'
+
+<factor>		::= <base> <factor_tail> | <base>
+<factor_tail>	::= '^' <exponent>
+<exponent>		::= <unary>
+
+<base>			::= '(' <expr> ')'
+					| <rational> | <complex>
+					| <vector> | <matrix>
+					| <id>
+
+<integer>		:== <digit> <integer_tail>
+<integer_tail>	:== <digit> <iteger_tail> | <digit>
+
+<digit>			::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+
+<rational>		:== <integer> | <integer> '.' <integer>
+
+<complex>		:== <rational> 'i'
+
+<vector>		::= '[' <vector_tail> ']'
+<vector_tail>	::= <expr> ',' <vector_tail> | <expr>
+
+<matrix>		::= '[' <matrix_tail> ']'
+<matrix_tail>	::= <vector> ';' <matrix_tail> | <vector>
+
+<id>			::= <letter> <id_tail>
+<id_tail>		::= <letter> <id_tail> | <letter>
+
+<letter>		::= 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J'
+					| 'K' | 'L' | 'M' | 'N' | 'O' | 'P' | 'Q' | 'R' | 'S' | 'T'
+					| 'U' | 'V' | 'W' | 'X' | 'Y' | 'Z'
+					| 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j'
+					| 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't'
+					| 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
