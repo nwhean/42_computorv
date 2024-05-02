@@ -112,9 +112,9 @@ struct s_Token	*Lexer_scan(void *_self)
 
 		do
 		{
-			Str_push_back(s, self->peek);
+			Str_push_back(s, tolower(self->peek));
 			readch(_self);
-		} while (isalnum(self->peek));
+		} while (isalpha(self->peek));
 		word = Lexer_find(self, s);
 		if (!word)
 		{
