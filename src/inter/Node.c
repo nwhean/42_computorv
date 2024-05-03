@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "Node.r"
 #include "Node.h"
 
@@ -11,6 +13,23 @@ static void	*Node_ctor(void *_self, va_list *app)
 
 	self = super_ctor(Node, _self, app);
 	return (self);
+}
+
+/* Return Token representing the Expr. */
+struct s_Token	*eval(const void *self)
+{
+	const struct s_NodeClass *const	*cp = self;
+
+	assert(self && *cp && (*cp)->eval);
+	return ((*cp)->eval(self));
+}
+
+struct s_Token	*super_eval(const void *_class, const void *_self)
+{
+	const struct s_NodeClass	*superclass = super(_class);
+
+	assert(_self && superclass->eval);
+	return (superclass->eval(_self));
 }
 
 /* NodeClass constructor method. */
@@ -32,7 +51,9 @@ static void	*NodeClass_ctor(void *_self, va_list *app)
 		voidf	method;
 
 		#pragma GCC diagnostic ignored "-Wcast-function-type"
-		(void)method;
+		method = va_arg(ap, voidf);
+		if (selector == (voidf)eval)
+			*(voidf *)&self->eval = method;
 		#pragma GCC diagnostic pop
 	}
 	return (self);

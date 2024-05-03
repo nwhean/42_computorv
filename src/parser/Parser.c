@@ -14,8 +14,11 @@
 #include "Arith.h"
 #include "Constant.h"
 #include "Expr.h"
+#include "ExprStmt.h"
 #include "Id.h"
 #include "MatExpr.h"
+#include "Seq.h"
+#include "Stmt.h"
 #include "Unary.h"
 #include "VecExpr.h"
 
@@ -40,7 +43,8 @@ static struct s_Word	*symbol_find(
 							const struct s_Parser *self,
 							const void *str);
 static void				move(void *_self);
-static struct s_Expr	*stmt(void *_self);
+static struct s_Stmt	*stmts(void *_self);
+static struct s_Stmt	*stmt(void *_self);
 static struct s_Expr	*expr(void *_self);
 static struct s_Expr	*term(void *_self);
 static struct s_Expr	*unary(void *_self);
@@ -92,31 +96,10 @@ static void	move(void *_self)
 void	Parser_program(void *_self)
 {
 	struct s_Parser		*self = _self;
-	void				*x = stmt(self);	/* Expr or subclass */
-	const char			*s;
-	struct s_Token		*token;
+	void				*x = stmts(self);	/* Seq */
 
-	if (!x)
-		return ;
-
-	s = str(x);
-	printf("%s\n", s);
-	free((char *)s);
-
-	token = eval(x);
-	if (token)
-	{
-		const char	*result = str(token);
-
-		printf("%s\n", result);
-		free((char *)result);
-		if (token->tag != ID)
-			delete(token);
-	}
-	else
-	{
-		fprintf(stderr, "Evaluation failure\n");
-	}
+	if (x)
+		eval(x);
 	delete(x);
 }
 
@@ -135,19 +118,43 @@ static bool	match(void *_self, int t)
 	return (false);
 }
 
-/* <stmt>	::= <expr> | epsilon */
-static struct s_Expr	*stmt(void *_self)
+/* <stmts>		::= <stmts_tail>
+ * <stmts_tail>	::= <stmt> <stmts_tail> | epsilon
+ */
+static struct s_Stmt	*stmts(void *_self)
 {
 	struct s_Parser	*self = _self;
-	struct s_Expr	*x = expr(self);
+	struct s_Stmt	*x;
 
+	if (self->look->tag == EOF)
+		return (NULL);
+	x = stmt(self);
+	return new(Seq, x, stmts(self));
+}
+
+/* <stmt>	::= <expr> '\n' | '\n' */
+static struct s_Stmt	*stmt(void *_self)
+{
+	struct s_Parser	*self = _self;
+	struct s_Expr	*x;
+
+	if (self->look->tag == '\n')	/* null statement */
+	{
+		move(self);
+		return (NULL);
+	}
+	x = expr(self);
+	if (!x)
+		return (NULL);
 	if (self->look->tag == '\n')
-		return (x);
+	{
+		move(self);
+		return new(ExprStmt, x);
+	}
 	fprintf(stderr, "match: Syntax Error: expect '\\n' (%d), get '%c' (%d)\n",
 			'\n', self->look->tag, self->look->tag);
 	delete(x);
 	return (NULL);
-
 }
 
 /* <expr>		::= <term> <expr_tail>

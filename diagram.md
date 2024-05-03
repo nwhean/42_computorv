@@ -61,15 +61,32 @@ classDiagram
 	class Expr {
 		+Token op
 		+Tag tag
-		+eval() Token
 		+get_op() Token
 		+set_tag(Tag) void
 		+get_tag() Tag
 	}
 
+	Stmt <|-- ExprStmt
+
+	class ExprStmt {
+		+Expr expr
+	}
+
 	Expr <|-- Id
-	Class Node
+
+	class Node {
+		+eval() Token
+	}
+
 	Expr <|-- Op
+	Stmt <|-- Seq
+
+	class Seq {
+		+Stmt stmt1
+		+Stmt stmt2
+	}
+
+	Node <|-- Stmt
 	Op <|-- Unary
 
 	class Unary {

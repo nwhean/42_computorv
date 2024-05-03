@@ -9,11 +9,14 @@
 /* inter */
 #include "Arith.h"
 #include "Expr.h"
+#include "ExprStmt.h"
 #include "Constant.h"
 #include "Id.h"
 #include "MatExpr.h"
 #include "Node.h"
 #include "Op.h"
+#include "Seq.h"
+#include "Stmt.h"
 #include "Unary.h"
 #include "VecExpr.h"
 
@@ -40,10 +43,13 @@ void	init_inter(void)
 	initArith();
 	initConstant();
 	initExpr();
+	initExprStmt();
 	initId();
 	initMatExpr();
 	initNode();
 	initOp();
+	initSeq();
+	initStmt();
 	initUnary();
 	initVecExpr();
 }

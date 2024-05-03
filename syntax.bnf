@@ -1,4 +1,7 @@
-<stmt>			::= <expr> | epsilon
+<stmts>			::= <stmts_tail>
+<stmts_tail>	::= <stmt> <stmts_tail> | epsilon
+
+<stmt>			::= <expr> '\n' | '\n'
 
 <expr>			::= <term> <expr_tail>
 <expr_tail>		::= <add_op> <term> <expr_tail>

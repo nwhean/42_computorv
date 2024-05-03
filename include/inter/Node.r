@@ -12,6 +12,7 @@ struct s_Node	/* Node: Object */
 struct	s_NodeClass	/* NodeClass: Class */
 {
 	const struct s_Class	_;
+	struct s_Token			*(*eval)(const void *self);
 };
 
 #endif

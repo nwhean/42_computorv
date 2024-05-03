@@ -30,10 +30,13 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 				Arith.c \
 				Constant.c \
 				Expr.c \
+				ExprStmt.c \
 				Id.c \
 				MatExpr.c \
 				Node.c \
 				Op.c \
+				Seq.c \
+				Stmt.c \
 				Unary.c \
 				VecExpr.c \
 			) \
