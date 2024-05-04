@@ -55,10 +55,10 @@ static char	*Unary_str(const void *_self)
 	return (retval);
 }
 
-static struct s_Token	*Unary_eval(const void *_self)
+static struct s_Token	*Unary_eval(const void *_self, void *env)
 {
 	const struct s_Unary	*self = _self;
-	void					*expr = eval(self->expr);
+	void					*expr = eval(self->expr, env);
 
 	if (!expr)
 		return (NULL);

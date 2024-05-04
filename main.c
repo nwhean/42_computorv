@@ -8,6 +8,7 @@
 
 /* inter */
 #include "Arith.h"
+#include "AssignStmt.h"
 #include "Expr.h"
 #include "ExprStmt.h"
 #include "Constant.h"
@@ -31,6 +32,9 @@
 /* parser */
 #include "Parser.h"
 
+/* symbols */
+#include "Env.h"
+
 void	init_container(void)
 {
 	initStr();
@@ -41,6 +45,7 @@ void	init_container(void)
 void	init_inter(void)
 {
 	initArith();
+	initAssignStmt();
 	initConstant();
 	initExpr();
 	initExprStmt();
@@ -69,6 +74,11 @@ void	init_parser(void)
 	initParser();
 }
 
+void	init_symbols(void)
+{
+	initEnv();
+}
+
 /* initialise all classes */
 void	init(void)
 {
@@ -76,9 +86,8 @@ void	init(void)
 	init_inter();
 	init_lexer();
 	init_parser();
+	init_symbols();
 }
-
-#include <string.h>
 
 int	main(void)
 {

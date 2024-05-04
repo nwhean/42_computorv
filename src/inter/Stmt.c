@@ -15,20 +15,20 @@ static void	*Stmt_ctor(void *_self, va_list *app)
 }
 
 /* Return Token representing the Expr. */
-void	exec(const void *self)
+void	exec(const void *self, void *env)
 {
 	const struct s_StmtClass *const	*cp = self;
 
 	assert(self && *cp && (*cp)->exec);
-	(*cp)->exec(self);
+	(*cp)->exec(self, env);
 }
 
-void	super_exec(const void *_class, const void *_self)
+void	super_exec(const void *_class, const void *_self, void *env)
 {
 	const struct s_StmtClass	*superclass = super(_class);
 
 	assert(_self && superclass->exec);
-	superclass->exec(_self);
+	superclass->exec(_self, env);
 }
 
 /* StmtClass constructor method. */

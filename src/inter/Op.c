@@ -33,12 +33,12 @@ static char	*Op_str(const void *_self)
 	return (super_str(class, self));
 }
 
-static struct s_Token	*Op_eval(const void *_self)
+static struct s_Token	*Op_eval(const void *_self, void *env)
 {
 	const struct s_ExprClass	*class = classOf(_self);
 	const struct s_Op			*self = _self;
 
-	return (super_eval(class, self));
+	return (super_eval(class, self, env));
 }
 
 void	initOp(void)

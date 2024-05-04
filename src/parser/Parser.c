@@ -12,6 +12,7 @@
 
 /* inter */
 #include "Arith.h"
+#include "AssignStmt.h"
 #include "Constant.h"
 #include "Expr.h"
 #include "ExprStmt.h"
@@ -33,15 +34,12 @@
 #include "Parser.h"
 #include "Parser.r"
 
+/* symbols */
+#include "Env.h"
+
 const void	*Parser;
 const void	*ParserClass;
 
-static void				symbol_add(
-							struct s_Parser *self,
-							const struct s_Word *word);
-static struct s_Word	*symbol_find(
-							const struct s_Parser *self,
-							const void *str);
 static void				move(void *_self);
 static struct s_Stmt	*stmts(void *_self);
 static struct s_Stmt	*stmt(void *_self);
@@ -61,7 +59,7 @@ static void	*Parser_ctor(void *_self, va_list *app)
 	self = super_ctor(Parser, _self, app);
 	self->lexer = va_arg(*app, void *);
 	self->look = NULL;
-	self->top = new(UnorderedMap);	/* symbol table */
+	self->top = new(Env, NULL);	/* symbol table */
 	move(self);
 	return (self);
 }
@@ -99,7 +97,7 @@ void	Parser_program(void *_self)
 	void				*x = stmts(self);	/* Seq */
 
 	if (x)
-		exec(x);
+		exec(x, self->top);
 	delete(x);
 }
 
@@ -132,11 +130,15 @@ static struct s_Stmt	*stmts(void *_self)
 	return new(Seq, x, stmts(self));
 }
 
-/* <stmt>	::= <expr> '\n' | '\n' */
+/* <stmt>			::= <expr_stmt> | <assign_stmt>
+ * <expr_stmt>		::= <expr> '\n' | '\n'
+ * <assign_stmt>	::= <id> '=' <expr> '\n'
+ */
 static struct s_Stmt	*stmt(void *_self)
 {
 	struct s_Parser	*self = _self;
-	struct s_Expr	*x;
+	void			*x = NULL;		/* Expr */
+	void			*id = NULL;		/* Id */
 
 	if (self->look->tag == '\n')	/* null statement */
 	{
@@ -151,9 +153,21 @@ static struct s_Stmt	*stmt(void *_self)
 		move(self);
 		return new(ExprStmt, x);
 	}
+	else if (get_tag(x) == ID && self->look->tag == '=')
+	{
+		id = x;
+		move(self);
+		x = expr(self);
+		if (self->look->tag == '\n')
+		{
+			move(self);
+			return new(AssignStmt, id, x);
+		}
+	}
 	fprintf(stderr, "match: Syntax Error: expect '\\n' (%d), get '%c' (%d)\n",
 			'\n', self->look->tag, self->look->tag);
 	delete(x);
+	delete(id);
 	return (NULL);
 }
 
@@ -277,7 +291,6 @@ static struct s_Expr	*base(void *_self)
 	struct s_Parser	*self = _self;
 	struct s_Expr	*x = NULL;
 	void			*tok;	/* Token or its subclass */
-	void			*s;	/* Str */
 
 	switch (self->look->tag)
 	{
@@ -312,20 +325,13 @@ static struct s_Expr	*base(void *_self)
 			move(self);
 			return (x);
 		case ID:
-			s = ((struct s_Word *)self->look)->lexeme;
-			tok = symbol_find(self, s);
-			/* if symbol is not found, add it to the symbol table. */
-			if (!tok)
-			{
-				tok = copy(self->look);
-				symbol_add(self, tok);
-			}
-			x = new(Id, copy(tok), self->look->tag);
+			x = new(Id, copy(self->look), ID);
 			move(self);
 			return (x);
 		default:
 			fprintf(stderr, "base: Unexpected token '%c' (%d)\n",
 					self->look->tag, self->look->tag);
+			move(self);
 			return (NULL);
 	}
 }
@@ -405,19 +411,6 @@ static void	*ParserClass_ctor(void *_self, va_list *app)
 		#pragma GCC diagnostic pop
 	}
 	return (self);
-}
-
-/* Add a Word to the symbol table. */
-static void	symbol_add(struct s_Parser *self, const struct s_Word *word)
-{
-	UnorderedMap_insert(self->top, copy(word->lexeme), (void *)word);
-}
-
-/* Find a Word from the symbol table. */
-static struct s_Word	*symbol_find(
-		const struct s_Parser *self, const void *str)
-{
-	return (UnorderedMap_find(self->top, str));
 }
 
 void	initParser(void)

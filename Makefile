@@ -6,6 +6,7 @@ INCLUDE	=	-Iinclude \
 			-Iinclude/lexer \
 			-Iinclude/other \
 			-Iinclude/parser \
+			-Iinclude/symbols \
 			-Iliboop/include
 LDFLAGS	=	-L. -Lliboop
 LDLIBS	=	-lcomputorv -loop -lm
@@ -19,6 +20,7 @@ INTER_DIR		=	inter/
 LEXER_DIR		=	lexer/
 OTHER_DIR		=	other/
 PARSER_DIR		=	parser/
+SYMBOLS_DIR		=	symbols/
 
 SRCDIR	=	src
 SRCS	=	$(addprefix $(CONTAINER_DIR), \
@@ -28,6 +30,7 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 			) \
 			$(addprefix $(INTER_DIR), \
 				Arith.c \
+				AssignStmt.c \
 				Constant.c \
 				Expr.c \
 				ExprStmt.c \
@@ -56,6 +59,9 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 			) \
 			$(addprefix $(PARSER_DIR), \
 				Parser.c \
+			) \
+			$(addprefix $(SYMBOLS_DIR), \
+				Env.c \
 			)
 OBJDIR	=	obj
 OBJS	=	$(addprefix $(OBJDIR)/, $(SRCS:%.c=%.o))

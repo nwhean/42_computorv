@@ -33,7 +33,7 @@ static char	*ExprStmt_str(const void *_self)
 	return (str(self->expr));
 }
 
-static void	ExprStmt_exec(const void *_self)
+static void	ExprStmt_exec(const void *_self, void *env)
 {
 	const struct s_ExprStmt	*self = _self;
 	char					*s = str(self->expr);
@@ -44,7 +44,7 @@ static void	ExprStmt_exec(const void *_self)
 	free(s);
 
 	/* evaluate the expression and print result */
-	token = eval(self->expr);
+	token = eval(self->expr, env);
 	if (token)
 	{
 		char	*result = str(token);

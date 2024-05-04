@@ -93,7 +93,7 @@ static char	*MatExpr_str(const void *_self)
 }
 
 /* Evaluate the expression into a Matrix class */
-static struct s_Token	*MatExpr_eval(const void *_self)
+static struct s_Token	*MatExpr_eval(const void *_self, void *env)
 {
 	const struct s_MatExpr	*self = _self;
 	void					*vec = new(Vec);
@@ -106,7 +106,7 @@ static struct s_Token	*MatExpr_eval(const void *_self)
 		size_t	j;
 
 		for (j = 0; j < self->cols; ++j)
-			Vec_push_back(vec_r, eval(Vec_at(vec_i, j)));
+			Vec_push_back(vec_r, eval(Vec_at(vec_i, j), env));
 		Vec_push_back(vec, vec_r);
 	}
 	return (new(Matrix, MATRIX, vec));

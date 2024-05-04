@@ -55,6 +55,13 @@ classDiagram
 		+Expr expr2
 	}
 
+	Stmt <|-- AssignStmt
+
+	class AssignStmt {
+		+Id id
+		+Expr expr;
+	}
+
 	Expr <|-- Constant
 	Node <|-- Expr
 
@@ -84,6 +91,11 @@ classDiagram
 	}
 
 	Node <|-- Stmt
+
+	class Stmt {
+		+exec(Env) void
+	}
+
 	Op <|-- Unary
 
 	class Unary {
@@ -224,8 +236,6 @@ classDiagram
 		-Token look
 		-UnorderedMap top
 		+program() void
-		-symbol_add(Word) void
-		-symbol_find(Str) Word
 		-move() void
 		-expr() Expr
 		-term() Expr

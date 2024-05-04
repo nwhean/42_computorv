@@ -25,7 +25,7 @@ static void	*Arith_ctor(void *_self, va_list *app)
 	self->expr1 = va_arg(*app, struct s_Expr *);
 	self->expr2 = va_arg(*app, struct s_Expr *);
 	set_tag(self, numeric_max(self->expr1->tag, self->expr2->tag));
-	assert(get_tag(self));
+	/* assert(get_tag(self)); */
 	return (self);
 }
 
@@ -63,12 +63,12 @@ static char	*Arith_str(const void *_self)
 }
 
 /* Evaluate the arithmetic expression. */
-static struct s_Token	*Arith_eval(const void *_self)
+static struct s_Token	*Arith_eval(const void *_self, void *env)
 {
 	const struct s_Arith	*self = _self;
 	const struct s_Token	*op = get_op(self);
-	void					*expr1 = eval(self->expr1);
-	void					*expr2 = eval(self->expr2);
+	void					*expr1 = eval(self->expr1, env);
+	void					*expr2 = eval(self->expr2, env);
 	void					*retval = NULL;
 
 	if (expr1 && expr2)

@@ -33,27 +33,38 @@ static char	*Expr_str(const void *_self)
 	return (str(self->op));
 }
 
+static bool	Expr_equal(const void *_self, const void *_other)
+{
+	const struct s_Expr	*self = _self;
+	const struct s_Expr	*other = _other;
+
+	if (self->tag != other->tag)
+		return (false);
+	return equal(self->op, other->op);
+}
+
 /* Return Token representing the Expr. */
-struct s_Token	*eval(const void *self)
+struct s_Token	*eval(const void *self, void *env)
 {
 	const struct s_ExprClass *const	*cp = self;
 
 	assert(self && *cp && (*cp)->eval);
-	return ((*cp)->eval(self));
+	return ((*cp)->eval(self, env));
 }
 
-struct s_Token	*super_eval(const void *_class, const void *_self)
+struct s_Token	*super_eval(const void *_class, const void *_self, void *env)
 {
 	const struct s_ExprClass	*superclass = super(_class);
 
 	assert(_self && superclass->eval);
-	return (superclass->eval(_self));
+	return (superclass->eval(_self, env));
 }
 
-static struct s_Token	*Expr_eval(const void *_self)
+static struct s_Token	*Expr_eval(const void *_self, void *env)
 {
 	const struct s_Expr	*self = _self;
 
+	(void)env;
 	return copy(self->op);
 }
 
@@ -122,6 +133,7 @@ void	initExpr(void)
 				ctor, Expr_ctor,
 				dtor, Expr_dtor,
 				str, Expr_str,
+				equal, Expr_equal,
 				eval, Expr_eval,
 				0);
 }

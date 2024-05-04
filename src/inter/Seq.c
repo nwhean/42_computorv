@@ -53,14 +53,14 @@ static char	*Seq_str(const void *_self)
 	return (retval);
 }
 
-static void	Seq_exec(const void *_self)
+static void	Seq_exec(const void *_self, void *env)
 {
 	const struct s_Seq	*self = _self;
 
 	if (self->stmt1)
-		exec(self->stmt1);
+		exec(self->stmt1, env);
 	if (self->stmt2)
-		exec(self->stmt2);
+		exec(self->stmt2, env);
 }
 
 void	initSeq(void)

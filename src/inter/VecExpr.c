@@ -41,7 +41,7 @@ static char	*VecExpr_str(const void *_self)
 }
 
 /* Evaluate the expression into a Vector class */
-static struct s_Token	*VecExpr_eval(const void *_self)
+static struct s_Token	*VecExpr_eval(const void *_self, void *env)
 {
 	const struct s_VecExpr	*self = _self;
 	void					*vec = new(Vec);
@@ -49,7 +49,7 @@ static struct s_Token	*VecExpr_eval(const void *_self)
 	size_t					i;
 
 	for (i = 0; i < size; ++i)
-		Vec_push_back(vec, eval(Vec_at(self->vec, i)));
+		Vec_push_back(vec, eval(Vec_at(self->vec, i), env));
 	return (new(Vector, VECTOR, vec));
 }
 

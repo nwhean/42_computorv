@@ -15,12 +15,12 @@ struct s_Stmt	/* Stmt: Node */
 struct	s_StmtClass	/* StmtClass: NodeClass */
 {
 	const struct s_NodeClass	_;
-	void						(*exec)(const void *self);
+	void						(*exec)(const void *self, void *env);
 };
 
 extern const void	*StmtClass;
 
-void	exec(const void *self);
+void	exec(const void *self, void *env);
 
 void	initStmt(void);
 

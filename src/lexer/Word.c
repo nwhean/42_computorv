@@ -75,6 +75,17 @@ static char	*Word_str(const void *_self)
 	return (str(self->lexeme));
 }
 
+/* Return the equality of two Word. */
+static bool	Word_equal(const void *_self, const void *_other)
+{
+	const struct s_Word	*self = _self;
+	const struct s_Word	*other = _other;
+
+	if (!super_equal(Word, _self, _other))
+		return (false);
+	return (equal(self->lexeme, other->lexeme));
+}
+
 /* add a word into the reserve. */
 static void	reserve_add(const struct s_Word *word)
 {
@@ -100,6 +111,7 @@ void	initWord(void)
 				copy, Word_copy,
 				dtor, Word_dtor,
 				str, Word_str,
+				equal, Word_equal,
 				0);
 		Word_reserved = new(UnorderedMap);
 		Word_plus = new(Word, PLUS, "plus");
