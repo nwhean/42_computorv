@@ -99,7 +99,7 @@ void	Parser_program(void *_self)
 	void				*x = stmts(self);	/* Seq */
 
 	if (x)
-		eval(x);
+		exec(x);
 	delete(x);
 }
 

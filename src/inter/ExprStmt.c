@@ -3,6 +3,7 @@
 
 /* lexer */
 #include "Token.h"
+#include "Expr.h"
 
 const void	*ExprStmt;
 
@@ -32,7 +33,7 @@ static char	*ExprStmt_str(const void *_self)
 	return (str(self->expr));
 }
 
-static struct s_Token	*ExprStmt_eval(const void *_self)
+static void	ExprStmt_exec(const void *_self)
 {
 	const struct s_ExprStmt	*self = _self;
 	char					*s = str(self->expr);
@@ -55,19 +56,17 @@ static struct s_Token	*ExprStmt_eval(const void *_self)
 	}
 	else
 		fprintf(stderr, "Evaluation failure\n");
-
-	return (NULL);
 }
 
 void	initExprStmt(void)
 {
 	initStmt();
 	if (!ExprStmt)
-		ExprStmt = new(NodeClass, "ExprStmt",
-				Node, sizeof(struct s_ExprStmt),
+		ExprStmt = new(StmtClass, "ExprStmt",
+				Stmt, sizeof(struct s_ExprStmt),
 				ctor, ExprStmt_ctor,
 				dtor, ExprStmt_dtor,
 				str, ExprStmt_str,
-				eval, ExprStmt_eval,
+				exec, ExprStmt_exec,
 				0);
 }

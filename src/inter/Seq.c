@@ -53,15 +53,14 @@ static char	*Seq_str(const void *_self)
 	return (retval);
 }
 
-static struct s_Token	*Seq_eval(const void *_self)
+static void	Seq_exec(const void *_self)
 {
 	const struct s_Seq	*self = _self;
 
 	if (self->stmt1)
-		eval(self->stmt1);
+		exec(self->stmt1);
 	if (self->stmt2)
-		eval(self->stmt2);
-	return (NULL);
+		exec(self->stmt2);
 }
 
 void	initSeq(void)
@@ -69,11 +68,11 @@ void	initSeq(void)
 	initStr();
 	initStmt();
 	if (!Seq)
-		Seq = new(NodeClass, "Seq",
-				Node, sizeof(struct s_Seq),
+		Seq = new(StmtClass, "Seq",
+				Stmt, sizeof(struct s_Seq),
 				ctor, Seq_ctor,
 				dtor, Seq_dtor,
 				str, Seq_str,
-				eval, Seq_eval,
+				exec, Seq_exec,
 				0);
 }

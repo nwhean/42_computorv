@@ -1,3 +1,5 @@
+#include <assert.h>
+
 #include "Expr.h"
 #include "Expr.r"
 
@@ -29,6 +31,23 @@ static char	*Expr_str(const void *_self)
 	const struct s_Expr	*self = _self;
 
 	return (str(self->op));
+}
+
+/* Return Token representing the Expr. */
+struct s_Token	*eval(const void *self)
+{
+	const struct s_ExprClass *const	*cp = self;
+
+	assert(self && *cp && (*cp)->eval);
+	return ((*cp)->eval(self));
+}
+
+struct s_Token	*super_eval(const void *_class, const void *_self)
+{
+	const struct s_ExprClass	*superclass = super(_class);
+
+	assert(_self && superclass->eval);
+	return (superclass->eval(_self));
 }
 
 static struct s_Token	*Expr_eval(const void *_self)
@@ -81,7 +100,9 @@ static void	*ExprClass_ctor(void *_self, va_list *app)
 		voidf	method;
 
 		#pragma GCC diagnostic ignored "-Wcast-function-type"
-		(void)method;
+		method = va_arg(ap, voidf);
+		if (selector == (voidf)eval)
+			*(voidf *)&self->eval = method;
 		#pragma GCC diagnostic pop
 	}
 	return (self);

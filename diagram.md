@@ -61,6 +61,7 @@ classDiagram
 	class Expr {
 		+Token op
 		+Tag tag
+		+eval(Env) Token
 		+get_op() Token
 		+set_tag(Tag) void
 		+get_tag() Tag
@@ -73,10 +74,6 @@ classDiagram
 	}
 
 	Expr <|-- Id
-
-	class Node {
-		+eval() Token
-	}
 
 	Expr <|-- Op
 	Stmt <|-- Seq
