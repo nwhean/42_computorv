@@ -60,6 +60,19 @@ static void	*MatExpr_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* MatExpr copy constructor method. */
+static void	*MatExpr_copy(const void *_self)
+{
+	const struct s_MatExpr	*self = _self;
+	struct s_MatExpr		*retval;
+
+	retval = super_copy(MatExpr, _self);
+	retval->rows = self->rows;
+	retval->cols = self->cols;
+	retval->vec = copy(self->vec);
+	return (retval);
+}
+
 /* MatExpr destructor method. */
 static void	*MatExpr_dtor(void *_self)
 {
@@ -123,6 +136,7 @@ void	initMatExpr(void)
 		MatExpr = new(ExprClass, "MatExpr",
 				Expr, sizeof(struct s_MatExpr),
 				ctor, MatExpr_ctor,
+				copy, MatExpr_copy,
 				dtor, MatExpr_dtor,
 				str, MatExpr_str,
 				eval, MatExpr_eval,

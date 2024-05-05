@@ -17,6 +17,18 @@ static void	*Expr_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* Expr copy constructor method. */
+static void	*Expr_copy(void *_self)
+{
+	struct s_Expr	*self = _self;
+	struct s_Expr	*retval;
+
+	retval = (super_copy(Expr, _self));
+	retval->op = copy(self->op);
+	retval->tag = self->tag;
+	return (retval);
+}
+
 /* Expr destructor method. */
 static void	*Expr_dtor(void *_self)
 {
@@ -131,6 +143,7 @@ void	initExpr(void)
 		Expr = new(ExprClass, "Expr",
 				Node, sizeof(struct s_Expr),
 				ctor, Expr_ctor,
+				copy, Expr_copy,
 				dtor, Expr_dtor,
 				str, Expr_str,
 				equal, Expr_equal,

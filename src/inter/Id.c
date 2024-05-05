@@ -21,6 +21,12 @@ static void	*Id_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* Id copy constructor method. */
+static void	*Id_copy(const void *_self)
+{
+	return (super_copy(Id, _self));
+}
+
 /* Id destructor method. */
 static void	*Id_dtor(void *_self)
 {
@@ -65,6 +71,7 @@ void	initId(void)
 		Id = new(ExprClass, "Id",
 				Expr, sizeof(struct s_Id),
 				ctor, Id_ctor,
+				copy, Id_copy,
 				dtor, Id_dtor,
 				str, Id_str,
 				equal, Id_equal,

@@ -29,6 +29,18 @@ static void	*Arith_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* Arith copy constructor method. */
+static void	*Arith_copy(const void *_self)
+{
+	const struct s_Arith	*self = _self;
+	struct s_Arith			*retval;
+
+	retval = super_copy(Arith, _self);
+	retval->expr1 = copy(self->expr1);
+	retval->expr2 = copy(self->expr2);
+	return (retval);
+}
+
 /* Arith destructor method. */
 static void	*Arith_dtor(void *_self)
 {
@@ -110,6 +122,7 @@ void	initArith(void)
 		Arith = new(ExprClass, "Arith",
 				Op, sizeof(struct s_Arith),
 				ctor, Arith_ctor,
+				copy, Arith_copy,
 				dtor, Arith_dtor,
 				str, Arith_str,
 				eval, Arith_eval,

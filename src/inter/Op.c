@@ -16,6 +16,12 @@ static void	*Op_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* Op copy constructor method. */
+static void	*Op_copy(const void *_self)
+{
+	return (super_copy(Op, _self));
+}
+
 /* Op destructor method. */
 static void	*Op_dtor(void *_self)
 {
@@ -48,6 +54,7 @@ void	initOp(void)
 		Op = new(ExprClass, "Op",
 				Expr, sizeof(struct s_Op),
 				ctor, Op_ctor,
+				copy, Op_copy,
 				dtor, Op_dtor,
 				str, Op_str,
 				eval, Op_eval,

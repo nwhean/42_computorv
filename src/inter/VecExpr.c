@@ -24,6 +24,17 @@ static void	*VecExpr_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* VecExpr copy constructor method. */
+static void	*VecExpr_copy(const void *_self)
+{
+	const struct s_VecExpr	*self = _self;
+	struct s_VecExpr		*retval;
+
+	retval = super_copy(VecExpr, _self);
+	retval->vec = copy(self->vec);
+	return (retval);
+}
+
 /* VecExpr destructor method. */
 static void	*VecExpr_dtor(void *_self)
 {
@@ -60,6 +71,7 @@ void	initVecExpr(void)
 		VecExpr = new(ExprClass, "VecExpr",
 				Expr, sizeof(struct s_VecExpr),
 				ctor, VecExpr_ctor,
+				copy, VecExpr_copy,
 				dtor, VecExpr_dtor,
 				str, VecExpr_str,
 				eval, VecExpr_eval,

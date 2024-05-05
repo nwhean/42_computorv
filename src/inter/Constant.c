@@ -16,6 +16,12 @@ static void	*Constant_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* Constant copy constructor method. */
+static void	*Constant_copy(const void *_self)
+{
+	return (super_copy(Constant, _self));
+}
+
 /* Constant destructor method. */
 static void	*Constant_dtor(void *_self)
 {
@@ -48,6 +54,7 @@ void	initConstant(void)
 		Constant = new(ExprClass, "Constant",
 				Expr, sizeof(struct s_Constant),
 				ctor, Constant_ctor,
+				copy, Constant_copy,
 				dtor, Constant_dtor,
 				str, Constant_str,
 				eval, Constant_eval,

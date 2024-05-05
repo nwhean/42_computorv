@@ -27,6 +27,17 @@ static void	*Unary_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* Unary copy constructor method. */
+static void	*Unary_copy(const void *_self)
+{
+	const struct s_Unary	*self = _self;
+	struct s_Unary			*retval;
+
+	retval = super_copy(Unary, _self);
+	retval->expr = copy(self->expr);
+	return (retval);
+}
+
 /* Unary destructor method. */
 static void	*Unary_dtor(void *_self)
 {
@@ -75,6 +86,7 @@ void	initUnary(void)
 		Unary = new(ExprClass, "Unary",
 				Op, sizeof(struct s_Unary),
 				ctor, Unary_ctor,
+				copy, Unary_copy,
 				dtor, Unary_dtor,
 				str, Unary_str,
 				eval, Unary_eval,

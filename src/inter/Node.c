@@ -13,6 +13,12 @@ static void	*Node_ctor(void *_self, va_list *app)
 	return (self);
 }
 
+/* Node copy constructor method. */
+static void	*Node_copy(void *_self)
+{
+	return (super_copy(Node, _self));
+}
+
 /* NodeClass constructor method. */
 static void	*NodeClass_ctor(void *_self, va_list *app)
 {
@@ -49,5 +55,6 @@ void	initNode(void)
 		Node = new(NodeClass, "Node",
 				Object, sizeof(struct s_Node),
 				ctor, Node_ctor,
+				copy, Node_copy,
 				0);
 }
