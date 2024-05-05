@@ -2,6 +2,7 @@
 #include "Str.h"
 
 /* inter */
+#include "Constant.h"
 #include "Expr.h"
 #include "AssignStmt.h"
 
@@ -73,7 +74,7 @@ static void	AssignStmt_exec(void *_self, void *env)
 		free(s);
 
 		/* put key-value pair in the environment */
-		Env_put(env, self->id, token);
+		Env_put(env, self->id, new(Constant, token, ID));
 		self->id = NULL;	/* prevent deletion of id */
 	}
 	else

@@ -36,7 +36,7 @@ void	Env_put(void *_self, void* id, void *expr)
 }
 
 /* get the expr from the hash table */
-void	*Env_get(const void *_self, void *id)
+void	*Env_get(const void *_self, const void *id)
 {
 	const struct s_Env	*self = _self;
 	struct s_Env		*env;

@@ -53,11 +53,11 @@ static bool	Id_equal(const void *self, const void *other)
 /* Get the value if an Id from the environment. */
 static struct s_Token	*Id_eval(const void *self, void *env)
 {
-	struct s_Token	*retval = Env_get(env, (void *)self);
+	struct s_Expr	*expr = Env_get(env, self);
 	char			*s;
 
-	if (retval)
-		return (copy(retval));
+	if (expr)
+		return (eval(expr, env));
 	s = str(get_op(self));
 	fprintf(stderr, "'%s' is not defined.\n", s);
 	free(s);

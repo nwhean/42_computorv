@@ -9,6 +9,6 @@ extern const void	*EnvClass;
 
 void	initEnv(void);
 void	Env_put(void *self, void* id, void *expr);
-void	*Env_get(const void *self, void *id);
+void	*Env_get(const void *self, const void *id);
 
 #endif

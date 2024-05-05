@@ -1,9 +1,13 @@
 #include <assert.h>
 #include <stdarg.h>
 
+/* inter */
 #include "Expr.h"
 #include "Expr.r"
 #include "Constant.h"
+
+/* symbols */
+#include "Env.h"
 
 const void	*Constant;
 
@@ -41,10 +45,8 @@ static char	*Constant_str(const void *_self)
 
 static struct s_Token	*Constant_eval(const void *_self, void *env)
 {
-	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Constant		*self = _self;
-
-	return (super_eval(class, self, env));
+	(void)env;
+	return (copy(get_op(_self)));
 }
 
 void	initConstant(void)
