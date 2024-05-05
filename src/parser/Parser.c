@@ -14,6 +14,7 @@
 #include "Arith.h"
 #include "AssignStmt.h"
 #include "Constant.h"
+#include "FuncDef.h"
 #include "Expr.h"
 #include "ExprStmt.h"
 #include "Id.h"
@@ -25,6 +26,7 @@
 
 /* lexer */
 #include "Complex.h"
+#include "Function.h"
 #include "Lexer.h"
 #include "Rational.h"
 #include "Token.h"
@@ -50,6 +52,7 @@ static struct s_Expr	*factor(void *_self);
 static struct s_Expr	*base(void *_self);
 static struct s_Expr	*vector(void *_self);
 static struct s_Expr	*matrix(void *_self);
+static void				*param(void *_self);
 
 /* Parser constructor method. */
 static void	*Parser_ctor(void *_self, va_list *app)
@@ -84,7 +87,7 @@ static void	move(void *_self)
 	if (self->look)
 	{
 		enum e_Tag	tag = self->look->tag;
-		if (!(tag == ID || tag == IMAG))
+		if (!(tag == ID || tag == FUNCTION || tag == IMAG))
 			delete(self->look);
 	}
 	self->look = Lexer_scan(self->lexer);
@@ -132,43 +135,51 @@ static struct s_Stmt	*stmts(void *_self)
 
 /* <stmt>			::= <expr_stmt> | <assign_stmt>
  * <expr_stmt>		::= <expr> '\n' | '\n'
- * <assign_stmt>	::= <id> '=' <expr> '\n'
+ * <assign_stmt>	::= <assign_lhs> '=' <expr> '\n'
+ * <assign_lhs>		::= <id> | <func>
  */
 static struct s_Stmt	*stmt(void *_self)
 {
 	struct s_Parser	*self = _self;
-	void			*x = NULL;		/* Expr */
-	void			*id = NULL;		/* Id */
+	void			*lhs = NULL;	/* Expr */
+	void			*rhs = NULL;	/* Expr */
+	enum e_Tag		tag;
 
 	if (self->look->tag == '\n')	/* null statement */
 	{
 		move(self);
 		return (NULL);
 	}
-	x = expr(self);
-	if (!x)
+	lhs = expr(self);
+	if (!lhs)
 		return (NULL);
-	if (self->look->tag == '\n')
+	switch (self->look->tag)
 	{
-		move(self);
-		return new(ExprStmt, x);
-	}
-	else if (get_tag(x) == ID && self->look->tag == '=')
-	{
-		id = x;
-		move(self);
-		x = expr(self);
-		if (self->look->tag == '\n')
-		{
+		case '\n':
 			move(self);
-			return new(AssignStmt, id, x);
-		}
+			return new(ExprStmt, lhs);
+		case '=':
+			move(self);
+			rhs = expr(self);
+			if (!rhs || !match(self, '\n'))
+			{
+				delete(lhs);
+				delete(rhs);
+				return (NULL);
+			}
+			tag = get_tag(lhs);
+			if (tag == ID)
+				return new(AssignStmt, lhs, rhs);
+			else
+				return new(FuncDef, lhs, rhs);
+		default:
+			fprintf(stderr,
+					"stmt: Syntax Error: expect '%c' (%d), get '%c' (%d)\n",
+					'\n', '\n', self->look->tag, self->look->tag);
+			delete(lhs);
+			delete(rhs);
+			return (NULL);
 	}
-	fprintf(stderr, "match: Syntax Error: expect '\\n' (%d), get '%c' (%d)\n",
-			'\n', self->look->tag, self->look->tag);
-	delete(x);
-	delete(id);
-	return (NULL);
 }
 
 /* <expr>		::= <term> <expr_tail>
@@ -290,7 +301,9 @@ static struct s_Expr	*base(void *_self)
 {
 	struct s_Parser	*self = _self;
 	struct s_Expr	*x = NULL;
-	void			*tok;	/* Token or its subclass */
+	void			*tok;		/* Token or its subclass */
+	void			*args;		/* Vec containing Expr */
+
 
 	switch (self->look->tag)
 	{
@@ -328,6 +341,16 @@ static struct s_Expr	*base(void *_self)
 			x = new(Id, copy(self->look), ID);
 			move(self);
 			return (x);
+		case FUNCTION:
+			x = copy(self->look);
+			move(self);
+			args = param(self);
+			if (!args)
+			{
+				delete(x);
+				return (NULL);
+			}
+			return new(Function, x, FUNCTION, args);
 		default:
 			fprintf(stderr, "base: Unexpected token '%c' (%d)\n",
 					self->look->tag, self->look->tag);
@@ -386,6 +409,36 @@ static struct s_Expr	*matrix(void *_self)
 	x = new(MatExpr, NULL, MATRIX, vec);
 
 	return (x);
+}
+
+/* <param_list>	:== <expr> ',' <param_list> | <expr> | epsilon */
+static void	*param(void *_self)
+{
+	struct s_Parser	*self = _self;
+	void			*vec = new(Vec);	/* Vec container */
+	struct s_Expr	*x;
+
+	match(self, '(');
+	if (self->look->tag == ')')
+	{
+		move(self);
+		return (vec);
+	}
+	do {
+		if (self->look->tag == ',')
+			move(self);
+		x = expr(self);
+		if (!x)
+		{
+			delete(vec);
+			return (NULL);
+		}
+		Vec_push_back(vec, x);
+	} while (self->look->tag == ',');
+	if (match(self, ')'))
+		return (vec);
+	delete(vec);
+	return (NULL);
 }
 
 /* ParserClass constructor method. */

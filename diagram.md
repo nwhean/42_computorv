@@ -80,6 +80,22 @@ classDiagram
 		+Expr expr
 	}
 
+	Expr <|-- Function
+
+	class Function {
+		+char* name
+		+Vec params
+		+Expr expr
+	}
+
+	Stmt <|-- FuncDef
+
+	class FuncDef {
+		+Id	id
+		+Vec params
+		+Expr expr
+	}
+
 	Expr <|-- Id
 
 	Expr <|-- Op
@@ -190,6 +206,7 @@ classDiagram
 		VECTOR
 		MATRIX
 		ID
+		FUNCTION
 	}
 
 	class Token {

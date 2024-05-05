@@ -3,7 +3,8 @@
 
 <stmt>			::= <expr_stmt> | <assign_stmt>
 <expr_stmt>		::= <expr> '\n' | '\n'
-<assign_stmt>	::= <id> '=' <expr> '\n'
+<assign_stmt>	::= <assign_lhs> '=' <expr> '\n'
+<assign_lhs>	::= <id> | <func>
 
 <expr>			::= <term> <expr_tail>
 <expr_tail>		::= <add_op> <term> <expr_tail>
@@ -23,7 +24,7 @@
 <base>			::= '(' <expr> ')'
 					| <rational> | <complex>
 					| <vector> | <matrix>
-					| <id>
+					| <id> | <func_call>
 
 <integer>		:== <digit> <integer_tail>
 <integer_tail>	:== <digit> <iteger_tail> | <digit>
@@ -49,3 +50,6 @@
 					| 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h' | 'i' | 'j'
 					| 'k' | 'l' | 'm' | 'n' | 'o' | 'p' | 'q' | 'r' | 's' | 't'
 					| 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
+
+<func>			:== <id> '(' <param_list> ')'
+<param_list>	:== <expr> ',' <param_list> | <expr> | epsilon

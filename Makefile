@@ -34,6 +34,8 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 				Constant.c \
 				Expr.c \
 				ExprStmt.c \
+				FuncDef.c \
+				Function.c \
 				Id.c \
 				MatExpr.c \
 				Node.c \

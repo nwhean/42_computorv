@@ -11,6 +11,8 @@
 #include "AssignStmt.h"
 #include "Expr.h"
 #include "ExprStmt.h"
+#include "FuncDef.h"
+#include "Function.h"
 #include "Constant.h"
 #include "Id.h"
 #include "MatExpr.h"
@@ -49,6 +51,8 @@ void	init_inter(void)
 	initConstant();
 	initExpr();
 	initExprStmt();
+	initFuncDef();
+	initFunction();
 	initId();
 	initMatExpr();
 	initNode();

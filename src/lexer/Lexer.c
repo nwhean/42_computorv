@@ -119,7 +119,7 @@ struct s_Token	*Lexer_scan(void *_self)
 		if (!word)
 		{
 			char	*s_ptr = str(s);
-			word = new(Word, ID, s_ptr);
+			word = new(Word, self->peek == '(' ? FUNCTION : ID, s_ptr);
 			Lexer_reserve(self, word);
 			free(s_ptr);
 		}
