@@ -133,9 +133,11 @@ static struct s_Stmt	*stmts(void *_self)
 	return new(Seq, x, stmts(self));
 }
 
-/* <stmt>			::= <expr_stmt> | <assign_stmt>
- * <expr_stmt>		::= <expr> '\n' | '\n'
- * <assign_stmt>	::= <assign_lhs> '=' <expr> '\n'
+/* <stmt>			::= <stmt_type> '\n'
+ * <stmt_type>		::= <null_stmt> | <expr_stmt> | <assign_stmt>
+ * <null_stmt>		::= epsilon
+ * <expr_stmt>		::= <expr> | <expr> '=' '?'
+ * <assign_stmt>	::= <assign_lhs> '=' <expr>
  * <assign_lhs>		::= <id> | <func>
  */
 static struct s_Stmt	*stmt(void *_self)
@@ -160,6 +162,17 @@ static struct s_Stmt	*stmt(void *_self)
 			return new(ExprStmt, lhs);
 		case '=':
 			move(self);
+			if (self->look->tag == '?')
+			{
+				move(self);
+				if (!match(self, '\n'))
+				{
+					delete(lhs);
+					return (NULL);
+				}
+				return new(ExprStmt, lhs);
+			}
+
 			rhs = expr(self);
 			if (!rhs || !match(self, '\n'))
 			{

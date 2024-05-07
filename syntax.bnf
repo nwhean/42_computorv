@@ -1,9 +1,11 @@
 <stmts>			::= <stmts_tail>
 <stmts_tail>	::= <stmt> <stmts_tail> | epsilon
 
-<stmt>			::= <expr_stmt> | <assign_stmt>
-<expr_stmt>		::= <expr> '\n' | '\n'
-<assign_stmt>	::= <assign_lhs> '=' <expr> '\n'
+<stmt>			::= <stmt_type> '\n'
+<stmt_type>		::= <null_stmt> | <expr_stmt> | <assign_stmt>
+<null_stmt>		::= epsilon
+<expr_stmt>		::= <expr> | <expr> '=' '?'
+<assign_stmt>	::= <assign_lhs> '=' <expr>
 <assign_lhs>	::= <id> | <func>
 
 <expr>			::= <term> <expr_tail>
