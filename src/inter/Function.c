@@ -5,6 +5,7 @@
 #include "Vec.h"
 
 /* inter */
+#include "Constant.h"
 #include "Expr.h"
 #include "Expr.r"
 #include "Function.h"
@@ -90,15 +91,43 @@ static char	*Function_str(const void *_self)
 
 static struct s_Token	*Function_eval(const void *_self, void *env)
 {
-	const struct s_Function		*self = _self;
+	const struct s_Function	*self = _self;
+	const struct s_Function	*def = Env_get(env, get_op(self));
+	void					*env_new;
+	size_t					size = Vec_size(self->params);
+	size_t					i;
+	struct s_Token			*retval;
 
-	return (eval(self->expr, env));
+	if (!def)
+	{
+		fprintf(stderr, "Function_eval: undefined function.\n");
+		return (NULL);
+	}
+
+	/* create a new environment to evaluate the function expression */
+	env_new = new(Env, env);
+	for (i = 0; i < size; ++i)
+	{
+		/* evaluate input parameter with the current environment */
+		void	*val = eval(Vec_at(self->params, i), env);
+
+		Env_put(
+			env_new,
+			copy(Vec_at(def->params, i)),
+			new(Constant, val, get_tag(val)));
+	}
+
+	/* evaluate the expression using the newly definde environment */
+	retval = eval(def->expr, env_new);
+	delete(env_new);
+	return (retval);
 }
 
 void	initFunction(void)
 {
 	initStr();
 	initVec();
+	initConstant();
 	initExpr();
 	if (!Function)
 		Function = new(ExprClass, "Function",
