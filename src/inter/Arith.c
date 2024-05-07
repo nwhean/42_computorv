@@ -81,37 +81,41 @@ static struct s_Token	*Arith_eval(const void *_self, void *env)
 	const struct s_Token	*op = get_op(self);
 	void					*expr1 = eval(self->expr1, env);
 	void					*expr2 = eval(self->expr2, env);
-	void					*retval = NULL;
 
-	if (expr1 && expr2)
+	/* return NULL if either of the expression is NULL */
+	if (!expr1 || !expr2)
 	{
-		switch (op->tag)
-		{
-			case '+':
-				retval = numeric_iadd(&expr1, expr2);
-				break ;
-			case '-':
-				retval = numeric_isub(&expr1, expr2);
-				break ;
-			case '*':
-				retval = numeric_imul(&expr1, expr2);
-				break ;
-			case MMULT:
-				retval = numeric_immult(&expr1, expr2);
-				break ;
-			case '/':
-				retval = numeric_idiv(&expr1, expr2);
-				break ;
-			case '%':
-				retval = numeric_imod(&expr1, expr2);
-				break ;
-			case '^':
-				retval = numeric_ipow(&expr1, expr2);
-				break ;
-		}
+		delete(expr1);
+		delete(expr2);
+		return (NULL);
+	}
+
+	switch (op->tag)
+	{
+		case '+':
+			numeric_iadd(&expr1, expr2);
+			break ;
+		case '-':
+			numeric_isub(&expr1, expr2);
+			break ;
+		case '*':
+			numeric_imul(&expr1, expr2);
+			break ;
+		case MMULT:
+			numeric_immult(&expr1, expr2);
+			break ;
+		case '/':
+			numeric_idiv(&expr1, expr2);
+			break ;
+		case '%':
+			numeric_imod(&expr1, expr2);
+			break ;
+		case '^':
+			numeric_ipow(&expr1, expr2);
+			break ;
 	}
 	delete(expr2);
-	return (retval);
+	return (expr1);
 }
 
 void	initArith(void)
