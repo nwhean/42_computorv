@@ -23,7 +23,16 @@ static void	*FuncDef_ctor(void *_self, va_list *app)
 	self = super_ctor(FuncDef, _self, app);
 	self->func = va_arg(*app, struct s_Function *);
 	self->expr = va_arg(*app, struct s_Expr *);
-	return (self);
+
+	if (get_tag(self->func) == FUNCTION && self->expr)
+		return (self);
+	if (get_tag(self->func) != FUNCTION)
+		fprintf(stderr, "FuncDef_ctor: expect Function as LHS, get '%c'.\n",
+				get_tag(self->func));
+	if (!self->expr)
+		fprintf(stderr, "FuncDef_ctor: RHS is ill-defined.\n");
+	delete(self);
+	return (NULL);
 }
 
 /* FuncDef destructor method. */

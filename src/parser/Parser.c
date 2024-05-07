@@ -145,6 +145,7 @@ static struct s_Stmt	*stmt(void *_self)
 	struct s_Parser	*self = _self;
 	void			*lhs = NULL;	/* Expr */
 	void			*rhs = NULL;	/* Expr */
+	void			*retval = NULL;
 	enum e_Tag		tag;
 
 	if (self->look->tag == '\n')	/* null statement */
@@ -158,41 +159,34 @@ static struct s_Stmt	*stmt(void *_self)
 	switch (self->look->tag)
 	{
 		case '\n':
-			move(self);
-			return new(ExprStmt, lhs);
+			retval = new(ExprStmt, lhs);
+			break ;
+
 		case '=':
 			move(self);
 			if (self->look->tag == '?')
 			{
 				move(self);
-				if (!match(self, '\n'))
-				{
-					delete(lhs);
-					return (NULL);
-				}
-				return new(ExprStmt, lhs);
+				retval = new(ExprStmt, lhs);
+				break ;
 			}
 
 			rhs = expr(self);
-			if (!rhs || !match(self, '\n'))
-			{
-				delete(lhs);
-				delete(rhs);
-				return (NULL);
-			}
 			tag = get_tag(lhs);
 			if (tag == ID)
-				return new(AssignStmt, lhs, rhs);
+				retval =  new(AssignStmt, lhs, rhs);
 			else
-				return new(FuncDef, lhs, rhs);
+				retval = new(FuncDef, lhs, rhs);
+			break ;
+
 		default:
-			fprintf(stderr,
-					"stmt: Syntax Error: expect '%c' (%d), get '%c' (%d)\n",
-					'\n', '\n', self->look->tag, self->look->tag);
+			match(self, '=');
 			delete(lhs);
 			delete(rhs);
-			return (NULL);
 	}
+	if (retval)
+		match(self, '\n');
+	return (retval);
 }
 
 /* <expr>		::= <term> <expr_tail>

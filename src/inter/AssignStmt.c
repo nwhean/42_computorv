@@ -22,7 +22,16 @@ static void	*AssignStmt_ctor(void *_self, va_list *app)
 	self = super_ctor(AssignStmt, _self, app);
 	self->id = va_arg(*app, struct s_Id *);
 	self->expr = va_arg(*app, struct s_Expr *);
-	return (self);
+
+	if (get_tag(self->id) == ID && self->expr)
+		return (self);
+	if (get_tag(self->id) != ID)
+		fprintf(stderr, "AssignStmt_ctor: expect Id as LHS, get '%c'.\n",
+				get_tag(self->id));
+	if (!self->expr)
+		fprintf(stderr, "AssignStmt_ctor: RHS is ill-defined.\n");
+	delete(self);
+	return (NULL);
 }
 
 /* AssignStmt destructor method. */
