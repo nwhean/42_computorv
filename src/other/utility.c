@@ -1,5 +1,12 @@
 #include "utility.h"
 
+/* wrapper exit function */
+void	*ft_exit(const void *params)
+{
+	(void)params;
+	exit(0);
+}
+
 /* Exchanges the values of x and y. */
 void	swap_double(double *x, double *y)
 {

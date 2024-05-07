@@ -5,6 +5,7 @@
 #include "Vec.h"
 
 /* inter */
+#include "BuiltIn.h"
 #include "Constant.h"
 #include "Expr.h"
 #include "Expr.r"
@@ -100,6 +101,12 @@ static struct s_Token	*Function_eval(const void *_self, void *env)
 
 	if (!def)
 	{
+		/* check whether there's a built-in function */
+		void	*built_in = Env_get(BuiltInFunc, get_op(self));
+
+		if (built_in)
+			return (BuiltIn_call(built_in, self->params));
+
 		fprintf(stderr, "Function_eval: undefined function.\n");
 		return (NULL);
 	}
@@ -127,6 +134,7 @@ void	initFunction(void)
 {
 	initStr();
 	initVec();
+	initBuiltIn();
 	initConstant();
 	initExpr();
 	if (!Function)

@@ -31,6 +31,7 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 			$(addprefix $(INTER_DIR), \
 				Arith.c \
 				AssignStmt.c \
+				BuiltIn.c \
 				Constant.c \
 				Expr.c \
 				ExprStmt.c \

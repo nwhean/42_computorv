@@ -1,0 +1,126 @@
+#include <stdarg.h>
+
+/* container */
+#include "Str.h"
+#include "Vec.h"
+
+/* inter */
+#include "Expr.h"
+#include "Expr.r"
+#include "BuiltIn.h"
+
+/* lexer */
+#include "Word.h"
+
+/* other */
+#include "utility.h"
+
+/* symbols */
+#include "Env.h"
+
+const void	*BuiltIn;
+const void	*BuiltInFunc;
+
+typedef void	*(*fptr)(const void *);
+
+/* BuiltIn constructor method. */
+static void	*BuiltIn_ctor(void *_self, va_list *app)
+{
+	struct s_BuiltIn	*self = _self;
+
+	self = super_ctor(BuiltIn, _self, app);
+	self->count = va_arg(*app, size_t);
+	self->fptr = va_arg(*app, fptr);
+	return (self);
+
+}
+
+/* BuiltIn copy constructor method. */
+static void	*BuiltIn_copy(const void *_self)
+{
+	const struct s_BuiltIn	*self = _self;
+	struct s_BuiltIn		*retval;
+
+	retval = super_copy(BuiltIn, _self);
+	retval->count = self->count;
+	retval->fptr = self->fptr;
+	return (retval);
+}
+
+/* BuiltIn destructor method. */
+static void	*BuiltIn_dtor(void *_self)
+{
+	return (super_dtor(BuiltIn, _self));
+}
+
+static char	*BuiltIn_str(const void *_self)
+{
+	const struct s_BuiltIn		*self = _self;
+	void						*s;
+	char						*s_append;
+	char						*retval;
+
+	/* opening bracket */
+	s = new(Str, "<built-in function ");
+
+	/* insert name */
+	s_append = str(get_op(self));
+	Str_append(s, s_append);
+	free(s_append);
+
+	/* closing bracket */
+	Str_push_back(s, '>');
+
+	retval = str(s);
+	delete(s);
+	return (retval);
+}
+
+/* call a built in function */
+void	*BuiltIn_call(const void *_self, const void *params)
+{
+	const struct s_BuiltIn	*self = _self;
+	size_t					size = Vec_size(params);
+
+	/* verify that the number of parameters is as expected */
+	if (size != self->count)
+	{
+		fprintf(stderr, "BuiltIn_call: expect %ld arguments, get %ld\n",
+				self->count, size);
+		return (NULL);
+	}
+	return (self->fptr(params));
+}
+
+/* add a built-in function to the environment. */
+static void	BuiltIn_add(const struct s_BuiltIn *func)
+{
+	Env_put((void *)BuiltInFunc, copy(get_op(func)), (void *)func);
+}
+
+const struct s_BuiltIn	*BuiltIn_exit;
+
+void	initBuiltIn(void)
+{
+	initStr();
+	initVec();
+	initExpr();
+	initWord();
+	if (!BuiltIn)
+	{
+		BuiltIn = new(ExprClass, "BuiltIn",
+				Expr, sizeof(struct s_BuiltIn),
+				ctor, BuiltIn_ctor,
+				copy, BuiltIn_copy,
+				dtor, BuiltIn_dtor,
+				str, BuiltIn_str,
+				0);
+		BuiltInFunc = new(Env, NULL);
+
+		/* define built-in functions */
+		BuiltIn_exit = new(BuiltIn, new(Word, FUNCTION, "exit"), BUILTIN,
+						0, ft_exit);
+
+		BuiltIn_add(BuiltIn_exit);
+	}
+}

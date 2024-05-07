@@ -9,6 +9,7 @@
 /* inter */
 #include "Arith.h"
 #include "AssignStmt.h"
+#include "BuiltIn.h"
 #include "Expr.h"
 #include "ExprStmt.h"
 #include "FuncDef.h"
@@ -48,6 +49,7 @@ void	init_inter(void)
 {
 	initArith();
 	initAssignStmt();
+	initBuiltIn();
 	initConstant();
 	initExpr();
 	initExprStmt();
