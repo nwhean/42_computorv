@@ -102,6 +102,8 @@ static void	BuiltIn_add(const struct s_BuiltIn *func)
 const struct s_BuiltIn	*BuiltIn_exit;
 const struct s_BuiltIn	*BuiltIn_exp;
 const struct s_BuiltIn	*BuiltIn_ln;
+const struct s_BuiltIn	*BuiltIn_sin;
+const struct s_BuiltIn	*BuiltIn_cos;
 
 void	initBuiltIn(void)
 {
@@ -127,9 +129,15 @@ void	initBuiltIn(void)
 						1, ft_exp);
 		BuiltIn_ln = new(BuiltIn, new(Word, FUNCTION, "ln"), BUILTIN,
 						1, ft_ln);
+		BuiltIn_sin = new(BuiltIn, new(Word, FUNCTION, "sin"), BUILTIN,
+						1, ft_sin);
+		BuiltIn_cos = new(BuiltIn, new(Word, FUNCTION, "cos"), BUILTIN,
+						1, ft_cos);
 
 		BuiltIn_add(BuiltIn_exit);
 		BuiltIn_add(BuiltIn_exp);
 		BuiltIn_add(BuiltIn_ln);
+		BuiltIn_add(BuiltIn_sin);
+		BuiltIn_add(BuiltIn_cos);
 	}
 }
