@@ -147,17 +147,63 @@ static char	*Rational_str(const void *_self)
 	return (retval);
 }
 
+/* Right shift the Rational to a simplier fraction. */
+static void	*Rational_rshift(void *_self)
+{
+	struct s_Rational	*self = _self;
+	long				a = self->numerator;
+	long				b = self->denominator;
+
+	while (b > 1e6)
+	{
+		if (a == -1)
+		{
+			a = 0;
+			b = 1;
+		}
+		else
+		{
+			a >>= 1;
+			b >>= 1;
+		}
+	}
+	self->numerator = a;
+	self->denominator = b;
+	return (self);
+}
+
+/* Left shift the Rational to a simplier fraction. */
+static void	*Rational_lshift(void *_self)
+{
+	struct s_Rational	*self = _self;
+	long				a = self->numerator;
+	long				b = self->denominator;
+
+	while (labs(a) < 1e12 && b < 1e12)
+	{
+		{
+			a <<= 1;
+			b <<= 1;
+		}
+	}
+	self->numerator = a;
+	self->denominator = b;
+	return (self);
+}
+
 /* Return the addition of two Rationals. */
 static void	*Rational_add_Rational(const void *_self, const void *_other)
 {
-	const struct s_Rational	*self = _self;
-	const struct s_Rational	*other = _other;
-	long					a = self->numerator;
-	long					b = self->denominator;
-	long					c = other->numerator;
-	long					d = other->denominator;
-	long					g = gcd(b, d);
+	struct s_Rational	*lhs = Rational_rshift(copy(_self));
+	struct s_Rational	*rhs = Rational_rshift(copy(_other));
+	long				a = lhs->numerator;
+	long				b = lhs->denominator;
+	long				c = rhs->numerator;
+	long				d = rhs->denominator;
+	long				g = gcd(b, d);
 
+	delete(lhs);
+	delete(rhs);
 	return new(Rational, RATIONAL, a * (d / g) + c * (b / g), b * (d / g));
 }
 
@@ -181,14 +227,16 @@ static void	*Rational_add(const void *_self, const void *_other)
 /* Return the subtraction of one Rational from Rational. */
 static void	*Rational_sub_Rational(const void *_self, const void *_other)
 {
-	const struct s_Rational	*self = _self;
-	const struct s_Rational	*other = _other;
-	long					a = self->numerator;
-	long					b = self->denominator;
-	long					c = other->numerator;
-	long					d = other->denominator;
-	long					g = gcd(b, d);
+	struct s_Rational	*lhs = Rational_rshift(copy(_self));
+	struct s_Rational	*rhs = Rational_rshift(copy(_other));
+	long				a = lhs->numerator;
+	long				b = lhs->denominator;
+	long				c = rhs->numerator;
+	long				d = rhs->denominator;
+	long				g = gcd(b, d);
 
+	delete(lhs);
+	delete(rhs);
 	return new(Rational, RATIONAL, a * (d / g) - c * (b / g), b * (d / g));
 }
 
@@ -215,15 +263,17 @@ static void	*Rational_sub(const void *_self, const void *_other)
 /* Return the multiplication of two Rationals. */
 static void	*Rational_mul_Rational(const void *_self, const void *_other)
 {
-	const struct s_Rational	*self = _self;
-	const struct s_Rational	*other = _other;
-	long					a = self->numerator;
-	long					b = self->denominator;
-	long					c = other->numerator;
-	long					d = other->denominator;
-	long					f = gcd(a, d);
-	long					g = gcd(b, c);
+	struct s_Rational	*lhs = Rational_rshift(copy(_self));
+	struct s_Rational	*rhs = Rational_rshift(copy(_other));
+	long				a = lhs->numerator;
+	long				b = lhs->denominator;
+	long				c = rhs->numerator;
+	long				d = rhs->denominator;
+	long				f = gcd(a, d);
+	long				g = gcd(b, c);
 
+	delete(lhs);
+	delete(rhs);
 	return new(Rational, RATIONAL, (a / f) * (c / g), (b / g) * (d / f));
 }
 
@@ -247,15 +297,17 @@ static void	*Rational_mul(const void *_self, const void *_other)
 /* Return the division of one Rational from another. */
 static void	*Rational_div_Rational(const void *_self, const void *_other)
 {
-	const struct s_Rational	*self = _self;
-	const struct s_Rational	*other = _other;
-	long					a = self->numerator;
-	long					b = self->denominator;
-	long					c = other->numerator;
-	long					d = other->denominator;
-	long					f = gcd(a, c);
-	long					g = gcd(b, d);
+	struct s_Rational	*lhs = Rational_lshift(copy(_self));
+	struct s_Rational	*rhs = Rational_rshift(copy(_other));
+	long				a = lhs->numerator;
+	long				b = lhs->denominator;
+	long				c = rhs->numerator;
+	long				d = rhs->denominator;
+	long				f = gcd(a, c);
+	long				g = gcd(b, d);
 
+	delete(lhs);
+	delete(rhs);
 	return new(Rational, RATIONAL, (a / f) * (d / g), (b / g) * (c / f));
 }
 

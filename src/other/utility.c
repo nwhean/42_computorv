@@ -1,9 +1,10 @@
 #include "utility.h"
 
 /* wrapper exit function */
-void	*ft_exit(const void *params)
+void	*ft_exit(const void *params, void *env)
 {
 	(void)params;
+	(void)env;
 	exit(0);
 }
 

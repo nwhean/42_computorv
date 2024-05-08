@@ -13,6 +13,7 @@
 #include "Word.h"
 
 /* other */
+#include "mathematics.h"
 #include "utility.h"
 
 /* symbols */
@@ -21,7 +22,7 @@
 const void	*BuiltIn;
 const void	*BuiltInFunc;
 
-typedef void	*(*fptr)(const void *);
+typedef void	*(*fptr)(const void *, const void *);
 
 /* BuiltIn constructor method. */
 static void	*BuiltIn_ctor(void *_self, va_list *app)
@@ -77,7 +78,7 @@ static char	*BuiltIn_str(const void *_self)
 }
 
 /* call a built in function */
-void	*BuiltIn_call(const void *_self, const void *params)
+void	*BuiltIn_call(const void *_self, const void *params, const void *env)
 {
 	const struct s_BuiltIn	*self = _self;
 	size_t					size = Vec_size(params);
@@ -89,7 +90,7 @@ void	*BuiltIn_call(const void *_self, const void *params)
 				self->count, size);
 		return (NULL);
 	}
-	return (self->fptr(params));
+	return (self->fptr(params, env));
 }
 
 /* add a built-in function to the environment. */
@@ -99,6 +100,7 @@ static void	BuiltIn_add(const struct s_BuiltIn *func)
 }
 
 const struct s_BuiltIn	*BuiltIn_exit;
+const struct s_BuiltIn	*BuiltIn_exp;
 
 void	initBuiltIn(void)
 {
@@ -120,7 +122,10 @@ void	initBuiltIn(void)
 		/* define built-in functions */
 		BuiltIn_exit = new(BuiltIn, new(Word, FUNCTION, "exit"), BUILTIN,
 						0, ft_exit);
+		BuiltIn_exp = new(BuiltIn, new(Word, FUNCTION, "exp"), BUILTIN,
+						1, ft_exp);
 
 		BuiltIn_add(BuiltIn_exit);
+		BuiltIn_add(BuiltIn_exp);
 	}
 }

@@ -7,14 +7,14 @@
 struct s_BuiltIn	/* BuiltIn: Expr */
 {
 	const struct s_Expr	_;
-	size_t				count;					/* the number of variables */
-	void				*(*fptr)(const void *);	/* function pointer */
+	size_t				count;	/* the number of variables */
+	void				*(*fptr)(const void *, const void *);	/* function */
 };
 
 extern const void	*BuiltIn;	/* new(BuiltIn, Word, BUILTIN, size_t, fptr); */
 extern const void	*BuiltInFunc;	/* Environment containing Built-in funcs */
 
-void	*BuiltIn_call(const void *self, const void *params);
+void	*BuiltIn_call(const void *self, const void *params, const void *env);
 
 void	initBuiltIn(void);
 

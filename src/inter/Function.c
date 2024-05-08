@@ -105,7 +105,7 @@ static struct s_Token	*Function_eval(const void *_self, void *env)
 		void	*built_in = Env_get(BuiltInFunc, get_op(self));
 
 		if (built_in)
-			return (BuiltIn_call(built_in, self->params));
+			return (BuiltIn_call(built_in, self->params, env));
 
 		fprintf(stderr, "Function_eval: undefined function.\n");
 		return (NULL);
