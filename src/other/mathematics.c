@@ -81,3 +81,84 @@ void	*ft_exp(const void *params, void *env)
 	delete(x);
 	return (retval);
 }
+
+/* Return the exponentiation of a Rational number */
+static struct s_Rational	*ft_ln_Rational(struct s_Rational *_x)
+{
+	struct s_Rational	*one;
+	struct s_Rational	*n;
+	struct s_Rational	*sum;
+	struct s_Rational	*x;
+	struct s_Rational	*x1;
+	struct s_Rational	*term;
+	struct s_Rational	*ln2;
+	struct s_Rational	*multiplier;
+	long				i = 0;
+
+	if (_x->numerator <= 0)
+	{
+		fprintf(stderr, "ft_ln_Rational: domain error.\n");
+		return (NULL);
+	}
+
+	/* scale until 0 < x < 1 */
+	x = copy(_x);
+	while (x->numerator / x->denominator > 1)
+	{
+		if (x->denominator > 1e9)
+			x->numerator >>= 1;
+		else
+			x->denominator *= 2;
+		++i;
+	}
+
+	one = new(Rational, RATIONAL, 1, 1);
+	n = new(Rational, RATIONAL, 1, 1);
+
+	/* ln(x) = -(x-1) - (x-1)^2 / 2 - (x-1)^3 / 3 - (x-1)^4 / 4 + ... */
+	sum = new(Rational, RATIONAL, 0, 1);	/* sum = 0 */
+	numeric_isub((void **)&x, one);			/* x = -(x - 1) */
+	numeric_ineg((void **)&x);
+	x1 = copy(x);							/* x1 = x  */
+	do {
+		term = numeric_div(x1, n);			/* term = x1 / n */
+		numeric_isub((void **)&sum, term);	/* sum -= term */
+		numeric_iadd((void **)&n, one);		/* n += 1*/
+		numeric_imul((void **)&x1, x);		/* x1 = x1 * x  */
+		delete(term);
+	} while (x1->numerator != 0);
+
+	/* sum = sum + i * ln(2) */
+	ln2 = Rational_from_double(0.6931471805599453);
+	multiplier = new(Rational, RATIONAL, i, 1);
+	numeric_imul((void **)&ln2, multiplier);
+	numeric_iadd((void **)&sum, ln2);
+
+	delete(one);
+	delete(n);
+	delete(x);
+	delete(x1);
+	delete(ln2);
+	delete(multiplier);
+	return (sum);
+}
+
+/* Return the exponentiation of a number. */
+void	*ft_ln(const void *params, void *env)
+{
+	void		*x = eval(Vec_at(params, 0), env);
+	enum e_Tag	tag= Token_get_tag(x);
+	void		*retval = NULL;
+
+	switch (tag)
+	{
+		case RATIONAL:
+			retval = ft_ln_Rational(x);
+			break ;
+		default:
+			fprintf(stderr, "ln function is not defined for input type.\n");
+	}
+
+	delete(x);
+	return (retval);
+}
