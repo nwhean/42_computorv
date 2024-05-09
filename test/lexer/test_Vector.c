@@ -619,48 +619,6 @@ void test_magnitude(void) {
 	delete(r);
 }
 
-void test_sum_product(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 10, 1);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, (long)-4, 1);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 7, 1);
-	void				*vec0 = new(Vec);
-	struct s_Vector		*v0;
-
-	struct s_Complex	*r10 = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, 0, 1),
-								new(Rational, RATIONAL, (long)-2, 1));
-	struct s_Complex	*r11 = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, 0, 1),
-								new(Rational, RATIONAL, 1, 1));
-	struct s_Complex	*r12 = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, 0, 1),
-								new(Rational, RATIONAL, 6, 1));
-	void				*vec1 = new(Vec);
-	struct s_Vector		*v1;
-
-	struct s_Complex	*target = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, 0, 1),
-								new(Rational, RATIONAL, 18, 1));
-	struct s_Complex	*r;
-
-	Vec_push_back(vec0, r00);
-	Vec_push_back(vec0, r01);
-	Vec_push_back(vec0, r02);
-	v0 = new(Vector, VECTOR, vec0);
-
-	Vec_push_back(vec1, r10);
-	Vec_push_back(vec1, r11);
-	Vec_push_back(vec1, r12);
-	v1 = new(Vector, VECTOR, vec1);
-
-	r = Vector_sum_product(v0, v1);
-	TEST_ASSERT_TRUE(equal(r, target));
-	delete(v0);
-	delete(v1);
-	delete(r);
-	delete(target);
-}
-
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
@@ -689,6 +647,5 @@ int main(void) {
 	RUN_TEST(test_dot);
 	RUN_TEST(test_magnitude);
 	RUN_TEST(test_sum);
-	RUN_TEST(test_sum_product);
 	return UNITY_END();
 }

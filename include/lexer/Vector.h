@@ -27,6 +27,5 @@ struct s_Vector		*Vector_cross(const void *self, const void *other);
 struct s_Rational	*Vector_dot(const void *self, const void *other);
 struct s_Rational	*Vector_magnitude(const void *self);
 void				*Vector_sum(const void *self);
-void				*Vector_sum_product(const void *self, const void *other);
 
 #endif

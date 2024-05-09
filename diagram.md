@@ -231,7 +231,6 @@ classDiagram
 		+Vector_dot(Vocter other) Rational
 		+Vector_magnitude() Rational
 		+Vector_sum() Numeric
-		+Vector_sum_product(other) Numeric
 	}
 
 	Numeric <|-- Matrix

@@ -461,23 +461,3 @@ void	*Vector_sum(const void *_self)
 		numeric_iadd(&sum, Vector_at(self, i));
 	return (sum);
 }
-
-/* Return the sum of the product of two vectors. */
-void	*Vector_sum_product(const void *_self, const void *_other)
-{
-	const struct s_Vector		*self = _self;
-	const struct s_Vector		*other = _other;
-	size_t						size = Vector_size(self);
-	struct s_Vector				*v;
-	struct s_Rational			*retval;
-
-	if (size != Vector_size(other))
-	{
-		fprintf(stderr, "%s\n", "Vector_sum_product: unequal sizes.");
-		return (NULL);
-	}
-	v = numeric_mul(self, other);
-	retval = Vector_sum(v);
-	delete(v);
-	return (retval);
-}
