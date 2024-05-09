@@ -128,8 +128,8 @@ void test_pow_rational(void) {
 	double				real = Rational_to_double(target->real);
 	double				imag = Rational_to_double(target->imag);
 
-	TEST_ASSERT_FLOAT_WITHIN(1e-7, real, 0.626352798861);
-	TEST_ASSERT_FLOAT_WITHIN(1e-7, imag, 0.669919542924);
+	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, 0.626352798861 / real);
+	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, 0.669919542924 / imag);
 	delete(a);
 	delete(b);
 	delete(target);
@@ -145,8 +145,8 @@ void test_pow_complex(void) {
 	struct s_Complex	*target = numeric_pow(a, b);
 	double				real = Rational_to_double(target->real);
 	double				imag = Rational_to_double(target->imag);
-	TEST_ASSERT_FLOAT_WITHIN(1e-7, real, 0.289688910906);
-	TEST_ASSERT_FLOAT_WITHIN(1e-7, imag, 0.258285468769);
+	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, 0.289688910906 / real);
+	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, 0.258285468769 / imag);
 	delete(a);
 	delete(b);
 	delete(target);

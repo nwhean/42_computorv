@@ -14,6 +14,8 @@
 #include "Matrix.h"
 
 /* other */
+#include "mathematics.h"
+#include "mathematics.r"
 #include "utility.h"
 
 const void	*Rational;
@@ -404,27 +406,67 @@ static void	*Rational_pow_Rational(const void *_self, const void *_other)
 	const struct s_Rational	*self = _self;
 	const struct s_Rational	*other = _other;
 	long					a = self->numerator;
-	long					b = self->denominator;
 	long					c = other->numerator;
 	long					d = other->denominator;
-	double					value = pow((double)a / b, (double)c / d);
-	struct s_Numeric		*promoted;
-	struct s_Numeric		*retval;
+	long					integer;
+	void					*fraction = NULL;
+	void					*cpy = NULL;
+	void					*retval = NULL;
+	void					*retval_frac = NULL;
 
+	/* raising negative number to non-integer gives a Complex solution */
 	if (a < 0 && d != 1)
 	{
-		if (!Complex)
-		{
-			fprintf(stderr, "%s\n",
-					"(-Rational)^(non-integer) is not supported");
-			return (NULL);
-		}
-		promoted = numeric_promote(self, COMPLEX);
-		retval = numeric_pow(promoted, other);
-		delete(promoted);
+		cpy = numeric_promote(self, COMPLEX);
+		retval = numeric_pow(cpy, other);
+		delete(cpy);
 		return (retval);
 	}
-	return Rational_from_double(value);
+
+	/* invert input if necessary */
+	if (c < 0)
+	{
+		cpy = Rational_invert(self);
+		c = -c;
+	}
+	else
+		cpy = copy(self);
+
+	/* separate the power to integer and fractional portion */
+	integer = c / d;
+	if (c - integer * d)	/* if there's a fractional part */
+	{
+		fraction = new(Rational, RATIONAL, c - integer * d, d);	/* b */
+		retval = ft_ln_Rational(cpy);					/* ln a */
+		fraction = numeric_imul(&fraction, retval);		/* b ln a */
+		retval_frac = ft_exp_Rational(fraction);		/* e^(b ln a) */
+		delete(retval);
+	}
+
+	/* exponentiation by squaring */
+	/* reference: https://en.wikipedia.org/wiki/Exponentiation_by_squaring */
+	retval = new(Rational, RATIONAL, 1, 1);
+	while (integer > 1)
+	{
+		if (integer % 2)	/* odd power */
+		{
+			retval = numeric_imul(&retval, cpy);
+			--integer;
+		}
+		cpy = numeric_imul(&cpy, cpy);
+		integer >>= 1;
+	}
+	if (integer == 1)
+		retval = numeric_imul(&retval, cpy);
+
+	/* multiply with fractional power */
+	if (retval_frac)
+		retval = numeric_imul(&retval, retval_frac);
+
+	delete(cpy);
+	delete(fraction);
+	delete(retval_frac);
+	return (retval);
 }
 
 /* Return the exponentiation of one Numeric to another. */
@@ -617,4 +659,19 @@ void	initRational(void)
 		initVector();
 		initMatrix();
 	}
+}
+
+/* Return the inverse of a Rational */
+void	*Rational_invert(const void *_self)
+{
+	const struct s_Rational	*self = _self;
+	long					a = self->numerator;
+	long					b = self->denominator;
+
+	if (a == 0)
+		return (copy(self));
+	else if (a < 0)
+		return (new(Rational, RATIONAL, -b, a));
+	else
+		return (new(Rational, RATIONAL, b, a));
 }
