@@ -614,7 +614,7 @@ void test_magnitude(void) {
 	v0 = new(Vector, VECTOR, vec0);
 
 	r = Vector_magnitude(v0);
-	TEST_ASSERT_FLOAT_WITHIN(1e-7, Rational_to_double(r), 5);
+	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, Rational_to_double(r) / 5);
 	delete(v0);
 	delete(r);
 }

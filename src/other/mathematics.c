@@ -361,3 +361,33 @@ void	*ft_tan(const void *params, void *env)
 	delete(x);
 	return (retval);
 }
+
+/* Return the square root of a Rational number */
+struct s_Rational	*ft_sqrt_Rational(struct s_Rational *x)
+{
+	struct s_Rational	*half = Rational_from_double(0.5);
+	struct s_Rational	*retval = numeric_pow(x, half);
+
+	delete(half);
+	return (retval);
+}
+
+/* Return the tan of a number. */
+void	*ft_sqrt(const void *params, void *env)
+{
+	void		*x = eval(Vec_at(params, 0), env);
+	enum e_Tag	tag= Token_get_tag(x);
+	void		*retval = NULL;
+
+	switch (tag)
+	{
+		case RATIONAL:
+			retval = ft_sqrt_Rational(x);
+			break ;
+		default:
+			fprintf(stderr, "sqrt function is not defined for input type.\n");
+	}
+
+	delete(x);
+	return (retval);
+}

@@ -434,8 +434,7 @@ struct s_Rational	*Complex_modulus(const struct s_Complex *self)
 	struct s_Rational	*sum = numeric_add(a2, b2);
 	struct s_Rational	*retval;
 
-	retval = Rational_from_double(
-				sqrt((double)sum->numerator / sum->denominator));
+	retval = ft_sqrt_Rational(sum);
 	delete(a2);
 	delete(b2);
 	delete(sum);

@@ -1,6 +1,5 @@
 #include <float.h>
 #include <limits.h>
-#include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -15,6 +14,8 @@
 #include "Matrix.h"
 
 /* other */
+#include "mathematics.h"
+#include "mathematics.r"
 #include "utility.h"
 
 const void	*Vector;
@@ -434,17 +435,16 @@ struct s_Rational	*Vector_magnitude(const void *_self)
 	const struct s_Vector	*self = _self;
 	struct s_Vector			*conj = Vector_conjugate(self);
 	struct s_Rational		*dot = Vector_dot(self, conj);
-	double					val;
+	struct s_Rational		*val;
 
-	val = Rational_to_double(dot);
-	val = sqrt(val);	/* should implement my own sqrt function */
+	val = ft_sqrt_Rational(dot);
 	delete(conj);
 	delete(dot);
-	return (Rational_from_double(val));
+	return (val);
 }
 
 /* Return the sum of the element of the vector. */
-void				*Vector_sum(const void *_self)
+void	*Vector_sum(const void *_self)
 {
 	const struct s_Vector	*self = _self;
 	size_t					size = Vector_size(self);
