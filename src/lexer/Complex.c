@@ -11,6 +11,10 @@
 #include "Vector.h"
 #include "Matrix.h"
 
+/* other */
+#include "mathematics.h"
+#include "mathematics.r"
+
 const void	*Complex;
 
 /* Complex constructor method. */
@@ -47,14 +51,20 @@ static struct s_Complex	*Complex_copy(const void *_self)
 }
 
 /* Return a Complex number given its polar form */
-static struct s_Complex	*Complex_from_polar(double modulus, double argument)
+static struct s_Complex	*Complex_from_polar(double _modulus, double _argument)
 {
-	double	a = modulus * cos(argument);
-	double	b = modulus * sin(argument);
+	void	*modulus = Rational_from_double(_modulus);
+	void	*argument = Rational_from_double(_argument);
+	void	*cos = ft_cos_Rational(argument);
+	void	*sin = ft_sin_Rational(argument);
+	void	*a = numeric_mul(modulus, cos);
+	void	*b = numeric_mul(modulus, sin);
 
-	return new(Complex, COMPLEX,
-			Rational_from_double(a),
-			Rational_from_double(b));
+	delete(modulus);
+	delete(argument);
+	delete(cos);
+	delete(sin);
+	return new(Complex, COMPLEX, a, b);
 }
 
 /* Return string representing the Complex. */
@@ -255,41 +265,52 @@ static struct s_Complex	*Complex_neg(const void *_self)
 	return (retval);
 }
 
-/* Return the exponentiation of a Complex to a Rational power. */
+/* Return the exponentiation of a Complex to a Rational power.
+ * e^(ix) = cos(x) + i sin(x)
+ * (e^(ix))^y = e^(ixy) = cos(xy) + i sin(xy)
+ */
 static void	*Complex_pow_Rational(const void *_self, const void *_other)
 {
 	const struct s_Complex	*self = _self;
 	const struct s_Rational	*other = _other;
-	struct s_Rational		*modulus = Complex_modulus(self);
-	struct s_Rational		*argument = Complex_argument(self);
-	double					r = Rational_to_double(modulus);
-	double					theta = Rational_to_double(argument);
-	double					n = Rational_to_double(other);
+	void					*modulus = Complex_modulus(self);
+	void					*argument = Complex_argument(self);
+	double 					r;
+	double					theta;
 
-	r = pow(r, n);
-	theta *= n;
+	modulus = numeric_ipow(&modulus, other);
+	argument = numeric_imul(&argument, other);
+	r = Rational_to_double(modulus);
+	theta = Rational_to_double(argument);
 	delete(modulus);
 	delete(argument);
 	return (Complex_from_polar(r, theta));
 }
 
 /* Return the exponentiation of a Complex to a Complex power, using the
- * principal branch of the logarithm for complex exponentiation.*/
+ * principal branch of the logarithm for complex exponentiation.
+ *
+ * z1 ^ z2 = (a + ib)^(c + id)
+ *         = (re^ix)^(c + id)		r = modulus(z1), x = arg(z1)
+ *         = (e^(ln(r)+ix))^(c + id)
+ *         = e^(ln(r)*(c + id) + ix*(c + id))
+ */
 static void	*Complex_pow_Complex(const void *_self, const void *_other)
 {
 	const struct s_Complex	*self = _self;
 	const struct s_Complex	*other = _other;
-	struct s_Rational	*modulus = Complex_modulus(self);
-	struct s_Rational	*log_modulus = Rational_from_double(
-										log(Rational_to_double(modulus)));
+	struct s_Rational		*modulus = Complex_modulus(self);		/* r */
+	struct s_Rational		*log_modulus = ft_ln_Rational(modulus); /* ln(r) */
 	struct s_Complex		*a = new(Complex, COMPLEX,
 									log_modulus,
-									Complex_argument(self));
+									Complex_argument(self));	/* ln(r) + ix */
 	struct s_Complex		*mul = numeric_mul(a, other);
-	double					r = exp(Rational_to_double(mul->real));
+	struct s_Rational		*modulus_new = ft_exp_Rational(mul->real);
+	double					r = Rational_to_double(modulus_new);
 	double					theta = Rational_to_double(mul->imag);
 
 	delete(modulus);
+	delete(modulus_new);
 	delete(a);
 	delete(mul);
 	return (Complex_from_polar(r, theta));

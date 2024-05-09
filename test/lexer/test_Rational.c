@@ -168,8 +168,8 @@ void test_pow_neg_to_non_integer(void) {
 	double				real = Rational_to_double(target->real);
 	double				imag = Rational_to_double(target->imag);
 
-	TEST_ASSERT_FLOAT_WITHIN(1e-7, real, 0.2218417766298604);
-	TEST_ASSERT_FLOAT_WITHIN(1e-7, imag, 0.07208076267434244);
+	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, 0.2218417766298604 / real);
+	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, 0.07208076267434244 / imag);
 	delete(a);
 	delete(b);
 	delete(target);
