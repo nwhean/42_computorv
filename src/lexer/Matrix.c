@@ -766,6 +766,8 @@ void	*Matrix_invert(const void *_self)
 		return (NULL);
 	if (LUP_decompose(A, P))
 		retval = LUP_invert(A, P);
+	else
+		fprintf(stderr, "%s\n", "Matrix_invert: Matrix is singular.");
 	delete(A);
 	free(P);
 	return (retval);

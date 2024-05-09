@@ -465,3 +465,15 @@ struct s_Complex	*Complex_conjugate(const struct s_Complex *self)
 	numeric_ineg(&imag);
 	return (new(Complex, COMPLEX, real, imag));
 }
+
+/* Return the inverse of a Complex number, i.e. z^-1 */
+struct s_Complex	*Complex_invert(const void *self)
+{
+	void	*conj = Complex_conjugate(self);
+	void	*den = numeric_mul(self, conj);
+	void	*retval = numeric_div(conj, den);
+
+	delete(conj);
+	delete(den);
+	return (retval);
+}

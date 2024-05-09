@@ -14,5 +14,6 @@ void	*ft_abs(const void *params, void *env);
 void	*ft_radians(const void *params, void *env);
 void	*ft_degrees(const void *params, void *env);
 void	*ft_norm(const void *params, void *env);
+void	*ft_inv(const void *params, void *env);
 
 #endif

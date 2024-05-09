@@ -20,6 +20,7 @@ struct s_Rational	*Complex_imag(const struct s_Complex *self);
 struct s_Rational	*Complex_modulus(const struct s_Complex *self);
 struct s_Rational	*Complex_argument(const struct s_Complex *self);
 struct s_Complex	*Complex_conjugate(const struct s_Complex *self);
+struct s_Complex	*Complex_invert(const void *self);
 
 
 #endif

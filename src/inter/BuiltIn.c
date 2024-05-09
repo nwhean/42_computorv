@@ -110,6 +110,7 @@ const struct s_BuiltIn	*BuiltIn_abs;
 const struct s_BuiltIn	*BuiltIn_radians;
 const struct s_BuiltIn	*BuiltIn_degrees;
 const struct s_BuiltIn	*BuiltIn_norm;
+const struct s_BuiltIn	*BuiltIn_inv;
 
 void	initBuiltIn(void)
 {
@@ -151,6 +152,8 @@ void	initBuiltIn(void)
 						1, ft_degrees);
 		BuiltIn_norm = new(BuiltIn, new(Word, FUNCTION, "norm"), BUILTIN,
 						1, ft_norm);
+		BuiltIn_inv = new(BuiltIn, new(Word, FUNCTION, "inv"), BUILTIN,
+						1, ft_inv);
 
 		BuiltIn_add(BuiltIn_exit);
 		BuiltIn_add(BuiltIn_exp);
@@ -163,5 +166,6 @@ void	initBuiltIn(void)
 		BuiltIn_add(BuiltIn_radians);
 		BuiltIn_add(BuiltIn_degrees);
 		BuiltIn_add(BuiltIn_norm);
+		BuiltIn_add(BuiltIn_inv);
 	}
 }

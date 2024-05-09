@@ -590,3 +590,29 @@ void	*ft_norm(const void *params, void *env)
 	delete(x);
 	return (retval);
 }
+
+/* Return the inverse of a number */
+void	*ft_inv(const void *params, void *env)
+{
+	void		*x = eval(Vec_at(params, 0), env);
+	enum e_Tag	tag= Token_get_tag(x);
+	void		*retval = NULL;
+
+	switch (tag)
+	{
+		case RATIONAL:
+			retval = Rational_invert(x);
+			break ;
+		case COMPLEX:
+			retval = Complex_invert(x);
+			break ;
+		case MATRIX:
+			retval = Matrix_invert(x);
+			break ;
+		default:
+			fprintf(stderr, "inv function is not defined for input type.\n");
+	}
+
+	delete(x);
+	return (retval);
+}
