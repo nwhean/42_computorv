@@ -106,6 +106,7 @@ const struct s_BuiltIn	*BuiltIn_sin;
 const struct s_BuiltIn	*BuiltIn_cos;
 const struct s_BuiltIn	*BuiltIn_tan;
 const struct s_BuiltIn	*BuiltIn_sqrt;
+const struct s_BuiltIn	*BuiltIn_abs;
 
 void	initBuiltIn(void)
 {
@@ -139,6 +140,8 @@ void	initBuiltIn(void)
 						1, ft_tan);
 		BuiltIn_sqrt = new(BuiltIn, new(Word, FUNCTION, "sqrt"), BUILTIN,
 						1, ft_sqrt);
+		BuiltIn_abs = new(BuiltIn, new(Word, FUNCTION, "abs"), BUILTIN,
+						1, ft_abs);
 
 		BuiltIn_add(BuiltIn_exit);
 		BuiltIn_add(BuiltIn_exp);
@@ -147,5 +150,6 @@ void	initBuiltIn(void)
 		BuiltIn_add(BuiltIn_cos);
 		BuiltIn_add(BuiltIn_tan);
 		BuiltIn_add(BuiltIn_sqrt);
+		BuiltIn_add(BuiltIn_abs);
 	}
 }

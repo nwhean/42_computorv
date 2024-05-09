@@ -10,5 +10,6 @@ void	*ft_sin(const void *params, void *env);
 void	*ft_cos(const void *params, void *env);
 void	*ft_tan(const void *params, void *env);
 void	*ft_sqrt(const void *params, void *env);
+void	*ft_abs(const void *params, void *env);
 
 #endif

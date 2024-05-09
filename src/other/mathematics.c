@@ -5,7 +5,10 @@
 #include "Expr.h"
 
 /* lexer */
+#include "Complex.h"
+#include "Matrix.h"
 #include "Rational.h"
+#include "Vector.h"
 
 /* other */
 #include "mathematics.h"
@@ -383,6 +386,44 @@ void	*ft_sqrt(const void *params, void *env)
 	{
 		case RATIONAL:
 			retval = ft_sqrt_Rational(x);
+			break ;
+		default:
+			fprintf(stderr, "sqrt function is not defined for input type.\n");
+	}
+
+	delete(x);
+	return (retval);
+}
+
+/* Return the square root of a Rational number */
+struct s_Rational	*ft_abs_Rational(struct s_Rational *x)
+{
+	if (x->numerator < 0)
+		return numeric_neg(x);
+	else
+		return copy(x);
+}
+
+/* Return the absolute value of a number. */
+void	*ft_abs(const void *params, void *env)
+{
+	void		*x = eval(Vec_at(params, 0), env);
+	enum e_Tag	tag= Token_get_tag(x);
+	void		*retval = NULL;
+
+	switch (tag)
+	{
+		case RATIONAL:
+			retval = ft_abs_Rational(x);
+			break ;
+		case COMPLEX:
+			retval = Complex_modulus(x);
+			break ;
+		case VECTOR:
+			retval = Vector_magnitude(x);
+			break ;
+		case MATRIX:
+			retval = Matrix_determinant(x);
 			break ;
 		default:
 			fprintf(stderr, "sqrt function is not defined for input type.\n");
