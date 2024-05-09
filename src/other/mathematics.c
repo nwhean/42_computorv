@@ -323,6 +323,38 @@ void	*ft_cos(const void *params, void *env)
 			retval = ft_cos_Rational(x);
 			break ;
 		default:
+			fprintf(stderr, "tan function is not defined for input type.\n");
+	}
+
+	delete(x);
+	return (retval);
+}
+
+/* Return the tan of a Rational number */
+struct s_Rational	*ft_tan_Rational(struct s_Rational *x)
+{
+	struct s_Rational	*sin = ft_sin_Rational(x);
+	struct s_Rational	*cos = ft_cos_Rational(x);
+	struct s_Rational	*retval = numeric_div(sin, cos);
+
+	delete(sin);
+	delete(cos);
+	return (retval);
+}
+
+/* Return the tan of a number. */
+void	*ft_tan(const void *params, void *env)
+{
+	void		*x = eval(Vec_at(params, 0), env);
+	enum e_Tag	tag= Token_get_tag(x);
+	void		*retval = NULL;
+
+	switch (tag)
+	{
+		case RATIONAL:
+			retval = ft_tan_Rational(x);
+			break ;
+		default:
 			fprintf(stderr, "cos function is not defined for input type.\n");
 	}
 

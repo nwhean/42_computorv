@@ -104,11 +104,31 @@ void test_cos_Rational(void) {
 	}
 }
 
+void test_tan_Rational(void) {
+	double	v;
+
+	for (v = -16; v < 16; v += 0.1)
+	{
+		void	*r_in = Rational_from_double(v);
+		void	*r_out = ft_tan_Rational(r_in);
+		double	calc = Rational_to_double(r_out);
+		double	target = tan(v);
+
+		if (target < - 0.001 || target > 0.001 )
+			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+		delete(r_in);
+		delete(r_out);
+		(void)calc;
+		(void)target;
+	}
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_exp_Rational);
 	RUN_TEST(test_ln_Rational);
 	RUN_TEST(test_sin_Rational);
 	RUN_TEST(test_cos_Rational);
+	RUN_TEST(test_tan_Rational);
 	return UNITY_END();
 }

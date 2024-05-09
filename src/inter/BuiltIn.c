@@ -104,6 +104,7 @@ const struct s_BuiltIn	*BuiltIn_exp;
 const struct s_BuiltIn	*BuiltIn_ln;
 const struct s_BuiltIn	*BuiltIn_sin;
 const struct s_BuiltIn	*BuiltIn_cos;
+const struct s_BuiltIn	*BuiltIn_tan;
 
 void	initBuiltIn(void)
 {
@@ -133,11 +134,15 @@ void	initBuiltIn(void)
 						1, ft_sin);
 		BuiltIn_cos = new(BuiltIn, new(Word, FUNCTION, "cos"), BUILTIN,
 						1, ft_cos);
+		BuiltIn_tan = new(BuiltIn, new(Word, FUNCTION, "tan"), BUILTIN,
+						1, ft_tan);
+
 
 		BuiltIn_add(BuiltIn_exit);
 		BuiltIn_add(BuiltIn_exp);
 		BuiltIn_add(BuiltIn_ln);
 		BuiltIn_add(BuiltIn_sin);
 		BuiltIn_add(BuiltIn_cos);
+		BuiltIn_add(BuiltIn_tan);
 	}
 }
