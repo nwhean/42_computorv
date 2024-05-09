@@ -7,5 +7,7 @@ struct s_Rational	*ft_sin_Rational(struct s_Rational *x);
 struct s_Rational	*ft_cos_Rational(struct s_Rational *x);
 struct s_Rational	*ft_tan_Rational(struct s_Rational *x);
 struct s_Rational	*ft_sqrt_Rational(struct s_Rational *x);
+struct s_Rational	*ft_radians_Rational(struct s_Rational *x);
+struct s_Rational	*ft_degrees_Rational(struct s_Rational *x);
 
 #endif

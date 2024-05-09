@@ -107,6 +107,8 @@ const struct s_BuiltIn	*BuiltIn_cos;
 const struct s_BuiltIn	*BuiltIn_tan;
 const struct s_BuiltIn	*BuiltIn_sqrt;
 const struct s_BuiltIn	*BuiltIn_abs;
+const struct s_BuiltIn	*BuiltIn_radians;
+const struct s_BuiltIn	*BuiltIn_degrees;
 
 void	initBuiltIn(void)
 {
@@ -142,6 +144,10 @@ void	initBuiltIn(void)
 						1, ft_sqrt);
 		BuiltIn_abs = new(BuiltIn, new(Word, FUNCTION, "abs"), BUILTIN,
 						1, ft_abs);
+		BuiltIn_radians = new(BuiltIn, new(Word, FUNCTION, "radians"), BUILTIN,
+						1, ft_radians);
+		BuiltIn_degrees = new(BuiltIn, new(Word, FUNCTION, "degrees"), BUILTIN,
+						1, ft_degrees);
 
 		BuiltIn_add(BuiltIn_exit);
 		BuiltIn_add(BuiltIn_exp);
@@ -151,5 +157,7 @@ void	initBuiltIn(void)
 		BuiltIn_add(BuiltIn_tan);
 		BuiltIn_add(BuiltIn_sqrt);
 		BuiltIn_add(BuiltIn_abs);
+		BuiltIn_add(BuiltIn_radians);
+		BuiltIn_add(BuiltIn_degrees);
 	}
 }

@@ -123,6 +123,44 @@ void test_tan_Rational(void) {
 	}
 }
 
+void test_radians_Rational(void) {
+	double	v;
+
+	for (v = -180; v < 180; v += 0.1)
+	{
+		void	*r_in = Rational_from_double(v);
+		void	*r_out = ft_radians_Rational(r_in);
+		double	calc = Rational_to_double(r_out);
+		double	target = v / 180 * 3.141592653589793;
+
+		if (target < - 0.001 || target > 0.001 )
+			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+		delete(r_in);
+		delete(r_out);
+		(void)calc;
+		(void)target;
+	}
+}
+
+void test_degrees_Rational(void) {
+	double	v;
+
+	for (v = -3.141592653589793; v < 3.141592653589793; v += 0.1)
+	{
+		void	*r_in = Rational_from_double(v);
+		void	*r_out = ft_degrees_Rational(r_in);
+		double	calc = Rational_to_double(r_out);
+		double	target = v * 180 / 3.141592653589793;
+
+		if (target < - 0.001 || target > 0.001 )
+			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+		delete(r_in);
+		delete(r_out);
+		(void)calc;
+		(void)target;
+	}
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_exp_Rational);
@@ -130,5 +168,7 @@ int main(void) {
 	RUN_TEST(test_sin_Rational);
 	RUN_TEST(test_cos_Rational);
 	RUN_TEST(test_tan_Rational);
+	RUN_TEST(test_radians_Rational);
+	RUN_TEST(test_degrees_Rational);
 	return UNITY_END();
 }

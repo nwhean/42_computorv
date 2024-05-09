@@ -432,3 +432,69 @@ void	*ft_abs(const void *params, void *env)
 	delete(x);
 	return (retval);
 }
+
+/* Convert degree to radians */
+struct s_Rational	*ft_radians_Rational(struct s_Rational *x)
+{
+	struct s_Rational	*pi = Rational_from_double(3.141592653589793);
+	struct s_Rational	*n180 = Rational_from_double(180);
+	void				*retval = numeric_mul(x, pi);
+
+	retval = numeric_idiv(&retval, n180);
+	delete(pi);
+	delete(n180);
+	return (retval);
+}
+
+/* Convert degree to radians */
+void	*ft_radians(const void *params, void *env)
+{
+	void		*x = eval(Vec_at(params, 0), env);
+	enum e_Tag	tag= Token_get_tag(x);
+	void		*retval = NULL;
+
+	switch (tag)
+	{
+		case RATIONAL:
+			retval = ft_radians_Rational(x);
+			break ;
+		default:
+			fprintf(stderr, "radians function is not defined for input type.\n");
+	}
+
+	delete(x);
+	return (retval);
+}
+
+/* Convert radians to degrees */
+struct s_Rational	*ft_degrees_Rational(struct s_Rational *x)
+{
+	struct s_Rational	*pi = Rational_from_double(3.141592653589793);
+	struct s_Rational	*n180 = Rational_from_double(180);
+	void				*retval = numeric_mul(x, n180);
+
+	retval = numeric_idiv(&retval, pi);
+	delete(pi);
+	delete(n180);
+	return (retval);
+}
+
+/* Convert radians to degrees */
+void	*ft_degrees(const void *params, void *env)
+{
+	void		*x = eval(Vec_at(params, 0), env);
+	enum e_Tag	tag= Token_get_tag(x);
+	void		*retval = NULL;
+
+	switch (tag)
+	{
+		case RATIONAL:
+			retval = ft_degrees_Rational(x);
+			break ;
+		default:
+			fprintf(stderr, "degrees function is not defined for input type.\n");
+	}
+
+	delete(x);
+	return (retval);
+}
