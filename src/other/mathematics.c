@@ -498,3 +498,95 @@ void	*ft_degrees(const void *params, void *env)
 	delete(x);
 	return (retval);
 }
+
+/* return the p = 1 norm of a matrix
+ * reference: https://en.wikipedia.org/wiki/Matrix_norm
+ */
+struct s_Rational	*ft_norm_Matrix(struct s_Matrix *x)
+{
+	void	*sum;
+	void	*temp;
+	void	*retval;
+	size_t	i;
+	size_t	j;
+
+	retval = Rational_from_double(0);
+	for (j = 0; j < x->cols; ++j)
+	{
+		sum = Rational_from_double(0);
+		for (i = 0; i < x->rows; ++i)
+		{
+			enum e_Tag	tag;
+
+			temp = Matrix_at(x, i, j);
+			tag = Token_get_tag(temp);
+			if (tag == RATIONAL)
+				temp = ft_abs_Rational(temp);
+			else
+				temp = Complex_modulus(temp);
+			numeric_iadd(&sum, temp);
+			delete(temp);
+		}
+		if (Rational_gt(sum, retval))
+		{
+			delete(retval);
+			retval = sum;
+		}
+		else
+			delete(sum);
+	}
+	return (retval);
+}
+
+/* return the p = 1 norm of a Vector
+ * reference: https://en.wikipedia.org/wiki/Norm_(mathematics)
+ */
+struct s_Rational	*ft_norm_Vector(struct s_Vector *x)
+{
+	void	*sum;
+	void	*temp;
+	size_t	i;
+
+	sum = Rational_from_double(0);
+	for (i = 0; i < x->size; ++i)
+	{
+		enum e_Tag	tag;
+
+		temp = Vector_at(x, i);
+		tag = Token_get_tag(temp);
+		if (tag == RATIONAL)
+			temp = ft_abs_Rational(temp);
+		else
+			temp = Complex_modulus(temp);
+		numeric_iadd(&sum, temp);
+		delete(temp);
+	}
+	return (sum);
+}
+
+/* Return the norm of a number */
+void	*ft_norm(const void *params, void *env)
+{
+	void		*x = eval(Vec_at(params, 0), env);
+	enum e_Tag	tag= Token_get_tag(x);
+	void		*retval = NULL;
+
+	switch (tag)
+	{
+		case RATIONAL:
+		case COMPLEX:
+			retval = ft_abs(params, env);
+			break ;
+		case VECTOR:
+			retval = ft_norm_Vector(x);
+			break ;
+		case MATRIX:
+			retval = ft_norm_Matrix(x);
+			break ;
+		default:
+			fprintf(stderr, "norm function is not defined for input type.\n");
+	}
+
+	delete(x);
+	return (retval);
+}

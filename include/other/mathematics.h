@@ -13,5 +13,6 @@ void	*ft_sqrt(const void *params, void *env);
 void	*ft_abs(const void *params, void *env);
 void	*ft_radians(const void *params, void *env);
 void	*ft_degrees(const void *params, void *env);
+void	*ft_norm(const void *params, void *env);
 
 #endif

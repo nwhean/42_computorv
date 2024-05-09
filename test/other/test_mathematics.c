@@ -2,8 +2,12 @@
 
 #include "unity.h"
 
+/* container */
+#include "Vec.h"
+
 /* lexer */
 #include "Rational.h"
+#include "Matrix.h"
 
 /* other */
 #include "mathematics.h"
@@ -161,6 +165,45 @@ void test_degrees_Rational(void) {
 	}
 }
 
+void test_norm_Matrix(void) {
+	struct s_Rational	*r00 = new(Rational, RATIONAL, (long)-3, 1);
+	struct s_Rational	*r01 = new(Rational, RATIONAL, 5, 1);
+	struct s_Rational	*r02 = new(Rational, RATIONAL, 7, 1);
+	struct s_Rational	*r10 = new(Rational, RATIONAL, 2, 1);
+	struct s_Rational	*r11 = new(Rational, RATIONAL, 6, 1);
+	struct s_Rational	*r12 = new(Rational, RATIONAL, 4, 1);
+	struct s_Rational	*r20 = new(Rational, RATIONAL, 0, 1);
+	struct s_Rational	*r21 = new(Rational, RATIONAL, 2, 1);
+	struct s_Rational	*r22 = new(Rational, RATIONAL, 8, 1);
+	void				*v0 = new(Vec);
+	void				*v1 = new(Vec);
+	void				*v2 = new(Vec);
+	void				*v = new(Vec);
+	struct s_Matrix		*m;
+	void				*r;
+	double				r_double;
+
+	Vec_push_back(v0, r00);
+	Vec_push_back(v0, r01);
+	Vec_push_back(v0, r02);
+	Vec_push_back(v1, r10);
+	Vec_push_back(v1, r11);
+	Vec_push_back(v1, r12);
+	Vec_push_back(v2, r20);
+	Vec_push_back(v2, r21);
+	Vec_push_back(v2, r22);
+	Vec_push_back(v, v0);
+	Vec_push_back(v, v1);
+	Vec_push_back(v, v2);
+	m = new(Matrix, MATRIX, v);
+
+	r = ft_norm_Matrix(m);
+	r_double = Rational_to_double(r);
+	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, r_double / 19);
+	delete(m);
+	delete(r);
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_exp_Rational);
@@ -170,5 +213,6 @@ int main(void) {
 	RUN_TEST(test_tan_Rational);
 	RUN_TEST(test_radians_Rational);
 	RUN_TEST(test_degrees_Rational);
+	RUN_TEST(test_norm_Matrix);
 	return UNITY_END();
 }
