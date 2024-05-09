@@ -229,7 +229,7 @@ static void	*Matrix_mul(const void *_self, const void *_other)
 }
 
 /* Return the matrix multiplication of two Matrices. */
-void	*Matrix_mmult(const void *_self, const void *_other)
+void	*Matrix_mmult_Matrix(const void *_self, const void *_other)
 {
 	const struct s_Matrix	*self = _self;
 	const struct s_Matrix	*other = _other;
@@ -240,12 +240,12 @@ void	*Matrix_mmult(const void *_self, const void *_other)
 
 	if (Token_get_tag(_other) != MATRIX)
 	{
-		fprintf(stderr, "%s\n", "Matrix_mmult: only Matrix input allowed.");
+		fprintf(stderr, "%s\n", "Matrix_mmult_Matrix: only Matrix allowed.");
 		return (NULL);
 	}
 	if (self->cols != other->rows)
 	{
-		fprintf(stderr, "%s\n", "Matrix_mmult: Incompatible matrix sizes.");
+		fprintf(stderr, "%s\n", "Matrix_mmult_Matrix: Incompatible sizes.");
 		return (NULL);
 	}
 	retval = Matrix_init(self, self->rows, other->cols);
@@ -267,6 +267,45 @@ void	*Matrix_mmult(const void *_self, const void *_other)
 		}
 	}
 	return (retval);
+}
+
+
+/* Return the matrix multiplication of a Matrix and a Vector. */
+void	*Matrix_mmult_Vector(const void *_self, const void *_other)
+{
+	const struct s_Matrix	*self = _self;
+	const struct s_Vector	*other = _other;
+	void					*promoted;
+	void					*retval;
+
+	if (self->cols != other->size)
+	{
+		fprintf(stderr, "%s\n", "Matrix_mmult_Vector: Incompatible sizes.");
+		return (NULL);
+	}
+	promoted = numeric_promote(other, MATRIX);
+	retval = Matrix_mmult(self, promoted);
+	delete(promoted);
+	return (retval);
+}
+
+/* Return the Matrix multiplication between two Numerics */
+void	*Matrix_mmult(const void *_self, const void *_other)
+{
+	switch (Token_get_tag(_other))
+	{
+		case RATIONAL:
+		case COMPLEX:
+			fprintf(stderr, "%s\n", "Matrix_mmult: incompatible with scalar.");
+			return (NULL);
+		case VECTOR:
+			return Matrix_mmult_Vector(_self, _other);
+		case MATRIX:
+			return Matrix_mmult_Matrix(_self, _other);
+		default:
+			fprintf(stderr, "%s\n", "Matrix_mmult: unexpected input type.");
+			return (NULL);
+	};
 }
 
 /* Return the division of one Numeric from another. */

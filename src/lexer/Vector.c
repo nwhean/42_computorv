@@ -275,6 +275,8 @@ static void	*Vector_promote(const void *_self, enum e_Tag tag)
 	const struct s_Vector	*self = _self;
 	void					*vec_v;
 	void					*vec_m;
+	void					*temp;
+	void					*retval;
 	size_t					i;
 
 	switch (tag)
@@ -292,7 +294,10 @@ static void	*Vector_promote(const void *_self, enum e_Tag tag)
 				Vec_push_back(vec_v, copy(self->data[i]));
 			vec_m = new(Vec);
 			Vec_push_back(vec_m, vec_v);
-			return (new(Matrix, MATRIX, vec_m));
+			temp = new(Matrix, MATRIX, vec_m);
+			retval = Matrix_transpose(temp);
+			delete(temp);
+			return (retval);
 		default:
 			fprintf(stderr, "%s\n",
 					"Vector_promotion: unexpected input type.");
