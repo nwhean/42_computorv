@@ -71,6 +71,23 @@ void	*UnorderedMap_find(const void *_self, const void *key)
 	return (NULL);
 }
 
+/* Return a vector containing the keys to the UnorderedMap */
+void	*UnorderedMap_keys(const void *_self)
+{
+	const struct s_UnorderedMap	*self = _self;
+
+	return (self->key);
+}
+
+/* Return a vector containing the values to the UnorderedMap */
+void	*UnorderedMap_values(const void *_self)
+{
+	const struct s_UnorderedMap	*self = _self;
+
+	return (self->value);
+}
+
+
 /* Inserts a key, value pair into the container, if the container doesn't
  * already contain an element with an equivalent key.
  */

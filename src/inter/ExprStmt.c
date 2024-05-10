@@ -54,8 +54,6 @@ static void	ExprStmt_exec(const void *_self, void *env)
 		if (token->tag != ID)
 			delete(token);
 	}
-	else
-		fprintf(stderr, "Evaluation failure\n");
 }
 
 void	initExprStmt(void)

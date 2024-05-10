@@ -1,3 +1,6 @@
+#include <stdio.h>
+
+#include "Object.h"
 #include "utility.h"
 
 /* wrapper exit function */
@@ -6,6 +9,16 @@ void	*ft_exit(const void *params, void *env)
 	(void)params;
 	(void)env;
 	exit(0);
+}
+
+/* print out a list of variables and values in the environment */
+void	ft_vars(const void *params, void *env)
+{
+	char	*s = str(env);
+
+	(void)params;
+	printf("%s\n", s);
+	free(s);
 }
 
 /* Exchanges the values of x and y. */

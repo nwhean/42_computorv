@@ -85,6 +85,15 @@ static char	*Function_str(const void *_self)
 	}
 	Str_push_back(s, ')');
 
+	/* insert expr if available */
+	if (self->expr)
+	{
+		Str_append(s, " = ");
+		s_append = str(self->expr);
+		Str_append(s, s_append);
+		free(s_append);
+	}
+
 	retval = str(s);
 	delete(s);
 	return (retval);

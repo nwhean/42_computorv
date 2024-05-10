@@ -21,6 +21,8 @@ classDiagram
 		+UnorderedMap_empty() bool
 		+UnorderedMap_size() size_t
 		+UnorderedMap_find(const Generic key) Generic
+		+UnorderedMap_keys() Vec~Generic~
+		+UnorderedMap_values() Vec~Generic~
 		+UnorderedMap_insert(const Generic key, const Generic value) bool
 		+UnorderedMap_erase(const Generic key) size_t
 		+UnorderedMap_clear() void
@@ -260,4 +262,14 @@ classDiagram
 		-base() Expr
 		-vector() Expr
 	}
+
+	%% symbol
+
+	class Env {
+		-UnorderedMap table
+		-Env prev
+		+put(Id id, Expr expr) void
+		+get(Id id)	Expr
+	}
+
 ```

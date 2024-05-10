@@ -1,4 +1,6 @@
+#include "Str.h"
 #include "UnorderedMap.h"
+#include "Vec.h"
 
 #include "Env.r"
 #include "Env.h"
@@ -24,6 +26,35 @@ static void	*Env_dtor(void *_self)
 
 	delete(self->table);
 	return (super_dtor(Env, _self));
+}
+
+/* Return '\n' delimited string of all key-value pairs in the environment */
+static char	*Env_str(const void *_self)
+{
+	const struct s_Env	*self = _self;
+	void				*keys = UnorderedMap_keys(self->table);
+	void				*values = UnorderedMap_values(self->table);
+	void				*s = new(Str, "");
+	char				*append;
+	size_t				size = Vec_size(keys);
+	size_t				i;
+
+	for (i = 0; i < size; ++i)
+	{
+		append = str(Vec_at(keys, i));
+		Str_append(s, append);
+		free(append);
+		Str_append(s, " = ");
+
+		append = str(Vec_at(values, i));
+		Str_append(s, append);
+		free(append);
+		Str_push_back(s, '\n');
+	}
+
+	append = str(s);
+	delete(s);
+	return (append);
 }
 
 /* put id and expr as key-value pair in the hash table */
@@ -88,5 +119,6 @@ void	initEnv(void)
 				Object, sizeof(struct s_Env),
 				ctor, Env_ctor,
 				dtor, Env_dtor,
+				str, Env_str,
 				0);
 }

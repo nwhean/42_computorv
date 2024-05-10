@@ -16,6 +16,8 @@ size_t	UnorderedMap_size(const void *self);
 
 /* element lookup */
 void	*UnorderedMap_find(const void *self, const void *key);
+void	*UnorderedMap_keys(const void *self);
+void	*UnorderedMap_values(const void *self);
 
 /* modifiers */
 bool	UnorderedMap_insert(void *self, const void *key, const void *value);
