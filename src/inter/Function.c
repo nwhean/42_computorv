@@ -106,7 +106,8 @@ static struct s_Token	*Function_eval(const void *_self, void *env)
 	void					*env_new;
 	size_t					size = Vec_size(self->params);
 	size_t					i;
-	struct s_Token			*retval;
+	void					*val;
+	struct s_Token			*retval = NULL;
 
 	if (!def)
 	{
@@ -125,7 +126,10 @@ static struct s_Token	*Function_eval(const void *_self, void *env)
 	for (i = 0; i < size; ++i)
 	{
 		/* evaluate input parameter with the current environment */
-		void	*val = eval(Vec_at(self->params, i), env);
+		val = eval(Vec_at(self->params, i), env);
+
+		if (!val)
+			break ;
 
 		Env_put(
 			env_new,
@@ -133,8 +137,9 @@ static struct s_Token	*Function_eval(const void *_self, void *env)
 			new(Constant, val, get_tag(val)));
 	}
 
-	/* evaluate the expression using the newly definde environment */
-	retval = eval(def->expr, env_new);
+	/* evaluate the expression using the newly defined environment */
+	if (val)
+		retval = eval(def->expr, env_new);
 	delete(env_new);
 	return (retval);
 }
