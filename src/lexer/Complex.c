@@ -143,7 +143,6 @@ static void	*Complex_sub(const void *_self, const void *_other)
 	{
 		case RATIONAL:
 			retval = numeric_promote(_other, COMPLEX);
-			numeric_ineg(&retval);
 			numeric_isub(&retval, _self);
 			return (numeric_ineg(&retval));
 		case COMPLEX:
