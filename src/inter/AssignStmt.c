@@ -83,8 +83,7 @@ static void	AssignStmt_exec(void *_self, void *env)
 		free(s);
 
 		/* put key-value pair in the environment */
-		Env_put(env, self->id, new(Constant, token, ID));
-		self->id = NULL;	/* prevent deletion of id */
+		Env_put(env, copy(get_op(self->id)), new(Constant, token, ID));
 	}
 	else
 		fprintf(stderr, "Assignment failure\n");

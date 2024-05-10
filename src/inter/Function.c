@@ -129,11 +129,14 @@ static struct s_Token	*Function_eval(const void *_self, void *env)
 		val = eval(Vec_at(self->params, i), env);
 
 		if (!val)
+		{
+			fprintf(stderr, "argument cannot be NULL\n");
 			break ;
+		}
 
 		Env_put(
 			env_new,
-			copy(Vec_at(def->params, i)),
+			copy(get_op(Vec_at(def->params, i))),
 			new(Constant, val, get_tag(val)));
 	}
 

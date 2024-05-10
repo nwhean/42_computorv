@@ -53,7 +53,7 @@ static bool	Id_equal(const void *self, const void *other)
 /* Get the value if an Id from the environment. */
 static struct s_Token	*Id_eval(const void *self, void *env)
 {
-	struct s_Expr	*expr = Env_get(env, self);
+	struct s_Expr	*expr = Env_get(env, get_op(self));
 	char			*s;
 
 	if (expr)

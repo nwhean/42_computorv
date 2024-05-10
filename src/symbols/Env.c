@@ -2,6 +2,8 @@
 #include "UnorderedMap.h"
 #include "Vec.h"
 
+#include "Token.h"
+
 #include "Env.r"
 #include "Env.h"
 
@@ -58,11 +60,19 @@ static char	*Env_str(const void *_self)
 }
 
 /* put id and expr as key-value pair in the hash table */
-void	Env_put(void *_self, void* id, void *expr)
+void	Env_put(void *_self, const void* id, void *expr)
 {
 	const struct s_Env	*self = _self;
+	enum e_Tag			tag = Token_get_tag(id);
+	struct s_Token		*cpy = copy(id);
 
+	/* delete both variable and function */
+	cpy->tag = tag == ID ? FUNCTION : ID;
 	UnorderedMap_erase(self->table, id);
+	UnorderedMap_erase(self->table, cpy);
+	delete(cpy);
+
+	/* insert new assignment */
 	UnorderedMap_insert(self->table, id, expr);
 }
 

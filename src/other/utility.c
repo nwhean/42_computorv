@@ -12,13 +12,14 @@ void	*ft_exit(const void *params, void *env)
 }
 
 /* print out a list of variables and values in the environment */
-void	ft_vars(const void *params, void *env)
+void	*ft_vars(const void *params, void *env)
 {
 	char	*s = str(env);
 
 	(void)params;
 	printf("%s\n", s);
 	free(s);
+	return (NULL);
 }
 
 /* Exchanges the values of x and y. */
