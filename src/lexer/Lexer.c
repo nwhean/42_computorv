@@ -108,19 +108,18 @@ struct s_Token	*Lexer_scan(void *_self)
 	if (isalpha(self->peek))
 	{
 		void	*s = new(Str, "");
-		void	*word;
+		void	*word = NULL;
 
 		do
 		{
 			Str_push_back(s, tolower(self->peek));
 			readch(_self);
 		} while (isalpha(self->peek));
-		word = Lexer_find(self, s);
+		word = Lexer_find(self, s);		/* find keywords */
 		if (!word)
 		{
 			char	*s_ptr = str(s);
 			word = new(Word, self->peek == '(' ? FUNCTION : ID, s_ptr);
-			Lexer_reserve(self, word);
 			free(s_ptr);
 		}
 		delete(s);

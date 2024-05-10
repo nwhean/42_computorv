@@ -71,10 +71,8 @@ static void	*Parser_ctor(void *_self, va_list *app)
 static void	*Parser_dtor(void *_self)
 {
 	struct s_Parser	*self = _self;
-	enum e_Tag	tag = self->look->tag;
 
-	if (!(tag == ID || tag == IMAG))
-		delete(self->look);
+	delete(self->look);
 	delete(self->top);
 	return (super_dtor(Parser, _self));
 }
@@ -85,11 +83,7 @@ static void	move(void *_self)
 	struct s_Parser	*self = _self;
 
 	if (self->look)
-	{
-		enum e_Tag	tag = self->look->tag;
-		if (!(tag == ID || tag == FUNCTION || tag == IMAG))
-			delete(self->look);
-	}
+		delete(self->look);
 	self->look = Lexer_scan(self->lexer);
 }
 
