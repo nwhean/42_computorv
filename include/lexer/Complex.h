@@ -13,6 +13,7 @@ struct s_Complex	/* Complex: Numeric */
 };
 
 extern const void	*Complex;	/* new(Complex, COMPLEX, Rational, Rational); */
+struct s_Complex	*Complex_from_polar(const void *mod, const void *arg);
 
 void	initComplex(void);
 struct s_Rational	*Complex_real(const struct s_Complex *self);

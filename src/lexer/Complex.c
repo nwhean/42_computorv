@@ -51,10 +51,10 @@ static struct s_Complex	*Complex_copy(const void *_self)
 }
 
 /* Return a Complex number given its polar form */
-static struct s_Complex	*Complex_from_polar(double _modulus, double _argument)
+struct s_Complex	*Complex_from_polar(const void *_mod, const void *_arg)
 {
-	void	*modulus = Rational_from_double(_modulus);
-	void	*argument = Rational_from_double(_argument);
+	void	*modulus = copy(_mod);
+	void	*argument = copy(_arg);
 	void	*cos = ft_cos_Rational(argument);
 	void	*sin = ft_sin_Rational(argument);
 	void	*a = numeric_mul(modulus, cos);
@@ -275,16 +275,14 @@ static void	*Complex_pow_Rational(const void *_self, const void *_other)
 	const struct s_Rational	*other = _other;
 	void					*modulus = Complex_modulus(self);
 	void					*argument = Complex_argument(self);
-	double 					r;
-	double					theta;
+	void					*retval;
 
 	modulus = numeric_ipow(&modulus, other);
 	argument = numeric_imul(&argument, other);
-	r = Rational_to_double(modulus);
-	theta = Rational_to_double(argument);
+	retval = Complex_from_polar(modulus, argument);
 	delete(modulus);
 	delete(argument);
-	return (Complex_from_polar(r, theta));
+	return (retval);
 }
 
 /* Return the exponentiation of a Complex to a Complex power, using the
@@ -306,14 +304,14 @@ static void	*Complex_pow_Complex(const void *_self, const void *_other)
 									Complex_argument(self));	/* ln(r) + ix */
 	struct s_Complex		*mul = numeric_mul(a, other);
 	struct s_Rational		*modulus_new = ft_exp_Rational(mul->real);
-	double					r = Rational_to_double(modulus_new);
-	double					theta = Rational_to_double(mul->imag);
+	void					*retval;
 
+	retval = Complex_from_polar(modulus_new, mul->imag);
 	delete(modulus);
 	delete(modulus_new);
 	delete(a);
 	delete(mul);
-	return (Complex_from_polar(r, theta));
+	return (retval);
 }
 
 /* Return the exponentiation of one Numeric to another. */
