@@ -119,7 +119,7 @@ void	*ft_exp(const void *params, void *env)
 	return (retval);
 }
 
-/* Return the exponentiation of a Rational number */
+/* Return the natural logarithm of a Rational number */
 struct s_Rational	*ft_ln_Rational(struct s_Rational *_x)
 {
 	struct s_Rational	*one;
@@ -163,7 +163,7 @@ struct s_Rational	*ft_ln_Rational(struct s_Rational *_x)
 		numeric_isub((void **)&sum, term);	/* sum -= term */
 		numeric_iadd((void **)&n, one);		/* n += 1*/
 		numeric_imul((void **)&x1, x);		/* x1 = x1 * x  */
-	} while (x1->numerator != 0 && term->denominator < 1e9);
+	} while (x1->numerator != 0 && term->denominator < 1e17);
 	delete(term);
 
 	/* sum = sum + i * ln(2) */
@@ -181,7 +181,22 @@ struct s_Rational	*ft_ln_Rational(struct s_Rational *_x)
 	return (sum);
 }
 
-/* Return the exponentiation of a number. */
+/* Return the natural logarithm of a Complex number
+ * ln(a + ib) = ln(re^(ix))
+ *            = ln(r) + ln(e^(ix))
+ *            = ln(r) + ix
+ */
+struct s_Complex	*ft_ln_Complex(struct s_Complex *x)
+{
+	void	*r = Complex_modulus(x);
+	void	*theta = Complex_argument(x);
+	void	*log_r = ft_ln_Rational(r);
+
+	delete(r);
+	return new(Complex, COMPLEX, log_r, theta);
+}
+
+/* Return the natural logarithm of a number. */
 void	*ft_ln(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
@@ -192,6 +207,9 @@ void	*ft_ln(const void *params, void *env)
 	{
 		case RATIONAL:
 			retval = ft_ln_Rational(x);
+			break ;
+		case COMPLEX:
+			retval = ft_ln_Complex(x);
 			break ;
 		default:
 			fprintf(stderr, "ln function is not defined for input type.\n");
