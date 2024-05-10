@@ -66,6 +66,36 @@ struct s_Rational	*ft_exp_Rational(struct s_Rational *x)
 	return (sum);
 }
 
+/* Return the exponentiation of a Complex number */
+struct s_Complex	*ft_exp_Complex(struct s_Complex *x)
+{
+	void	*pi = Rational_from_double(3.14159265358979323846);
+	void	*a = Complex_real(x);
+	void	*b = Complex_imag(x);
+	void	*mod = ft_exp_Rational(a);
+	void	*retval;
+
+	/* shift b so that -pi < b < pi*/
+	while (Rational_gt(b, pi))
+	{
+		numeric_isub(&b, pi);
+		numeric_isub(&b, pi);
+	}
+	numeric_ineg(&pi);
+	while (Rational_lt(b, pi))
+	{
+		numeric_isub(&b, pi);
+		numeric_isub(&b, pi);
+	}
+
+	retval = Complex_from_polar(mod, b);
+	delete(pi);
+	delete(a);
+	delete(b);
+	delete(mod);
+	return (retval);
+}
+
 /* Return the exponentiation of a number. */
 void	*ft_exp(const void *params, void *env)
 {
@@ -77,6 +107,9 @@ void	*ft_exp(const void *params, void *env)
 	{
 		case RATIONAL:
 			retval = ft_exp_Rational(x);
+			break ;
+		case COMPLEX:
+			retval = ft_exp_Complex(x);
 			break ;
 		default:
 			fprintf(stderr, "exp function is not defined for input type.\n");
