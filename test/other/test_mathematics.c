@@ -371,6 +371,64 @@ void test_tanh_Complex(void) {
 	}
 }
 
+void test_sqrt_Rational(void)
+{
+	double	v;
+
+	for (v = 0.1; v < 5; v += 0.1)
+	{
+		void	*r_in = Rational_from_double(v);
+		void	*r_out = ft_sqrt_Rational(r_in);
+		double	calc = Rational_to_double(r_out);
+		double	target = sqrt(v);
+
+		if (target < - 0.001 || target > 0.001 )
+			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+		delete(r_in);
+		delete(r_out);
+		(void)calc;
+		(void)target;
+	}
+}
+
+void test_sqrt_Complex(void) {
+	double	a;
+	double	b;
+
+	for (a = -5; a < 5; a += 0.1)
+	{
+		for (b = -5; b < 5; b += 0.1)
+		{
+			void	*z = new(Complex, COMPLEX,
+							Rational_from_double(a),
+							Rational_from_double(b));
+			void	*sqrt_z = ft_sqrt_Complex(z);
+			void	*sqrt_z_real = Complex_real(sqrt_z);
+			void	*sqrt_z_imag = Complex_imag(sqrt_z);
+			double	calc_real = Rational_to_double(sqrt_z_real);
+			double	calc_imag = Rational_to_double(sqrt_z_imag);
+			double	r = sqrt(sqrt(a*a + b*b));
+			double	theta = atan2(b, a) / 2;
+			double	real = r * cos(theta);
+			double	imag = r * sin(theta);
+
+			/* due to floating point error b is not exactly 0 */
+			/* when b is nearly 0, output is sensitive to the sign of b */
+			if (b < -0.001 || b > 0.001)
+			{
+				if (real < -0.001 || real > 0.001 )
+					TEST_ASSERT_FLOAT_WITHIN(0.03, 1, calc_real / real);
+				if (imag < -0.001 || imag > 0.001 )
+					TEST_ASSERT_FLOAT_WITHIN(0.03, 1, calc_imag / imag);
+			}
+			delete(z);
+			delete(sqrt_z);
+			delete(sqrt_z_real);
+			delete(sqrt_z_imag);
+		}
+	}
+}
+
 void test_radians_Rational(void) {
 	double	v;
 
@@ -464,6 +522,8 @@ int main(void) {
 	RUN_TEST(test_cosh_Complex);
 	RUN_TEST(test_tanh_Rational);
 	RUN_TEST(test_tanh_Complex);
+	RUN_TEST(test_sqrt_Rational);
+	RUN_TEST(test_sqrt_Complex);
 	RUN_TEST(test_radians_Rational);
 	RUN_TEST(test_degrees_Rational);
 	RUN_TEST(test_norm_Matrix);

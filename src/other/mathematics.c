@@ -730,12 +730,40 @@ void	*ft_tanh(const void *params, void *env)
 }
 
 /* Return the square root of a Rational number */
-struct s_Rational	*ft_sqrt_Rational(struct s_Rational *x)
+void	*ft_sqrt_Rational(struct s_Rational *x)
 {
 	struct s_Rational	*half = Rational_from_double(0.5);
-	struct s_Rational	*retval = numeric_pow(x, half);
+	struct s_Rational	*retval;
 
+	if (x->numerator == 0)
+		retval = copy(x);
+	else
+		retval = numeric_pow(x, half);
 	delete(half);
+	return (retval);
+}
+
+/* Return the square root of a Complex number */
+struct s_Complex	*ft_sqrt_Complex(struct s_Complex *_x)
+{
+	struct s_Rational	*half = Rational_from_double(0.5);
+	struct s_Rational	*real = Complex_real(_x);
+	struct s_Rational	*imag = Complex_imag(_x);
+	void				*x = NULL;
+	void				*retval;
+
+	if (imag->numerator == 0)	/* real number */
+	{
+		x = Complex_real(_x);
+		retval = ft_sqrt_Rational(x);
+		retval = numeric_ipromote(&retval, COMPLEX);
+		delete(x);
+	}
+	else
+		retval = numeric_pow(_x, half);
+	delete(half);
+	delete(real);
+	delete(imag);
 	return (retval);
 }
 
@@ -750,6 +778,9 @@ void	*ft_sqrt(const void *params, void *env)
 	{
 		case RATIONAL:
 			retval = ft_sqrt_Rational(x);
+			break ;
+		case COMPLEX:
+			retval = ft_sqrt_Complex(x);
 			break ;
 		default:
 			fprintf(stderr, "sqrt function is not defined for input type.\n");
