@@ -209,9 +209,6 @@ void test_tan_Complex(void) {
 			double	real = sin(2*a) / (cos(2*a) + cosh(2*b));
 			double	imag = sinh(2*b) / (cos(2*a) + cosh(2*b));
 
-			printf("a = %f, b = %f\n", a, b);
-			printf("real: %f vs %f\n", calc_real, real);
-			printf("imag: %f vs %f\n", calc_imag, imag);
 			if (real < -0.001 || real > 0.001 )
 				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
 			if (imag < -0.001 || imag > 0.001 )
@@ -243,6 +240,37 @@ void test_sinh_Rational(void) {
 	}
 }
 
+void test_sinh_Complex(void) {
+	double	a;
+	double	b;
+
+	for (a = -5; a < 5; a += 0.1)
+	{
+		for (b = -5; b < 5; b += 0.1)
+		{
+			void	*z = new(Complex, COMPLEX,
+							Rational_from_double(a),
+							Rational_from_double(b));
+			void	*sinh_z = ft_sinh_Complex(z);
+			void	*sinh_z_real = Complex_real(sinh_z);
+			void	*sinh_z_imag = Complex_imag(sinh_z);
+			double	calc_real = Rational_to_double(sinh_z_real);
+			double	calc_imag = Rational_to_double(sinh_z_imag);
+			double	real = sinh(a) * cos(b);
+			double	imag = cosh(a) * sin(b);
+
+			if (real < -0.001 || real > 0.001 )
+				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
+			if (imag < -0.001 || imag > 0.001 )
+				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_imag / imag);
+			delete(z);
+			delete(sinh_z);
+			delete(sinh_z_real);
+			delete(sinh_z_imag);
+		}
+	}
+}
+
 void test_cosh_Rational(void) {
 	double	v;
 
@@ -262,6 +290,37 @@ void test_cosh_Rational(void) {
 	}
 }
 
+void test_cosh_Complex(void) {
+	double	a;
+	double	b;
+
+	for (a = -5; a < 5; a += 0.1)
+	{
+		for (b = -5; b < 5; b += 0.1)
+		{
+			void	*z = new(Complex, COMPLEX,
+							Rational_from_double(a),
+							Rational_from_double(b));
+			void	*cosh_z = ft_cosh_Complex(z);
+			void	*cosh_z_real = Complex_real(cosh_z);
+			void	*cosh_z_imag = Complex_imag(cosh_z);
+			double	calc_real = Rational_to_double(cosh_z_real);
+			double	calc_imag = Rational_to_double(cosh_z_imag);
+			double	real = cosh(a) * cos(b);
+			double	imag = sinh(a) * sin(b);
+
+			if (real < -0.001 || real > 0.001 )
+				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
+			if (imag < -0.001 || imag > 0.001 )
+				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_imag / imag);
+			delete(z);
+			delete(cosh_z);
+			delete(cosh_z_real);
+			delete(cosh_z_imag);
+		}
+	}
+}
+
 void test_tanh_Rational(void) {
 	double	v;
 
@@ -278,6 +337,37 @@ void test_tanh_Rational(void) {
 		delete(r_out);
 		(void)calc;
 		(void)target;
+	}
+}
+
+void test_tanh_Complex(void) {
+	double	a;
+	double	b;
+
+	for (a = -1.5; a < 1.5; a += 0.1)
+	{
+		for (b = -1.5; b < 1.5; b += 0.1)
+		{
+			void	*z = new(Complex, COMPLEX,
+							Rational_from_double(a),
+							Rational_from_double(b));
+			void	*tanh_z = ft_tanh_Complex(z);
+			void	*tanh_z_real = Complex_real(tanh_z);
+			void	*tanh_z_imag = Complex_imag(tanh_z);
+			double	calc_real = Rational_to_double(tanh_z_real);
+			double	calc_imag = Rational_to_double(tanh_z_imag);
+			double	real = sinh(2*a) / (cosh(2*a) + cos(2*b));
+			double	imag = sin(2*b) / (cosh(2*a) + cos(2*b));
+
+			if (real < -0.001 || real > 0.001 )
+				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
+			if (imag < -0.001 || imag > 0.001 )
+				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_imag / imag);
+			delete(z);
+			delete(tanh_z);
+			delete(tanh_z_real);
+			delete(tanh_z_imag);
+		}
 	}
 }
 
@@ -369,8 +459,11 @@ int main(void) {
 	RUN_TEST(test_tan_Rational);
 	RUN_TEST(test_tan_Complex);
 	RUN_TEST(test_sinh_Rational);
+	RUN_TEST(test_sinh_Complex);
 	RUN_TEST(test_cosh_Rational);
+	RUN_TEST(test_cosh_Complex);
 	RUN_TEST(test_tanh_Rational);
+	RUN_TEST(test_tanh_Complex);
 	RUN_TEST(test_radians_Rational);
 	RUN_TEST(test_degrees_Rational);
 	RUN_TEST(test_norm_Matrix);

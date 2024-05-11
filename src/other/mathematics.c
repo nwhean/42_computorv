@@ -540,6 +540,31 @@ struct s_Rational	*ft_sinh_Rational(struct s_Rational *_x)
 	return (sum);
 }
 
+/* Return the sinh of a Complex number
+ * sinh(a + ib) = sinh(a) cosh(ib) + cosh(a) sinh(ib)
+ *              = sinh(a) cos(b) + cosh(a) sinh(ib)    note: cos(z) = cosh(iz)
+ *              = sinh(a) cos(b) + i cosh(a) sin(b)    note: i sin(z) = sinh(iz)
+ */
+struct s_Complex	*ft_sinh_Complex(struct s_Complex *x)
+{
+	void	*a = Complex_real(x);
+	void	*b = Complex_imag(x);
+	void	*sinh_a = ft_sinh_Rational(a);
+	void	*cos_b = ft_cos_Rational(b);
+	void	*cosh_a = ft_cosh_Rational(a);
+	void	*sin_b = ft_sin_Rational(b);
+	void	*real = numeric_mul(sinh_a, cos_b);
+	void	*imag = numeric_mul(cosh_a, sin_b);
+
+	delete(a);
+	delete(b);
+	delete(sinh_a);
+	delete(cos_b);
+	delete(cosh_a);
+	delete(sin_b);
+	return new(Complex, COMPLEX, real, imag);
+}
+
 /* Return the sinh of a number. */
 void	*ft_sinh(const void *params, void *env)
 {
@@ -551,6 +576,9 @@ void	*ft_sinh(const void *params, void *env)
 	{
 		case RATIONAL:
 			retval = ft_sinh_Rational(x);
+			break ;
+		case COMPLEX:
+			retval = ft_sinh_Complex(x);
 			break ;
 		default:
 			fprintf(stderr, "sinh function is not defined for input type.\n");
@@ -605,7 +633,30 @@ struct s_Rational	*ft_cosh_Rational(struct s_Rational *_x)
 	delete(one);
 	delete(two);
 	return (retval);
-/* 	return Rational_from_double(cosh(Rational_to_double(x))); */
+}
+
+/* Return the cosh of a Complex number
+ * cosh(a + ib) = cosh(a) cosh(ib) + sinh(a) sinh(ib)
+ *              = cosh(a) cos(b) + i sinh(a) sin(b)
+ */
+struct s_Complex	*ft_cosh_Complex(struct s_Complex *x)
+{
+	void	*a = Complex_real(x);
+	void	*b = Complex_imag(x);
+	void	*cosh_a = ft_cosh_Rational(a);
+	void	*cos_b = ft_cos_Rational(b);
+	void	*sinh_a = ft_sinh_Rational(a);
+	void	*sin_b = ft_sin_Rational(b);
+	void	*real = numeric_mul(cosh_a, cos_b);
+	void	*imag = numeric_mul(sinh_a, sin_b);
+
+	delete(a);
+	delete(b);
+	delete(cosh_a);
+	delete(cos_b);
+	delete(sinh_a);
+	delete(sin_b);
+	return new(Complex, COMPLEX, real, imag);
 }
 
 /* Return the cosh of a number. */
@@ -619,6 +670,9 @@ void	*ft_cosh(const void *params, void *env)
 	{
 		case RATIONAL:
 			retval = ft_cosh_Rational(x);
+			break ;
+		case COMPLEX:
+			retval = ft_cosh_Complex(x);
 			break ;
 		default:
 			fprintf(stderr, "cosh function is not defined for input type.\n");
@@ -640,6 +694,18 @@ struct s_Rational	*ft_tanh_Rational(struct s_Rational *x)
 	return (retval);
 }
 
+/* Return the tanh of a Complex number */
+struct s_Complex	*ft_tanh_Complex(struct s_Complex *x)
+{
+	void	*sinh = ft_sinh_Complex(x);
+	void	*cosh = ft_cosh_Complex(x);
+	void	*retval = numeric_div(sinh, cosh);
+
+	delete(sinh);
+	delete(cosh);
+	return (retval);
+}
+
 /* Return the tanh of a number. */
 void	*ft_tanh(const void *params, void *env)
 {
@@ -651,6 +717,9 @@ void	*ft_tanh(const void *params, void *env)
 	{
 		case RATIONAL:
 			retval = ft_tanh_Rational(x);
+			break ;
+		case COMPLEX:
+			retval = ft_tanh_Complex(x);
 			break ;
 		default:
 			fprintf(stderr, "tanh function is not defined for input type.\n");
