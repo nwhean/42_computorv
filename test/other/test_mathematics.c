@@ -6,6 +6,7 @@
 #include "Vec.h"
 
 /* lexer */
+#include "Complex.h"
 #include "Rational.h"
 #include "Matrix.h"
 
@@ -89,6 +90,37 @@ void test_sin_Rational(void) {
 	}
 }
 
+void test_sin_Complex(void) {
+	double	a;
+	double	b;
+
+	for (a = -5; a < 5; a += 0.1)
+	{
+		for (b = -5; b < 5; b += 0.1)
+		{
+			void	*z = new(Complex, COMPLEX,
+							Rational_from_double(a),
+							Rational_from_double(b));
+			void	*sin_z = ft_sin_Complex(z);
+			void	*sin_z_real = Complex_real(sin_z);
+			void	*sin_z_imag = Complex_imag(sin_z);
+			double	calc_real = Rational_to_double(sin_z_real);
+			double	calc_imag = Rational_to_double(sin_z_imag);
+			double	real = sin(a) * cosh(b);
+			double	imag = cos(a) * sinh(b);
+
+			if (real < -0.001 || real > 0.001 )
+				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
+			if (imag < -0.001 || imag > 0.001 )
+				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_imag / imag);
+			delete(z);
+			delete(sin_z);
+			delete(sin_z_real);
+			delete(sin_z_imag);
+		}
+	}
+}
+
 void test_cos_Rational(void) {
 	double	v;
 
@@ -108,6 +140,37 @@ void test_cos_Rational(void) {
 	}
 }
 
+void test_cos_Complex(void) {
+	double	a;
+	double	b;
+
+	for (a = -5; a < 5; a += 0.1)
+	{
+		for (b = -5; b < 5; b += 0.1)
+		{
+			void	*z = new(Complex, COMPLEX,
+							Rational_from_double(a),
+							Rational_from_double(b));
+			void	*cos_z = ft_cos_Complex(z);
+			void	*cos_z_real = Complex_real(cos_z);
+			void	*cos_z_imag = Complex_imag(cos_z);
+			double	calc_real = Rational_to_double(cos_z_real);
+			double	calc_imag = Rational_to_double(cos_z_imag);
+			double	real = cos(a) * cosh(b);
+			double	imag = -sin(a) * sinh(b);
+
+			if (real < -0.001 || real > 0.001 )
+				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
+			if (imag < -0.001 || imag > 0.001 )
+				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_imag / imag);
+			delete(z);
+			delete(cos_z);
+			delete(cos_z_real);
+			delete(cos_z_imag);
+		}
+	}
+}
+
 void test_tan_Rational(void) {
 	double	v;
 
@@ -124,6 +187,40 @@ void test_tan_Rational(void) {
 		delete(r_out);
 		(void)calc;
 		(void)target;
+	}
+}
+
+void test_tan_Complex(void) {
+	double	a;
+	double	b;
+
+	for (a = -1.5; a < 1.5; a += 0.1)
+	{
+		for (b = -1.5; b < 1.5; b += 0.1)
+		{
+			void	*z = new(Complex, COMPLEX,
+							Rational_from_double(a),
+							Rational_from_double(b));
+			void	*tan_z = ft_tan_Complex(z);
+			void	*tan_z_real = Complex_real(tan_z);
+			void	*tan_z_imag = Complex_imag(tan_z);
+			double	calc_real = Rational_to_double(tan_z_real);
+			double	calc_imag = Rational_to_double(tan_z_imag);
+			double	real = sin(2*a) / (cos(2*a) + cosh(2*b));
+			double	imag = sinh(2*b) / (cos(2*a) + cosh(2*b));
+
+			printf("a = %f, b = %f\n", a, b);
+			printf("real: %f vs %f\n", calc_real, real);
+			printf("imag: %f vs %f\n", calc_imag, imag);
+			if (real < -0.001 || real > 0.001 )
+				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
+			if (imag < -0.001 || imag > 0.001 )
+				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_imag / imag);
+			delete(z);
+			delete(tan_z);
+			delete(tan_z_real);
+			delete(tan_z_imag);
+		}
 	}
 }
 
@@ -266,8 +363,11 @@ int main(void) {
 	RUN_TEST(test_exp_Rational);
 	RUN_TEST(test_ln_Rational);
 	RUN_TEST(test_sin_Rational);
+	RUN_TEST(test_sin_Complex);
 	RUN_TEST(test_cos_Rational);
+	RUN_TEST(test_cos_Complex);
 	RUN_TEST(test_tan_Rational);
+	RUN_TEST(test_tan_Complex);
 	RUN_TEST(test_sinh_Rational);
 	RUN_TEST(test_cosh_Rational);
 	RUN_TEST(test_tanh_Rational);

@@ -285,6 +285,30 @@ struct s_Rational	*ft_sin_Rational(struct s_Rational *_x)
 	return (sum);
 }
 
+/* Return the sin of a Complex number
+ * sin(a + ib) = sin(a) cos(ib) + cos(a) sin(ib)
+ *             = sin(a) cosh(b) + i cos(a) sinh(b)
+ */
+struct s_Complex	*ft_sin_Complex(struct s_Complex *x)
+{
+	void	*a = Complex_real(x);
+	void	*b = Complex_imag(x);
+	void	*sin_a = ft_sin_Rational(a);
+	void	*cosh_b = ft_cosh_Rational(b);
+	void	*cos_a = ft_cos_Rational(a);
+	void	*sinh_b = ft_sinh_Rational(b);
+	void	*real = numeric_mul(sin_a, cosh_b);
+	void	*imag = numeric_mul(cos_a, sinh_b);
+
+	delete(a);
+	delete(b);
+	delete(sin_a);
+	delete(cosh_b);
+	delete(cos_a);
+	delete(sinh_b);
+	return new(Complex, COMPLEX, real, imag);
+}
+
 /* Return the sin of a number. */
 void	*ft_sin(const void *params, void *env)
 {
@@ -296,6 +320,9 @@ void	*ft_sin(const void *params, void *env)
 	{
 		case RATIONAL:
 			retval = ft_sin_Rational(x);
+			break ;
+		case COMPLEX:
+			retval = ft_sin_Complex(x);
 			break ;
 		default:
 			fprintf(stderr, "sin function is not defined for input type.\n");
@@ -366,6 +393,31 @@ struct s_Rational	*ft_cos_Rational(struct s_Rational *_x)
 	return (sum);
 }
 
+/* Return the cosine of a Complex number
+ * cos(a + ib) = cos(a) cos(ib) - sin(a) sin(ib)
+ *             = cos(a) cosh(b) - i sin(a) sinh(b)
+ */
+struct s_Complex	*ft_cos_Complex(struct s_Complex *x)
+{
+	void	*a = Complex_real(x);
+	void	*b = Complex_imag(x);
+	void	*cos_a = ft_cos_Rational(a);
+	void	*cosh_b = ft_cosh_Rational(b);
+	void	*sin_a = ft_sin_Rational(a);
+	void	*sinh_b = ft_sinh_Rational(b);
+	void	*real = numeric_mul(cos_a, cosh_b);
+	void	*imag = numeric_mul(sin_a, sinh_b);
+
+	numeric_ineg(&imag);
+	delete(a);
+	delete(b);
+	delete(cos_a);
+	delete(cosh_b);
+	delete(sin_a);
+	delete(sinh_b);
+	return new(Complex, COMPLEX, real, imag);
+}
+
 /* Return the cos of a number. */
 void	*ft_cos(const void *params, void *env)
 {
@@ -377,6 +429,9 @@ void	*ft_cos(const void *params, void *env)
 	{
 		case RATIONAL:
 			retval = ft_cos_Rational(x);
+			break ;
+		case COMPLEX:
+			retval = ft_cos_Complex(x);
 			break ;
 		default:
 			fprintf(stderr, "tan function is not defined for input type.\n");
@@ -398,6 +453,18 @@ struct s_Rational	*ft_tan_Rational(struct s_Rational *x)
 	return (retval);
 }
 
+/* Return the tan of a Complex number */
+struct s_Complex	*ft_tan_Complex(struct s_Complex *x)
+{
+	void	*sin = ft_sin_Complex(x);
+	void	*cos = ft_cos_Complex(x);
+	void	*retval = numeric_div(sin, cos);
+
+	delete(sin);
+	delete(cos);
+	return (retval);
+}
+
 /* Return the tan of a number. */
 void	*ft_tan(const void *params, void *env)
 {
@@ -409,6 +476,9 @@ void	*ft_tan(const void *params, void *env)
 	{
 		case RATIONAL:
 			retval = ft_tan_Rational(x);
+			break ;
+		case COMPLEX:
+			retval = ft_tan_Complex(x);
 			break ;
 		default:
 			fprintf(stderr, "tan function is not defined for input type.\n");
