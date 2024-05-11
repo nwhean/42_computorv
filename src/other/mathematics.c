@@ -163,7 +163,9 @@ struct s_Rational	*ft_ln_Rational(struct s_Rational *_x)
 		numeric_isub((void **)&sum, term);	/* sum -= term */
 		numeric_iadd((void **)&n, one);		/* n += 1*/
 		numeric_imul((void **)&x1, x);		/* x1 = x1 * x  */
-	} while (x1->numerator != 0 && term->denominator < 1e17);
+	} while (x1->numerator != 0
+			&& term->denominator < 1e17
+			&& n->numerator < 200);		/* prevent infinite loop */
 	delete(term);
 
 	/* sum = sum + i * ln(2) */
@@ -409,7 +411,179 @@ void	*ft_tan(const void *params, void *env)
 			retval = ft_tan_Rational(x);
 			break ;
 		default:
-			fprintf(stderr, "cos function is not defined for input type.\n");
+			fprintf(stderr, "tan function is not defined for input type.\n");
+	}
+
+	delete(x);
+	return (retval);
+}
+
+/* Return the sinh of a Rational number */
+struct s_Rational	*ft_sinh_Rational(struct s_Rational *_x)
+{
+	struct s_Rational	*x = copy(_x);
+	struct s_Rational	*sum;
+	void				*cosh;
+	void				*sinh;
+	void				*neg_x;
+	void				*e_x;
+	void				*e_neg_x;
+	void				*two;
+
+	/* scale until -1 < x < 1 */
+	if (x->numerator > x->denominator
+			|| (x->numerator < 0 && -x->numerator > x->denominator))
+	{
+		if (x->denominator > 1e9)
+			x->numerator >>= 1;
+		else
+			x->denominator <<= 1;
+
+		/* sinh(2x) = 2 * sinh(x) * cosh(x) */
+		cosh = ft_cosh_Rational(x);
+		sinh = ft_sinh_Rational(x);
+		sum = numeric_mul(cosh, sinh);
+
+		if (sum->denominator > 1e9)
+			sum->numerator <<= 1;
+		else
+			sum->denominator >>= 1;
+
+		delete(cosh);
+		delete(sinh);
+		delete(x);
+		return (sum);
+	}
+
+	neg_x = numeric_neg(x);
+	e_x = ft_exp_Rational(x);
+	e_neg_x = ft_exp_Rational(neg_x);
+	sum = numeric_sub(e_x, e_neg_x);
+	two = new(Rational, RATIONAL, 2, 1);
+
+	numeric_idiv((void **)&sum, two);
+	delete(x);
+	delete(neg_x);
+	delete(e_x);
+	delete(e_neg_x);
+	delete(two);
+	return (sum);
+}
+
+/* Return the sinh of a number. */
+void	*ft_sinh(const void *params, void *env)
+{
+	void		*x = eval(Vec_at(params, 0), env);
+	enum e_Tag	tag= Token_get_tag(x);
+	void		*retval = NULL;
+
+	switch (tag)
+	{
+		case RATIONAL:
+			retval = ft_sinh_Rational(x);
+			break ;
+		default:
+			fprintf(stderr, "sinh function is not defined for input type.\n");
+	}
+
+	delete(x);
+	return (retval);
+}
+
+/* Return the cosh of a Rational number */
+struct s_Rational	*ft_cosh_Rational(struct s_Rational *_x)
+{
+	struct s_Rational	*x = copy(_x);
+	void				*neg_x;
+	void				*e_x;
+	void				*e_neg_x;
+	void				*retval;
+	void				*one = new(Rational, RATIONAL, 1, 1);
+	void				*two = new(Rational, RATIONAL, 2, 1);
+
+	/* scale until -1 < x < 1 */
+	if (x->numerator > x->denominator
+			|| (x->numerator < 0 && -x->numerator > x->denominator))
+	{
+		if (x->denominator > 1e9)
+			x->numerator >>= 1;
+		else
+			x->denominator <<= 1;
+
+		/* cosh(2x) = 2 (cosh(x))^2 - 1 */
+		retval = ft_cosh_Rational(x);
+		numeric_imul(&retval, retval);
+		numeric_imul(&retval, two);
+		numeric_isub(&retval, one);
+		delete(x);
+		delete(one);
+		delete(two);
+		return (retval);
+	}
+
+	/* cosh(x) = (e^x + e^(-x)) / 2 */
+	neg_x = numeric_neg(x);
+	e_x = ft_exp_Rational(x);
+	e_neg_x = ft_exp_Rational(neg_x);
+	retval = numeric_add(e_x, e_neg_x);
+	numeric_idiv(&retval, two);
+
+	delete(x);
+	delete(neg_x);
+	delete(e_x);
+	delete(e_neg_x);
+	delete(one);
+	delete(two);
+	return (retval);
+/* 	return Rational_from_double(cosh(Rational_to_double(x))); */
+}
+
+/* Return the cosh of a number. */
+void	*ft_cosh(const void *params, void *env)
+{
+	void		*x = eval(Vec_at(params, 0), env);
+	enum e_Tag	tag= Token_get_tag(x);
+	void		*retval = NULL;
+
+	switch (tag)
+	{
+		case RATIONAL:
+			retval = ft_cosh_Rational(x);
+			break ;
+		default:
+			fprintf(stderr, "cosh function is not defined for input type.\n");
+	}
+
+	delete(x);
+	return (retval);
+}
+
+/* Return the tanh of a Rational number */
+struct s_Rational	*ft_tanh_Rational(struct s_Rational *x)
+{
+	struct s_Rational	*sinh = ft_sinh_Rational(x);
+	struct s_Rational	*cosh = ft_cosh_Rational(x);
+	struct s_Rational	*retval = numeric_div(sinh, cosh);
+
+	delete(sinh);
+	delete(cosh);
+	return (retval);
+}
+
+/* Return the tanh of a number. */
+void	*ft_tanh(const void *params, void *env)
+{
+	void		*x = eval(Vec_at(params, 0), env);
+	enum e_Tag	tag= Token_get_tag(x);
+	void		*retval = NULL;
+
+	switch (tag)
+	{
+		case RATIONAL:
+			retval = ft_tanh_Rational(x);
+			break ;
+		default:
+			fprintf(stderr, "tanh function is not defined for input type.\n");
 	}
 
 	delete(x);

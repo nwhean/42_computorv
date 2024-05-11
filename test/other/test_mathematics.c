@@ -127,6 +127,63 @@ void test_tan_Rational(void) {
 	}
 }
 
+void test_sinh_Rational(void) {
+	double	v;
+
+	for (v = -3; v < 1; v += 0.1)
+	{
+		void	*r_in = Rational_from_double(v);
+		void	*r_out = ft_sinh_Rational(r_in);
+		double	calc = Rational_to_double(r_out);
+		double	target = sinh(v);
+
+		if (target < - 0.001 || target > 0.001 )
+			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+		delete(r_in);
+		delete(r_out);
+		(void)calc;
+		(void)target;
+	}
+}
+
+void test_cosh_Rational(void) {
+	double	v;
+
+	for (v = -3; v < 3; v += 0.1)
+	{
+		void	*r_in = Rational_from_double(v);
+		void	*r_out = ft_cosh_Rational(r_in);
+		double	calc = Rational_to_double(r_out);
+		double	target = cosh(v);
+
+		if (target < - 0.001 || target > 0.001 )
+			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+		delete(r_in);
+		delete(r_out);
+		(void)calc;
+		(void)target;
+	}
+}
+
+void test_tanh_Rational(void) {
+	double	v;
+
+	for (v = -3; v < 3; v += 0.1)
+	{
+		void	*r_in = Rational_from_double(v);
+		void	*r_out = ft_tanh_Rational(r_in);
+		double	calc = Rational_to_double(r_out);
+		double	target = tanh(v);
+
+		if (target < - 0.001 || target > 0.001 )
+			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+		delete(r_in);
+		delete(r_out);
+		(void)calc;
+		(void)target;
+	}
+}
+
 void test_radians_Rational(void) {
 	double	v;
 
@@ -211,6 +268,9 @@ int main(void) {
 	RUN_TEST(test_sin_Rational);
 	RUN_TEST(test_cos_Rational);
 	RUN_TEST(test_tan_Rational);
+	RUN_TEST(test_sinh_Rational);
+	RUN_TEST(test_cosh_Rational);
+	RUN_TEST(test_tanh_Rational);
 	RUN_TEST(test_radians_Rational);
 	RUN_TEST(test_degrees_Rational);
 	RUN_TEST(test_norm_Matrix);
