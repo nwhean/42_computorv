@@ -20,13 +20,14 @@ size_t	max(size_t a, size_t b)
 }
 
 /* Return the exponentiation of a Rational number */
-struct s_Rational	*ft_exp_Rational(struct s_Rational *x)
+struct s_Rational	*ft_exp_Rational(struct s_Rational *_x)
 {
+	struct s_Rational	*x = copy(_x);
 	struct s_Rational	*one = new(Rational, RATIONAL, 1, 1);
 	struct s_Rational	*n = new(Rational, RATIONAL, 0, 1);
 	struct s_Rational	*sum;
 	struct s_Rational	*x1;
-	struct s_Rational	*term;
+	struct s_Rational	*term = NULL;
 	int					i = 0;
 
 	/* scale until -1 < x < 1 */
@@ -44,24 +45,21 @@ struct s_Rational	*ft_exp_Rational(struct s_Rational *x)
 	sum = new(Rational, RATIONAL, 0, 1);	/* sum = 0 */
 	x1 = new(Rational, RATIONAL, 1, 1);		/* x1 = 1 */
 	do {
+		delete(term);
 		numeric_iadd((void **)&sum, x1);	/* sum += x1 */
 		numeric_iadd((void **)&n, one);		/* n += 1*/
 		term = numeric_div(x, n);			/* term = x / n */
 		numeric_imul((void **)&x1, term);	/* x1 = x1 * x/n */
-		delete(term);
 	} while (x1->numerator != 0);
+	delete(term);
 
 	/* square until i = 0 */
 	for (; i > 0; --i)
-	{
-		void	*cpy = copy(sum);
-
-		numeric_imul((void **)&sum, cpy);
-		delete(cpy);
-	}
+		numeric_imul((void **)&sum, sum);
 
 	delete(one);
 	delete(n);
+	delete(x);
 	delete(x1);
 	return (sum);
 }
@@ -616,6 +614,7 @@ struct s_Rational	*ft_cosh_Rational(struct s_Rational *_x)
 		delete(x);
 		delete(one);
 		delete(two);
+
 		return (retval);
 	}
 

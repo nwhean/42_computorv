@@ -156,7 +156,7 @@ static void	*Rational_rshift(void *_self)
 	long				a = self->numerator;
 	long				b = self->denominator;
 
-	while (b > 1e6)
+	while (b > 1e5)
 	{
 		if (a == -1)
 		{
