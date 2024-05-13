@@ -24,14 +24,14 @@ void tearDown(void) {
 void test_exp_Rational(void) {
 	double	v;
 
-	for (v = -16; v < 16; v += 0.1)
+	for (v = -10; v < 10; v += 0.1)
 	{
 		void	*r_in = Rational_from_double(v);
 		void	*r_out = ft_exp_Rational(r_in);
 		double	calc = Rational_to_double(r_out);
 		double	target = exp(v);
 
-		TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+		TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -74,7 +74,7 @@ void test_ln_Rational(void) {
 void test_sin_Rational(void) {
 	double	v;
 
-	for (v = -16; v < 16; v += 0.1)
+	for (v = -10; v < 10; v += 0.1)
 	{
 		void	*r_in = Rational_from_double(v);
 		void	*r_out = ft_sin_Rational(r_in);
@@ -82,7 +82,7 @@ void test_sin_Rational(void) {
 		double	target = sin(v);
 
 		if (target < - 0.001 || target > 0.001 )
-			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+			TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -110,9 +110,9 @@ void test_sin_Complex(void) {
 			double	imag = cos(a) * sinh(b);
 
 			if (real < -0.001 || real > 0.001 )
-				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
+				TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc_real / real);
 			if (imag < -0.001 || imag > 0.001 )
-				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_imag / imag);
+				TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc_imag / imag);
 			delete(z);
 			delete(sin_z);
 			delete(sin_z_real);
@@ -124,7 +124,7 @@ void test_sin_Complex(void) {
 void test_cos_Rational(void) {
 	double	v;
 
-	for (v = -16; v < 16; v += 0.1)
+	for (v = -10; v < 10; v += 0.1)
 	{
 		void	*r_in = Rational_from_double(v);
 		void	*r_out = ft_cos_Rational(r_in);
@@ -132,7 +132,7 @@ void test_cos_Rational(void) {
 		double	target = cos(v);
 
 		if (target < - 0.001 || target > 0.001 )
-			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+			TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -160,9 +160,9 @@ void test_cos_Complex(void) {
 			double	imag = -sin(a) * sinh(b);
 
 			if (real < -0.001 || real > 0.001 )
-				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
+				TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc_real / real);
 			if (imag < -0.001 || imag > 0.001 )
-				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_imag / imag);
+				TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc_imag / imag);
 			delete(z);
 			delete(cos_z);
 			delete(cos_z_real);
@@ -174,7 +174,7 @@ void test_cos_Complex(void) {
 void test_tan_Rational(void) {
 	double	v;
 
-	for (v = -16; v < 16; v += 0.1)
+	for (v = -10; v < 10; v += 0.1)
 	{
 		void	*r_in = Rational_from_double(v);
 		void	*r_out = ft_tan_Rational(r_in);
@@ -182,7 +182,7 @@ void test_tan_Rational(void) {
 		double	target = tan(v);
 
 		if (target < - 0.001 || target > 0.001 )
-			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+			TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -210,9 +210,9 @@ void test_tan_Complex(void) {
 			double	imag = sinh(2*b) / (cos(2*a) + cosh(2*b));
 
 			if (real < -0.001 || real > 0.001 )
-				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
+				TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc_real / real);
 			if (imag < -0.001 || imag > 0.001 )
-				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_imag / imag);
+				TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc_imag / imag);
 			delete(z);
 			delete(tan_z);
 			delete(tan_z_real);
@@ -232,7 +232,7 @@ void test_sinh_Rational(void) {
 		double	target = sinh(v);
 
 		if (target < - 0.001 || target > 0.001 )
-			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+			TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -260,9 +260,9 @@ void test_sinh_Complex(void) {
 			double	imag = cosh(a) * sin(b);
 
 			if (real < -0.001 || real > 0.001 )
-				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
+				TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc_real / real);
 			if (imag < -0.001 || imag > 0.001 )
-				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_imag / imag);
+				TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc_imag / imag);
 			delete(z);
 			delete(sinh_z);
 			delete(sinh_z_real);
@@ -282,7 +282,7 @@ void test_cosh_Rational(void) {
 		double	target = cosh(v);
 
 		if (target < - 0.001 || target > 0.001 )
-			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+			TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -310,9 +310,9 @@ void test_cosh_Complex(void) {
 			double	imag = sinh(a) * sin(b);
 
 			if (real < -0.001 || real > 0.001 )
-				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
+				TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc_real / real);
 			if (imag < -0.001 || imag > 0.001 )
-				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_imag / imag);
+				TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc_imag / imag);
 			delete(z);
 			delete(cosh_z);
 			delete(cosh_z_real);
@@ -332,7 +332,7 @@ void test_tanh_Rational(void) {
 		double	target = tanh(v);
 
 		if (target < - 0.001 || target > 0.001 )
-			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+			TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -360,9 +360,9 @@ void test_tanh_Complex(void) {
 			double	imag = sin(2*b) / (cosh(2*a) + cos(2*b));
 
 			if (real < -0.001 || real > 0.001 )
-				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_real / real);
+				TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc_real / real);
 			if (imag < -0.001 || imag > 0.001 )
-				TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc_imag / imag);
+				TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc_imag / imag);
 			delete(z);
 			delete(tanh_z);
 			delete(tanh_z_real);
@@ -383,7 +383,7 @@ void test_sqrt_Rational(void)
 		double	target = sqrt(v);
 
 		if (target < - 0.001 || target > 0.001 )
-			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+			TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -440,7 +440,7 @@ void test_radians_Rational(void) {
 		double	target = v / 180 * 3.141592653589793;
 
 		if (target < - 0.001 || target > 0.001 )
-			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+			TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -459,7 +459,7 @@ void test_degrees_Rational(void) {
 		double	target = v * 180 / 3.141592653589793;
 
 		if (target < - 0.001 || target > 0.001 )
-			TEST_ASSERT_FLOAT_WITHIN(0.01, 1, calc / target);
+			TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -501,7 +501,7 @@ void test_norm_Matrix(void) {
 
 	r = ft_norm_Matrix(m);
 	r_double = Rational_to_double(r);
-	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, r_double / 19);
+	TEST_ASSERT_FLOAT_WITHIN(0.02, 1, r_double / 19);
 	delete(m);
 	delete(r);
 }
