@@ -9,3 +9,6 @@
 
 # library
 *.a
+
+# gmp files
+gmp-6.3.0

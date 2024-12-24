@@ -89,6 +89,13 @@ $(LIBCOMP):	$(OBJS)
 $(LIBOOP_PATH)/liboop.a:
 	$(MAKE) liboop.a -C $(LIBOOP_PATH) -s
 
+gmp:
+	tar -xvf gmp-6.3.0.tar.xz
+	cd gmp-6.3.0/
+	./configure
+	make
+	sudo make install
+
 clean:
 	$(MAKE) clean -C $(LIBOOP_PATH) -s
 	$(RM) -r $(OBJDIR)
