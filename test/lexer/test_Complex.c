@@ -19,10 +19,10 @@ void test_ctor(void) {
 									Rational_from_long((long)22, (long)7),
 									Rational_from_long((long)-3, (long)5)
 									);
-	TEST_ASSERT_EQUAL(comp->real->numerator, 22);
-	TEST_ASSERT_EQUAL(comp->real->denominator, 7);
-	TEST_ASSERT_EQUAL(comp->imag->numerator, -3);
-	TEST_ASSERT_EQUAL(comp->imag->denominator, 5);
+	TEST_ASSERT_EQUAL(mpz_get_si(comp->real->numerator), 22);
+	TEST_ASSERT_EQUAL(mpz_get_si(comp->real->denominator), 7);
+	TEST_ASSERT_EQUAL(mpz_get_si(comp->imag->numerator), (long)-3);
+	TEST_ASSERT_EQUAL(mpz_get_si(comp->imag->denominator), 5);
 	delete(comp);
 }
 
@@ -46,10 +46,10 @@ void test_add(void) {
 								Rational_from_long((long)5, (long)6),
 								Rational_from_long((long)7, (long)8));
 	struct s_Complex	*target = numeric_add(a, b);
-	TEST_ASSERT_EQUAL(target->real->numerator, 4);
-	TEST_ASSERT_EQUAL(target->real->denominator, 3);
-	TEST_ASSERT_EQUAL(target->imag->numerator, 13);
-	TEST_ASSERT_EQUAL(target->imag->denominator, 8);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->real->numerator), 4);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->real->denominator), 3);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->imag->numerator), 13);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->imag->denominator), 8);
 	delete(a);
 	delete(b);
 	delete(target);
@@ -63,10 +63,10 @@ void test_sub(void) {
 								Rational_from_long((long)5, (long)6),
 								Rational_from_long((long)7, (long)8));
 	struct s_Complex	*target = numeric_sub(a, b);
-	TEST_ASSERT_EQUAL(target->real->numerator, -1);
-	TEST_ASSERT_EQUAL(target->real->denominator, 3);
-	TEST_ASSERT_EQUAL(target->imag->numerator, -1);
-	TEST_ASSERT_EQUAL(target->imag->denominator, 8);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->real->numerator), -1);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->real->denominator), 3);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->imag->numerator), -1);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->imag->denominator), 8);
 	delete(a);
 	delete(b);
 	delete(target);
@@ -80,10 +80,10 @@ void test_mul(void) {
 								Rational_from_long((long)5, (long)6),
 								Rational_from_long((long)7, (long)8));
 	struct s_Complex	*target = numeric_mul(a, b);
-	TEST_ASSERT_EQUAL(target->real->numerator, -23);
-	TEST_ASSERT_EQUAL(target->real->denominator, 96);
-	TEST_ASSERT_EQUAL(target->imag->numerator, 17);
-	TEST_ASSERT_EQUAL(target->imag->denominator, 16);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->real->numerator), -23);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->real->denominator), 96);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->imag->numerator), 17);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->imag->denominator), 16);
 	delete(a);
 	delete(b);
 	delete(target);
@@ -97,10 +97,10 @@ void test_div(void) {
 								Rational_from_long((long)5, (long)6),
 								Rational_from_long((long)7, (long)8));
 	struct s_Complex	*target = numeric_div(a, b);
-	TEST_ASSERT_EQUAL(target->real->numerator, 618);
-	TEST_ASSERT_EQUAL(target->real->denominator, 841);
-	TEST_ASSERT_EQUAL(target->imag->numerator, 108);
-	TEST_ASSERT_EQUAL(target->imag->denominator, 841);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->real->numerator), 618);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->real->denominator), 841);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->imag->numerator), 108);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->imag->denominator), 841);
 	delete(a);
 	delete(b);
 	delete(target);
@@ -111,10 +111,10 @@ void test_neg(void) {
 								Rational_from_long((long)1, (long)2),
 								Rational_from_long((long)3, (long)4));
 	struct s_Complex	*target = numeric_neg(a);
-	TEST_ASSERT_EQUAL(target->real->numerator, -1);
-	TEST_ASSERT_EQUAL(target->real->denominator, 2);
-	TEST_ASSERT_EQUAL(target->imag->numerator, -3);
-	TEST_ASSERT_EQUAL(target->imag->denominator, 4);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->real->numerator), -1);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->real->denominator), 2);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->imag->numerator), -3);
+	TEST_ASSERT_EQUAL(mpz_get_si(target->imag->denominator), 4);
 	delete(a);
 	delete(target);
 }
@@ -128,8 +128,8 @@ void test_pow_rational(void) {
 	double				real = Rational_to_double(target->real);
 	double				imag = Rational_to_double(target->imag);
 
-	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, 0.626352798861 / real);
-	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, 0.669919542924 / imag);
+	TEST_ASSERT_FLOAT_WITHIN(1e-15, 0.626352798861, real);
+	TEST_ASSERT_FLOAT_WITHIN(1e-15, 0.669919542924, imag);
 	delete(a);
 	delete(b);
 	delete(target);
@@ -145,8 +145,8 @@ void test_pow_complex(void) {
 	struct s_Complex	*target = numeric_pow(a, b);
 	double				real = Rational_to_double(target->real);
 	double				imag = Rational_to_double(target->imag);
-	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, 0.289688910906 / real);
-	TEST_ASSERT_FLOAT_WITHIN(0.01, 1, 0.258285468769 / imag);
+	TEST_ASSERT_FLOAT_WITHIN(1e-15, 0.289688910906, real);
+	TEST_ASSERT_FLOAT_WITHIN(1e-15, 0.258285468769, imag);
 	delete(a);
 	delete(b);
 	delete(target);
