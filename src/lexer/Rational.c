@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <gmp.h>
 
 /* container */
 #include "Vec.h"
@@ -20,98 +21,69 @@
 
 const void	*Rational;
 
-/* Return the Greatest Common Divisor of two numbers. */
-static long	gcd(long a, long b)
-{
-	a = labs(a);
-	b = labs(b);
-	while (a && b)
-	{
-		if (a > b)
-			a %= b;
-		else
-			b %= a;
-	}
-	if (!a)
-		return (b);
-	return (a);
-}
-
-/* Return the Least Common Multiple of two numbers. */
-static long	lcm(long a, long b)
-{
-	return (labs(a * b) / gcd(a, b));
-}
-
 /* Rational constructor method. */
 static void	*Rational_ctor(void *_self, va_list *app)
 {
 	struct s_Rational	*self;
-	long				numerator;
-	long				denominator;
-	long				divisor;
 
 	self = super_ctor(Rational, _self, app);
-	numerator = va_arg(*app, long);
-	denominator = va_arg(*app, long);
-	divisor = gcd(numerator, denominator);
-	numerator /= divisor;
-	denominator /= divisor;
-	if (denominator < 0)
-	{
-		numerator *= -1;
-		denominator *= -1;
-	}
-	self->numerator = numerator;
-	self->denominator = denominator;
-	return (self);
+	mpz_init_set(self->numerator, va_arg(*app, mpz_ptr));
+	mpz_init_set(self->denominator, va_arg(*app, mpz_ptr));
+	return (Rational_canonicalise(self));
+}
+
+/* Rational destructor method. */
+static void	*Rational_dtor(void *_self)
+{
+	struct s_Rational	*self = _self;
+
+	mpz_clear(self->numerator);
+	mpz_clear(self->denominator);
+	return (super_dtor(Rational, self));
+}
+
+/* Construct a Rational from two long */
+void	*Rational_from_long(long numerator, long denominator)
+{
+	mpz_t	num;
+	mpz_t	den;
+	void	*retval;
+
+	mpz_init_set_si(num, numerator);
+	mpz_init_set_si(den, denominator);
+	retval = new(Rational, RATIONAL, num, den);
+	mpz_clear(num);
+	mpz_clear(den);
+	return (retval);
 }
 
 /* Construct a Rational from double.
- * Adapted from Python source code:
- * https://github.com/python/cpython/blob/a0f82dd6ccddc5fd3266df8ba55496ab573aacf2/Lib/fractions.py#L340
+ * Relies on the rational number feature from GMP package.
  */
 void	*Rational_from_double(double n)
 {
-	const unsigned long	max_denominator = 1.0e+9;	/* precision */
-	unsigned long		p0 = 0;
-	unsigned long		q0 = 1;
-	unsigned long		p1 = 1;
-	unsigned long		q1 = 0;
-	double				d = 1;
-	long				sign = n < 0 ? -1 : 1;
+	mpq_t	rational;
+	mpz_t	num;
+	mpz_t	den;
+	void	*retval;
 
-	if (n != n)		/* if n == nan, this evaluates to true */
-		return (NULL);
-
-	n = fabs(n);	/* simplify the algorithm by only using positive numbers */
-	while (1)
-	{
-		unsigned long	q2;
-		unsigned long	a;
-
-		a = floor(n / d);
-		q2 = q0 + a * q1;				/* q2 = q0_prev + a * q1_prev */
-		if (q2 > max_denominator || d == 0)
-			break ;
-
-		/* update p and q values for next cycle */
-		swap_unsigned_long(&p0, &p1);	/* p0 = p1_prev */
-		q0 = q1;						/* q0 = q1_prev */
-		p1 += a * p0;					/* p1 = p0_prev + a * p1_prev */
-		q1 = q2;						/* q1 = q0_prev + a * q1_prev = q2*/
-
-		/* update n and d values for next cycle */
-		swap_double(&n, &d);			/* n = d_prev */
-		d -= a * n;						/* d = n_prev - a * d_prev */
-	}
-	return new(Rational, RATIONAL, sign * p1, q1);
+	mpq_init(rational);
+	mpz_init(num);
+	mpz_init(den);
+	mpq_set_d(rational, n);
+	mpq_get_num(num, rational);
+	mpq_get_den(den, rational);
+	retval = new(Rational, RATIONAL, num, den);
+	mpq_clear(rational);
+	mpz_clear(num);
+	mpz_clear(den);
+	return (retval);
 }
 
 /* convert Rational to a double. */
 double	Rational_to_double(const struct s_Rational *self)
 {
-	return ((double)(self->numerator) / self->denominator);
+	return (mpz_get_d(self->numerator) / mpz_get_d(self->denominator));
 }
 
 /* Return a copy of the Rational. */
@@ -121,8 +93,8 @@ static struct s_Rational	*Rational_copy(const void *_self)
 	struct s_Rational		*retval;
 
 	retval = super_copy(Rational, self);
-	retval->numerator = self->numerator;
-	retval->denominator = self->denominator;
+	mpz_init_set(retval->numerator, self->numerator);
+	mpz_init_set(retval->denominator, self->denominator);
 	return (retval);
 }
 
@@ -133,80 +105,49 @@ static char	*Rational_str(const void *_self)
 	int						len;
 	char					*retval;
 
-	if (self->denominator == 1)
+	if (mpz_cmp_ui(self->denominator, 1) == 0)
 	{
-		len = ceil(log10(LONG_MAX));
+		len = mpz_sizeinbase(self->numerator, 10);
 		retval = malloc(len + 2);
-		sprintf(retval, "%ld", self->numerator);
+		mpz_get_str(retval, 10, self->numerator);
 	}
 	else
 	{
 		len = DBL_MAX_10_EXP;
 		retval = malloc(len + 3);
-		sprintf(retval, "%f",
-				(double)self->numerator / self->denominator);
+		sprintf(retval, "%f", Rational_to_double(self));
 	}
 	return (retval);
-}
-
-/* Right shift the Rational to a simplier fraction. */
-static void	*Rational_rshift(void *_self)
-{
-	struct s_Rational	*self = _self;
-	long				a = self->numerator;
-	long				b = self->denominator;
-
-	while (b > 1e5)
-	{
-		if (a == -1)
-		{
-			a = 0;
-			b = 1;
-		}
-		else
-		{
-			a >>= 1;
-			b >>= 1;
-		}
-	}
-	self->numerator = a;
-	self->denominator = b;
-	return (self);
-}
-
-/* Left shift the Rational to a simplier fraction. */
-static void	*Rational_lshift(void *_self)
-{
-	struct s_Rational	*self = _self;
-	long				a = self->numerator;
-	long				b = self->denominator;
-
-	while (labs(a) < 1e12 && b < 1e12)
-	{
-		{
-			a <<= 1;
-			b <<= 1;
-		}
-	}
-	self->numerator = a;
-	self->denominator = b;
-	return (self);
 }
 
 /* Return the addition of two Rationals. */
 static void	*Rational_add_Rational(const void *_self, const void *_other)
 {
-	struct s_Rational	*lhs = Rational_rshift(copy(_self));
-	struct s_Rational	*rhs = Rational_rshift(copy(_other));
-	long				a = lhs->numerator;
-	long				b = lhs->denominator;
-	long				c = rhs->numerator;
-	long				d = rhs->denominator;
-	long				g = gcd(b, d);
+	struct s_Rational	*lhs = (struct s_Rational *)_self;
+	struct s_Rational	*rhs = (struct s_Rational *)_other;
+	mpz_t				num;
+	mpz_t				den;
+	struct s_Rational	*retval;
 
-	delete(lhs);
-	delete(rhs);
-	return new(Rational, RATIONAL, a * (d / g) + c * (b / g), b * (d / g));
+	mpz_init(num);
+	mpz_init(den);
+	mpz_mul(num, lhs->numerator, rhs->denominator);		/* ad */
+	mpz_addmul(num, rhs->numerator, lhs->denominator);	/* ad + bc */
+	mpz_mul(den, lhs->denominator, rhs->denominator);	/* bd */
+
+	/* put a hard limit on the size of the integers */
+	while(mpz_sizeinbase(num, 2) > 512 || mpz_sizeinbase(den, 2) > 512)
+	{
+		mpz_div_ui(num, num, 2);
+		mpz_div_ui(den, den, 2);
+	}
+
+	retval = new(Rational, RATIONAL, num, den);
+	Rational_canonicalise(retval);
+
+	mpz_clear(num);
+	mpz_clear(den);
+	return (retval);
 }
 
 /* Return the addition of two Numerics. */
@@ -229,17 +170,31 @@ static void	*Rational_add(const void *_self, const void *_other)
 /* Return the subtraction of one Rational from Rational. */
 static void	*Rational_sub_Rational(const void *_self, const void *_other)
 {
-	struct s_Rational	*lhs = Rational_rshift(copy(_self));
-	struct s_Rational	*rhs = Rational_rshift(copy(_other));
-	long				a = lhs->numerator;
-	long				b = lhs->denominator;
-	long				c = rhs->numerator;
-	long				d = rhs->denominator;
-	long				g = gcd(b, d);
+	struct s_Rational	*lhs = (struct s_Rational *)_self;
+	struct s_Rational	*rhs = (struct s_Rational *)_other;
+	mpz_t				num;
+	mpz_t				den;
+	struct s_Rational	*retval;
 
-	delete(lhs);
-	delete(rhs);
-	return new(Rational, RATIONAL, a * (d / g) - c * (b / g), b * (d / g));
+	mpz_init(num);
+	mpz_init(den);
+	mpz_mul(num, lhs->numerator, rhs->denominator);		/* ad */
+	mpz_submul(num, rhs->numerator, lhs->denominator);	/* ad - bc */
+	mpz_mul(den, lhs->denominator, rhs->denominator);	/* bd */
+
+	/* put a hard limit on the size of the integers */
+	while(mpz_sizeinbase(num, 2) > 512 || mpz_sizeinbase(den, 2) > 512)
+	{
+		mpz_div_ui(num, num, 2);
+		mpz_div_ui(den, den, 2);
+	}
+
+	retval = new(Rational, RATIONAL, num, den);
+	Rational_canonicalise(retval);
+
+	mpz_clear(num);
+	mpz_clear(den);
+	return (retval);
 }
 
 /* Return the subtraction of one Numeric from another. */
@@ -265,18 +220,30 @@ static void	*Rational_sub(const void *_self, const void *_other)
 /* Return the multiplication of two Rationals. */
 static void	*Rational_mul_Rational(const void *_self, const void *_other)
 {
-	struct s_Rational	*lhs = Rational_rshift(copy(_self));
-	struct s_Rational	*rhs = Rational_rshift(copy(_other));
-	long				a = lhs->numerator;
-	long				b = lhs->denominator;
-	long				c = rhs->numerator;
-	long				d = rhs->denominator;
-	long				f = gcd(a, d);
-	long				g = gcd(b, c);
+	struct s_Rational	*lhs = (struct s_Rational *)_self;
+	struct s_Rational	*rhs = (struct s_Rational *)_other;
+	mpz_t				num;
+	mpz_t				den;
+	struct s_Rational	*retval;
 
-	delete(lhs);
-	delete(rhs);
-	return new(Rational, RATIONAL, (a / f) * (c / g), (b / g) * (d / f));
+	mpz_init(num);
+	mpz_init(den);
+	mpz_mul(num, lhs->numerator, rhs->numerator);		/* ac */
+	mpz_mul(den, lhs->denominator, rhs->denominator);	/* bd */
+
+	/* put a hard limit on the size of the integers */
+	while(mpz_sizeinbase(num, 2) > 512 || mpz_sizeinbase(den, 2) > 512)
+	{
+		mpz_div_ui(num, num, 2);
+		mpz_div_ui(den, den, 2);
+	}
+
+	retval = new(Rational, RATIONAL, num, den);
+	Rational_canonicalise(retval);
+
+	mpz_clear(num);
+	mpz_clear(den);
+	return (retval);
 }
 
 /* Return the multiplication of two Numerics. */
@@ -299,18 +266,30 @@ static void	*Rational_mul(const void *_self, const void *_other)
 /* Return the division of one Rational from another. */
 static void	*Rational_div_Rational(const void *_self, const void *_other)
 {
-	struct s_Rational	*lhs = Rational_lshift(copy(_self));
-	struct s_Rational	*rhs = Rational_rshift(copy(_other));
-	long				a = lhs->numerator;
-	long				b = lhs->denominator;
-	long				c = rhs->numerator;
-	long				d = rhs->denominator;
-	long				f = gcd(a, c);
-	long				g = gcd(b, d);
+	struct s_Rational	*lhs = (struct s_Rational *)_self;
+	struct s_Rational	*rhs = (struct s_Rational *)_other;
+	mpz_t				num;
+	mpz_t				den;
+	struct s_Rational	*retval;
 
-	delete(lhs);
-	delete(rhs);
-	return new(Rational, RATIONAL, (a / f) * (d / g), (b / g) * (c / f));
+	mpz_init(num);
+	mpz_init(den);
+	mpz_mul(num, lhs->numerator, rhs->denominator);		/* ad */
+	mpz_mul(den, lhs->denominator, rhs->numerator);		/* bc */
+
+	/* put a hard limit on the size of the integers */
+	while(mpz_sizeinbase(num, 2) > 512 || mpz_sizeinbase(den, 2) > 512)
+	{
+		mpz_div_ui(num, num, 2);
+		mpz_div_ui(den, den, 2);
+	}
+
+	retval = new(Rational, RATIONAL, num, den);
+	Rational_canonicalise(retval);
+
+	mpz_clear(num);
+	mpz_clear(den);
+	return (retval);
 }
 
 /* Return the division of one Numeric from another. */
@@ -342,10 +321,14 @@ static void	*Rational_div(const void *_self, const void *_other)
 static void	*Rational_floor(const void *_self)
 {
 	const struct s_Rational	*self = _self;
-	long					num;
+	struct s_Rational		*retval = Rational_from_long(0, 1);
+	mpz_t					quotient;
 
-	num = (long)floor((double)self->numerator / (double)self->denominator);
-	return new(Rational, RATIONAL, num, 1);
+	mpz_init(quotient);
+	mpz_fdiv_q(quotient, self->numerator, self->denominator);
+	mpz_set(retval->numerator, quotient);
+	mpz_clear(quotient);
+	return (retval);
 }
 
 /* Return remainder from the division of one Rational from another. */
@@ -392,7 +375,7 @@ static struct s_Rational	*Rational_neg(const void *_self)
 	const struct s_Rational	*self = _self;
 	struct s_Rational		*retval = copy(self);
 
-	retval->numerator *= -1;
+	mpz_neg(retval->numerator, retval->numerator);
 	return (retval);
 }
 
@@ -405,38 +388,49 @@ static void	*Rational_pow_Rational(const void *_self, const void *_other)
 {
 	const struct s_Rational	*self = _self;
 	const struct s_Rational	*other = _other;
-	long					a = self->numerator;
-	long					c = other->numerator;
-	long					d = other->denominator;
-	long					integer;
+	mpz_t					a;
+	mpz_t					c;
+	mpz_t					d;
+	mpz_t					quotient;
+	mpz_t					remainder;
 	void					*fraction = NULL;
 	void					*cpy = NULL;
 	void					*retval = NULL;
 	void					*retval_frac = NULL;
 
+	/* initialise values */
+	mpz_init_set(a, self->numerator);
+	mpz_init_set(c, other->numerator);
+	mpz_init_set(d, other->denominator);
+
 	/* raising negative number to non-integer gives a Complex solution */
-	if (a < 0 && d != 1)
+	if (mpz_sgn(a) < 0 && mpz_cmp_ui(d, 1) != 0)
 	{
 		cpy = numeric_promote(self, COMPLEX);
 		retval = numeric_pow(cpy, other);
 		delete(cpy);
+		mpz_clear(a);
+		mpz_clear(c);
+		mpz_clear(d);
 		return (retval);
 	}
 
 	/* invert input if necessary */
-	if (c < 0)
+	if (mpz_sgn(c) < 0)
 	{
 		cpy = Rational_invert(self);
-		c = -c;
+		mpz_neg(c, c);
 	}
 	else
 		cpy = copy(self);
 
 	/* separate the power to integer and fractional portion */
-	integer = c / d;
-	if (c - integer * d)	/* if there's a fractional part */
+	mpz_init(quotient);
+	mpz_init(remainder);
+	mpz_tdiv_qr(quotient, remainder, c, d);
+	if (mpz_cmp_ui(remainder, 0) != 0)	/* if there's a fractional part */
 	{
-		fraction = new(Rational, RATIONAL, c - integer * d, d);	/* b */
+		fraction = new(Rational, RATIONAL, remainder, d);	/* b */
 		retval = ft_ln_Rational(cpy);					/* ln a */
 		fraction = numeric_imul(&fraction, retval);		/* b ln a */
 		retval_frac = ft_exp_Rational(fraction);		/* e^(b ln a) */
@@ -445,24 +439,29 @@ static void	*Rational_pow_Rational(const void *_self, const void *_other)
 
 	/* exponentiation by squaring */
 	/* reference: https://en.wikipedia.org/wiki/Exponentiation_by_squaring */
-	retval = new(Rational, RATIONAL, 1, 1);
-	while (integer > 1)
+	retval = Rational_from_long(1, 1);
+	while (mpz_cmp_ui(quotient, 1) > 0)
 	{
-		if (integer % 2)	/* odd power */
+		if (mpz_odd_p(quotient))	/* odd power */
 		{
 			retval = numeric_imul(&retval, cpy);
-			--integer;
+			mpz_sub_ui(quotient, quotient, 1);
 		}
 		cpy = numeric_imul(&cpy, cpy);
-		integer >>= 1;
+		mpz_div_ui(quotient, quotient, 2);
 	}
-	if (integer == 1)
+	if (mpz_cmp_ui(quotient, 1) == 0)
 		retval = numeric_imul(&retval, cpy);
 
 	/* multiply with fractional power */
 	if (retval_frac)
 		retval = numeric_imul(&retval, retval_frac);
 
+	mpz_clear(a);
+	mpz_clear(c);
+	mpz_clear(d);
+	mpz_clear(quotient);
+	mpz_clear(remainder);
 	delete(cpy);
 	delete(fraction);
 	delete(retval_frac);
@@ -496,16 +495,11 @@ static void	*Rational_pow(const void *_self, const void *_other)
 /* Return true if two Rationals are the same, false otherwise. */
 static bool	Rational_eq(const struct s_Rational *a, const struct s_Rational *b)
 {
-	long	n1 = a->numerator;
-	long	d1 = a->denominator;
-	long	n2 = b->numerator;
-	long	d2 = b->denominator;
-
 	if (Token_get_tag(a) != Token_get_tag(b))
 		return (false);
-	if (n1 != n2)
+	if (mpz_cmp(a->numerator, b->numerator))
 		return (false);
-	if (d1 != d2)
+	if (mpz_cmp(a->denominator, b->denominator))
 		return (false);
 	return (true);
 }
@@ -519,85 +513,44 @@ bool	Rational_neq(const struct s_Rational *a, const struct s_Rational *b)
 /* Return true if a is less than b. */
 bool	Rational_lt(const struct s_Rational *a, const struct s_Rational *b)
 {
-	long	n1 = a->numerator;
-	long	d1 = a->denominator;
-	long	n2 = b->numerator;
-	long	d2 = b->denominator;
-	long	f;
+	mpz_t	n1;
+	mpz_t	n2;
+	bool	retval;
 
 	if (Token_get_tag(a) != Token_get_tag(b))
 		return (false);
-	if (n1 == 0 && n2 == 0)
-		return (false);
-	if (n1 < 0 && n2 > 0)
-		return (true);
-	f = lcm(d1, d2);
-	n1 *= f / d1;
-	n2 *= f / d2;
-	return (n1 < n2);
+	mpz_init_set(n1, a->numerator);
+	mpz_init_set(n2, b->numerator);
+	mpz_mul(n1, n1, b->denominator);
+	mpz_mul(n2, n2, a->denominator);
+	retval = mpz_cmp(n1, n2) < 0;
+	mpz_clear(n1);
+	mpz_clear(n2);
+	return (retval);
 }
 
 /* Return true if a is greater than b. */
 bool	Rational_gt(const struct s_Rational *a, const struct s_Rational *b)
 {
-	long	n1 = a->numerator;
-	long	d1 = a->denominator;
-	long	n2 = b->numerator;
-	long	d2 = b->denominator;
-	long	f;
-
 	if (Token_get_tag(a) != Token_get_tag(b))
 		return (false);
-	if (n1 == 0 && n2 == 0)
-		return (false);
-	if (n1 > 0 && n2 < 0)
-		return (true);
-	f = lcm(d1, d2);
-	n1 *= f / d1;
-	n2 *= f / d2;
-	return (n1 > n2);
+	return (!Rational_le(a, b));
 }
 
 /* Return true if a is less than or equal to b, false otherwise. */
 bool	Rational_le(const struct s_Rational *a, const struct s_Rational *b)
 {
-	long	n1 = a->numerator;
-	long	d1 = a->denominator;
-	long	n2 = b->numerator;
-	long	d2 = b->denominator;
-	long	f;
-
 	if (Token_get_tag(a) != Token_get_tag(b))
 		return (false);
-	if (n1 == 0 && n2 == 0)
-		return (true);
-	if (n1 < 0 && n2 > 0)
-		return (true);
-	f = lcm(d1, d2);
-	n1 *= f / d1;
-	n2 *= f / d2;
-	return (n1 <= n2);
+	return (Rational_eq(a, b) | Rational_lt(a, b));
 }
 
 /* Return true if a is greater than or equal to b, false otherwise. */
 bool	Rational_ge(const struct s_Rational *a, const struct s_Rational *b)
 {
-	long	n1 = a->numerator;
-	long	d1 = a->denominator;
-	long	n2 = b->numerator;
-	long	d2 = b->denominator;
-	long	f;
-
 	if (Token_get_tag(a) != Token_get_tag(b))
 		return (false);
-	if (n1 == 0 && n2 == 0)
-		return (true);
-	if (n1 > 0 && n2 < 0)
-		return (true);
-	f = lcm(d1, d2);
-	n1 *= f / d1;
-	n2 *= f / d2;
-	return (n1 >= n2);
+	return (!Rational_lt(a, b));
 }
 
 /* Promote one Numeric type to another */
@@ -614,7 +567,7 @@ static void	*Rational_promote(const void *_self, enum e_Tag tag)
 		case COMPLEX:
 			return new(Complex, COMPLEX,
 					Rational_copy(self),
-					new(Rational, RATIONAL, 0, 1));
+					Rational_from_long(0, 1));
 		case VECTOR:
 		case MATRIX:
 			/* create the vector */
@@ -643,6 +596,7 @@ void	initRational(void)
 				Numeric, sizeof(struct s_Rational),
 				ctor, Rational_ctor,
 				copy, Rational_copy,
+				dtor, Rational_dtor,
 				str, Rational_str,
 				equal, Rational_eq,
 				numeric_add, Rational_add,
@@ -665,13 +619,28 @@ void	initRational(void)
 void	*Rational_invert(const void *_self)
 {
 	const struct s_Rational	*self = _self;
-	long					a = self->numerator;
-	long					b = self->denominator;
 
-	if (a == 0)
+	if (mpz_cmp_ui(self->numerator, 0) == 0)
 		return (copy(self));
-	else if (a < 0)
-		return (new(Rational, RATIONAL, -b, a));
-	else
-		return (new(Rational, RATIONAL, b, a));
+	return (new(Rational, RATIONAL, self->denominator, self->numerator));
+}
+
+/* Remove any factors that are common to the numerator and denominator
+   and make the denominator positive. */
+void	*Rational_canonicalise(void *_self)
+{
+	struct s_Rational	*self = _self;
+	mpz_t				divisor;
+
+	mpz_init(divisor);
+	mpz_gcd(divisor, self->numerator, self->denominator);
+	mpz_div(self->numerator, self->numerator, divisor);
+	mpz_div(self->denominator, self->denominator, divisor);
+	if (mpz_sgn(self->denominator) < 0)
+	{
+		mpz_neg(self->numerator, self->numerator);
+		mpz_neg(self->denominator, self->denominator);
+	}
+	mpz_clear(divisor);
+	return (self);
 }

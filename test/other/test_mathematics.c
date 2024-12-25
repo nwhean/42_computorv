@@ -31,7 +31,7 @@ void test_exp_Rational(void) {
 		double	calc = Rational_to_double(r_out);
 		double	target = exp(v);
 
-		TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
+		TEST_ASSERT_FLOAT_WITHIN(1e-15, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -49,7 +49,7 @@ void test_ln_Rational(void) {
 		double	calc = Rational_to_double(r_out);
 		double	target = log(v);
 
-		TEST_ASSERT_FLOAT_WITHIN(0.05, 1, calc / target);
+		TEST_ASSERT_FLOAT_WITHIN(1e-15, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -63,7 +63,7 @@ void test_ln_Rational(void) {
 		double	calc = Rational_to_double(r_out);
 		double	target = log(v);
 
-		TEST_ASSERT_FLOAT_WITHIN(0.03, 1, calc / target);
+		TEST_ASSERT_FLOAT_WITHIN(1e-15, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -81,8 +81,8 @@ void test_sin_Rational(void) {
 		double	calc = Rational_to_double(r_out);
 		double	target = sin(v);
 
-		if (target < - 0.001 || target > 0.001 )
-			TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
+		if (target < -1e-15 || target > 1e-15 )
+			TEST_ASSERT_FLOAT_WITHIN(1e-15, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -131,8 +131,8 @@ void test_cos_Rational(void) {
 		double	calc = Rational_to_double(r_out);
 		double	target = cos(v);
 
-		if (target < - 0.001 || target > 0.001 )
-			TEST_ASSERT_FLOAT_WITHIN(0.02, 1, calc / target);
+		if (target < -1e-15 || target > 1e-15 )
+			TEST_ASSERT_FLOAT_WITHIN(1e-15, 1, calc / target);
 		delete(r_in);
 		delete(r_out);
 		(void)calc;
@@ -468,15 +468,15 @@ void test_degrees_Rational(void) {
 }
 
 void test_norm_Matrix(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, (long)-3, 1);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 5, 1);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 7, 1);
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 2, 1);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 6, 1);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 4, 1);
-	struct s_Rational	*r20 = new(Rational, RATIONAL, 0, 1);
-	struct s_Rational	*r21 = new(Rational, RATIONAL, 2, 1);
-	struct s_Rational	*r22 = new(Rational, RATIONAL, 8, 1);
+	struct s_Rational	*r00 = Rational_from_long((long)-3, 1);
+	struct s_Rational	*r01 = Rational_from_long(5, 1);
+	struct s_Rational	*r02 = Rational_from_long(7, 1);
+	struct s_Rational	*r10 = Rational_from_long(2, 1);
+	struct s_Rational	*r11 = Rational_from_long(6, 1);
+	struct s_Rational	*r12 = Rational_from_long(4, 1);
+	struct s_Rational	*r20 = Rational_from_long(0, 1);
+	struct s_Rational	*r21 = Rational_from_long(2, 1);
+	struct s_Rational	*r22 = Rational_from_long(8, 1);
 	void				*v0 = new(Vec);
 	void				*v1 = new(Vec);
 	void				*v2 = new(Vec);

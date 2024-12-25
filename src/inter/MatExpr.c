@@ -53,7 +53,7 @@ static void	*MatExpr_ctor(void *_self, va_list *app)
 
 		/* convert self->vec into a Vec containing Vecs containing Expr */
 		for (j = Vec_size(vec_i); j < self->cols; ++j)
-			Vec_push_back(vec_i, new(Rational, RATIONAL, 0, 1));
+			Vec_push_back(vec_i, Rational_from_long(0, 1));
 	}
 
 	delete(vec);

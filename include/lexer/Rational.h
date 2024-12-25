@@ -1,19 +1,22 @@
 #ifndef RATIONAL_H
 # define RATIONAL_H
 
+# include <gmp.h>
+
 # include "Numeric.h"
 
 /* all members are public */
 struct s_Rational	/* Rational: Numeric */
 {
 	const struct s_Numeric	_;
-	long					numerator;
-	long					denominator;
+	mpz_t					numerator;
+	mpz_t					denominator;
 };
 
 extern const void	*Rational;	/* new(Rational, RATIONAL, long, long); */
 
 void	initRational(void);
+void	*Rational_from_long(long numerator, long denominator);
 void	*Rational_from_double(double n);
 double	Rational_to_double(const struct s_Rational *self);
 
@@ -26,5 +29,6 @@ bool	Rational_ge(const struct s_Rational *a, const struct s_Rational *b);
 
 /* operations */
 void	*Rational_invert(const void *self);
+void	*Rational_canonicalise(void *self);
 
 #endif

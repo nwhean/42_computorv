@@ -23,10 +23,10 @@ void tearDown(void) {
 }
 
 void test_ctor(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r2 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r3 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r0 = Rational_from_long(1, 2)
+	struct s_Rational	*r1 = Rational_from_long(3, 4)
+	struct s_Rational	*r2 = Rational_from_long(5, 6);
+	struct s_Rational	*r3 = Rational_from_long(7, 8);
 	void				*v0 = new(Vec);
 	void				*v1 = new(Vec);
 	void				*v = new(Vec);
@@ -47,10 +47,10 @@ void test_ctor(void) {
 }
 
 void test_str(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r2 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r3 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
+	struct s_Rational	*r2 = Rational_from_long(5, 6);
+	struct s_Rational	*r3 = Rational_from_long(7, 8);
 	void				*v0 = new(Vec);
 	void				*v1 = new(Vec);
 	void				*v = new(Vec);
@@ -73,16 +73,16 @@ void test_str(void) {
 }
 
 void test_add_scalar(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*r = Rational_from_long(1, 2);
 
 	Vec_push_back(v00, r00);
 	Vec_push_back(v00, r01);
@@ -98,19 +98,19 @@ void test_add_scalar(void) {
 }
 
 void test_add_matrix(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4)
+	struct s_Rational	*r02 = Rational_from_long(5, 6)
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 3, 2);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 5, 3);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, 7, 4);
+	struct s_Rational	*r10 = Rational_from_long(1, 1);
+	struct s_Rational	*r11 = Rational_from_long(3, 2);
+	struct s_Rational	*r12 = Rational_from_long(5, 3)
+	struct s_Rational	*r13 = Rational_from_long(7, 4)
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -142,16 +142,16 @@ void test_add_matrix(void) {
 }
 
 void test_sub_scalar(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2)
+	struct s_Rational	*r01 = Rational_from_long(3, 4)
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*r = Rational_from_long(1, 2);
 
 	Vec_push_back(v00, r00);
 	Vec_push_back(v00, r01);
@@ -167,19 +167,19 @@ void test_sub_scalar(void) {
 }
 
 void test_sub_matrix(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2)
+	struct s_Rational	*r01 = Rational_from_long(3, 4)
+	struct s_Rational	*r02 = Rational_from_long(5, 6)
+	struct s_Rational	*r03 = Rational_from_long(7, 8)
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 0, 1);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 0, 1);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 0, 1);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, 0, 1);
+	struct s_Rational	*r10 = Rational_from_long(0, 1);
+	struct s_Rational	*r11 = Rational_from_long(0, 1);
+	struct s_Rational	*r12 = Rational_from_long(0, 1);
+	struct s_Rational	*r13 = Rational_from_long(0, 1);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -211,21 +211,21 @@ void test_sub_matrix(void) {
 }
 
 void test_mul_scalar(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*r = Rational_from_long(1, 2);
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 1, 4);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 3, 8);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 5, 12);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, 7, 16);
+	struct s_Rational	*r10 = Rational_from_long(1, 4);
+	struct s_Rational	*r11 = Rational_from_long(3, 8);
+	struct s_Rational	*r12 = Rational_from_long(5, 12);
+	struct s_Rational	*r13 = Rational_from_long(7, 16);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -258,19 +258,19 @@ void test_mul_scalar(void) {
 }
 
 void test_mul_matrix(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 1, 4);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 9, 16);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 25, 36);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, 49, 64);
+	struct s_Rational	*r10 = Rational_from_long(1, 4);
+	struct s_Rational	*r11 = Rational_from_long(9, 16);
+	struct s_Rational	*r12 = Rational_from_long(25, 36);
+	struct s_Rational	*r13 = Rational_from_long(49, 64);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -302,21 +302,21 @@ void test_mul_matrix(void) {
 }
 
 void test_div_scalar(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*r = Rational_from_long(1, 2);
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 3, 2);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 5, 3);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, 7, 4);
+	struct s_Rational	*r10 = Rational_from_long(1, 1);
+	struct s_Rational	*r11 = Rational_from_long(3, 2);
+	struct s_Rational	*r12 = Rational_from_long(5, 3);
+	struct s_Rational	*r13 = Rational_from_long(7, 4);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -349,19 +349,19 @@ void test_div_scalar(void) {
 }
 
 void test_div_matrix(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r10 = Rational_from_long(1, 1);
+	struct s_Rational	*r11 = Rational_from_long(1, 1);
+	struct s_Rational	*r12 = Rational_from_long(1, 1);
+	struct s_Rational	*r13 = Rational_from_long(1, 1);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -393,21 +393,21 @@ void test_div_matrix(void) {
 }
 
 void test_mod_scalar(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*r = Rational_from_long(1, 2);
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 0, 1);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 1, 4);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 1, 3);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, 3, 8);
+	struct s_Rational	*r10 = Rational_from_long(0, 1);
+	struct s_Rational	*r11 = Rational_from_long(1, 4);
+	struct s_Rational	*r12 = Rational_from_long(1, 3);
+	struct s_Rational	*r13 = Rational_from_long(3, 8);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -440,10 +440,10 @@ void test_mod_scalar(void) {
 }
 
 void test_mod_matrix(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
@@ -465,19 +465,19 @@ void test_mod_matrix(void) {
 }
 
 void test_neg(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, (long)-1, 2);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, (long)-3, 4);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, (long)-5, 6);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, (long)-7, 8);
+	struct s_Rational	*r10 = Rational_from_long((long)-1, 2);
+	struct s_Rational	*r11 = Rational_from_long((long)-3, 4);
+	struct s_Rational	*r12 = Rational_from_long((long)-5, 6);
+	struct s_Rational	*r13 = Rational_from_long((long)-7, 8);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -509,25 +509,25 @@ void test_neg(void) {
 }
 
 void test_pow(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 2, 1);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 3, 1);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 4, 1);
+	struct s_Rational	*r00 = Rational_from_long(1, 1);
+	struct s_Rational	*r01 = Rational_from_long(2, 1);
+	struct s_Rational	*r02 = Rational_from_long(3, 1);
+	struct s_Rational	*r03 = Rational_from_long(4, 1);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 37, 1);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 54, 1);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 81, 1);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, 118, 1);
+	struct s_Rational	*r10 = Rational_from_long(37, 1);
+	struct s_Rational	*r11 = Rational_from_long(54, 1);
+	struct s_Rational	*r12 = Rational_from_long(81, 1);
+	struct s_Rational	*r13 = Rational_from_long(118, 1);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
 	struct s_Matrix		*m1;
 
-	struct s_Rational	*r = new(Rational, RATIONAL, 3, 1);
+	struct s_Rational	*r = Rational_from_long(3, 1);
 	struct s_Matrix		*m;
 
 	Vec_push_back(v00, r00);
@@ -555,19 +555,19 @@ void test_pow(void) {
 }
 
 void test_equal_true(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r10 = Rational_from_long(1, 2);
+	struct s_Rational	*r11 = Rational_from_long(3, 4);
+	struct s_Rational	*r12 = Rational_from_long(5, 6);
+	struct s_Rational	*r13 = Rational_from_long(7, 8);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -594,19 +594,19 @@ void test_equal_true(void) {
 }
 
 void test_equal_false(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, 7, 9);
+	struct s_Rational	*r10 = Rational_from_long(1, 2);
+	struct s_Rational	*r11 = Rational_from_long(3, 4);
+	struct s_Rational	*r12 = Rational_from_long(5, 6);
+	struct s_Rational	*r13 = Rational_from_long(7, 9);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -633,10 +633,10 @@ void test_equal_false(void) {
 }
 
 void test_promote_rational(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
@@ -658,10 +658,10 @@ void test_promote_rational(void) {
 }
 
 void test_promote_complex(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
@@ -683,10 +683,10 @@ void test_promote_complex(void) {
 }
 
 void test_promote_vector(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
@@ -708,19 +708,19 @@ void test_promote_vector(void) {
 }
 
 void test_promote_matrix(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r10 = Rational_from_long(1, 2);
+	struct s_Rational	*r11 = Rational_from_long(3, 4);
+	struct s_Rational	*r12 = Rational_from_long(5, 6);
+	struct s_Rational	*r13 = Rational_from_long(7, 8);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -752,10 +752,10 @@ void test_promote_matrix(void) {
 }
 
 void test_eye(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 0, 1);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 0, 1);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r00 = Rational_from_long(1, 1);
+	struct s_Rational	*r01 = Rational_from_long(0, 1);
+	struct s_Rational	*r02 = Rational_from_long(0, 1);
+	struct s_Rational	*r03 = Rational_from_long(1, 1);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);
@@ -778,26 +778,26 @@ void test_eye(void) {
 }
 
 void test_mmul(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 2, 1);
+	struct s_Rational	*r00 = Rational_from_long(1, 1);
+	struct s_Rational	*r01 = Rational_from_long(2, 1);
 	void				*v00 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 3, 1);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 4, 1);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 5, 1);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, 6, 1);
-	struct s_Rational	*r14 = new(Rational, RATIONAL, 7, 1);
-	struct s_Rational	*r15 = new(Rational, RATIONAL, 8, 1);
+	struct s_Rational	*r10 = Rational_from_long(3, 1);
+	struct s_Rational	*r11 = Rational_from_long(4, 1);
+	struct s_Rational	*r12 = Rational_from_long(5, 1);
+	struct s_Rational	*r13 = Rational_from_long(6, 1);
+	struct s_Rational	*r14 = Rational_from_long(7, 1);
+	struct s_Rational	*r15 = Rational_from_long(8, 1);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
 	struct s_Matrix		*m1;
 
-	struct s_Rational	*r20 = new(Rational, RATIONAL, 15, 1);
-	struct s_Rational	*r21 = new(Rational, RATIONAL, 18, 1);
-	struct s_Rational	*r22 = new(Rational, RATIONAL, 21, 1);
+	struct s_Rational	*r20 = Rational_from_long(15, 1);
+	struct s_Rational	*r21 = Rational_from_long(18, 1);
+	struct s_Rational	*r22 = Rational_from_long(21, 1);
 	void				*v20 = new(Vec);
 	void				*v2 = new(Vec);
 	struct s_Matrix		*m2;
@@ -834,14 +834,14 @@ void test_mmul(void) {
 }
 
 void test_transpose(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 2, 1);
+	struct s_Rational	*r00 = Rational_from_long(1, 1);
+	struct s_Rational	*r01 = Rational_from_long(2, 1);
 	void				*v00 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 2, 1);
+	struct s_Rational	*r10 = Rational_from_long(1, 1);
+	struct s_Rational	*r11 = Rational_from_long(2, 1);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -868,30 +868,30 @@ void test_transpose(void) {
 }
 
 void test_solve(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 2, 1);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 3, 1);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 4, 1);
-	struct s_Rational	*r04 = new(Rational, RATIONAL, 5, 1);
-	struct s_Rational	*r05 = new(Rational, RATIONAL, 6, 1);
-	struct s_Rational	*r06 = new(Rational, RATIONAL, 7, 1);
-	struct s_Rational	*r07 = new(Rational, RATIONAL, 8, 1);
-	struct s_Rational	*r08 = new(Rational, RATIONAL, 10, 1);
+	struct s_Rational	*r00 = Rational_from_long(1, 1);
+	struct s_Rational	*r01 = Rational_from_long(2, 1);
+	struct s_Rational	*r02 = Rational_from_long(3, 1);
+	struct s_Rational	*r03 = Rational_from_long(4, 1);
+	struct s_Rational	*r04 = Rational_from_long(5, 1);
+	struct s_Rational	*r05 = Rational_from_long(6, 1);
+	struct s_Rational	*r06 = Rational_from_long(7, 1);
+	struct s_Rational	*r07 = Rational_from_long(8, 1);
+	struct s_Rational	*r08 = Rational_from_long(10, 1);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v02 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, 2, 1);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, 4, 1);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 6, 1);
+	struct s_Rational	*r10 = Rational_from_long(2, 1);
+	struct s_Rational	*r11 = Rational_from_long(4, 1);
+	struct s_Rational	*r12 = Rational_from_long(6, 1);
 	void				*v1 = new(Vec);
 	struct s_Vector		*b;
 
-	struct s_Rational	*r20 = new(Rational, RATIONAL, (long)-2, 3);
-	struct s_Rational	*r21 = new(Rational, RATIONAL, 4, 3);
-	struct s_Rational	*r22 = new(Rational, RATIONAL, 0, 1);
+	struct s_Rational	*r20 = Rational_from_long((long)-2, 3);
+	struct s_Rational	*r21 = Rational_from_long(4, 3);
+	struct s_Rational	*r22 = Rational_from_long(0, 1);
 	void				*v2 = new(Vec);
 	struct s_Vector		*target;
 
@@ -930,30 +930,30 @@ void test_solve(void) {
 }
 
 void test_inverse(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 2, 1);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 3, 1);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 4, 1);
-	struct s_Rational	*r04 = new(Rational, RATIONAL, 5, 1);
-	struct s_Rational	*r05 = new(Rational, RATIONAL, 6, 1);
-	struct s_Rational	*r06 = new(Rational, RATIONAL, 7, 1);
-	struct s_Rational	*r07 = new(Rational, RATIONAL, 8, 1);
-	struct s_Rational	*r08 = new(Rational, RATIONAL, 10, 1);
+	struct s_Rational	*r00 = Rational_from_long(1, 1);
+	struct s_Rational	*r01 = Rational_from_long(2, 1);
+	struct s_Rational	*r02 = Rational_from_long(3, 1);
+	struct s_Rational	*r03 = Rational_from_long(4, 1);
+	struct s_Rational	*r04 = Rational_from_long(5, 1);
+	struct s_Rational	*r05 = Rational_from_long(6, 1);
+	struct s_Rational	*r06 = Rational_from_long(7, 1);
+	struct s_Rational	*r07 = Rational_from_long(8, 1);
+	struct s_Rational	*r08 = Rational_from_long(10, 1);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v02 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*r10 = new(Rational, RATIONAL, (long)-2, 3);
-	struct s_Rational	*r11 = new(Rational, RATIONAL, (long)-4, 3);
-	struct s_Rational	*r12 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r13 = new(Rational, RATIONAL, (long)-2, 3);
-	struct s_Rational	*r14 = new(Rational, RATIONAL, 11, 3);
-	struct s_Rational	*r15 = new(Rational, RATIONAL, (long)-2, 1);
-	struct s_Rational	*r16 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r17 = new(Rational, RATIONAL, (long)-2, 1);
-	struct s_Rational	*r18 = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*r10 = Rational_from_long((long)-2, 3);
+	struct s_Rational	*r11 = Rational_from_long((long)-4, 3);
+	struct s_Rational	*r12 = Rational_from_long(1, 1);
+	struct s_Rational	*r13 = Rational_from_long((long)-2, 3);
+	struct s_Rational	*r14 = Rational_from_long(11, 3);
+	struct s_Rational	*r15 = Rational_from_long((long)-2, 1);
+	struct s_Rational	*r16 = Rational_from_long(1, 1);
+	struct s_Rational	*r17 = Rational_from_long((long)-2, 1);
+	struct s_Rational	*r18 = Rational_from_long(1, 1);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v12 = new(Vec);
@@ -998,22 +998,22 @@ void test_inverse(void) {
 }
 
 void test_determinant(void) {
-	struct s_Rational	*r00 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r01 = new(Rational, RATIONAL, 2, 1);
-	struct s_Rational	*r02 = new(Rational, RATIONAL, 3, 1);
-	struct s_Rational	*r03 = new(Rational, RATIONAL, 4, 1);
-	struct s_Rational	*r04 = new(Rational, RATIONAL, 5, 1);
-	struct s_Rational	*r05 = new(Rational, RATIONAL, 6, 1);
-	struct s_Rational	*r06 = new(Rational, RATIONAL, 7, 1);
-	struct s_Rational	*r07 = new(Rational, RATIONAL, 8, 1);
-	struct s_Rational	*r08 = new(Rational, RATIONAL, 10, 1);
+	struct s_Rational	*r00 = Rational_from_long(1, 1);
+	struct s_Rational	*r01 = Rational_from_long(2, 1);
+	struct s_Rational	*r02 = Rational_from_long(3, 1);
+	struct s_Rational	*r03 = Rational_from_long(4, 1);
+	struct s_Rational	*r04 = Rational_from_long(5, 1);
+	struct s_Rational	*r05 = Rational_from_long(6, 1);
+	struct s_Rational	*r06 = Rational_from_long(7, 1);
+	struct s_Rational	*r07 = Rational_from_long(8, 1);
+	struct s_Rational	*r08 = Rational_from_long(10, 1);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v02 = new(Vec);
 	void				*v0 = new(Vec);
 	struct s_Matrix		*m0;
 
-	struct s_Rational	*target = new(Rational, RATIONAL, (long)-3, 1);
+	struct s_Rational	*target = Rational_from_long((long)-3, 1);
 	struct s_Rational	*r;
 
 	Vec_push_back(v00, r00);

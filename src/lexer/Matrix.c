@@ -3,6 +3,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <gmp.h>
 
 /* container */
 #include "Str.h"
@@ -52,7 +53,7 @@ static void	*Matrix_ctor(void *_self, va_list *app)
 
 		/* handle different column sizes */
 		for (; j < self->cols; ++j)
-			self->data[i * self->cols + j] = new(Rational, RATIONAL, 0, 1);
+			self->data[i * self->cols + j] = Rational_from_long(0, 1);
 	}
 	delete(vec);
 	return (self);
@@ -252,7 +253,7 @@ void	*Matrix_mmult_Matrix(const void *_self, const void *_other)
 	if (!retval)
 		return (NULL);
 	for (i = 0; i < retval->rows * retval->cols; ++i)
-		retval->data[i] = new(Rational, RATIONAL, 0, 1);
+		retval->data[i] = Rational_from_long(0, 1);
 	for (i = 0; i < self->rows; ++i)
 	{
 		for (k = 0; k < self->cols; ++k)
@@ -351,7 +352,7 @@ static void	*Matrix_mod(const void *_self, const void *_other)
 static struct s_Matrix	*Matrix_neg(const void *_self)
 {
 	const struct s_Matrix	*self = _self;
-	struct s_Rational		*r = new(Rational, RATIONAL, (long)-1, 1);
+	struct s_Rational		*r = Rational_from_long((long)-1, 1);
 	struct s_Matrix			*retval = Matrix_mul(self, r);
 
 	delete(r);
@@ -369,28 +370,30 @@ static void	*Matrix_pow_Rational(const void *_self, const void *_other)
 		fprintf(stderr, "%s\n", "Matrix_pow_Rational: matrix is not square.");
 		return (NULL);
 	}
-	if (other->denominator != 1)
+	if (mpz_cmp_ui(other->denominator, 1) != 0)	/* if not equal 1 */
 	{
 		fprintf(stderr, "%s\n",
 				"Matrix_pow_Rational: only support integer exponent.");
 		return (NULL);
 	}
-	if (other->numerator < 0)
+	if (mpz_cmp_ui(other->numerator, 0) < 0)	/* if less than 0 */
 	{
 		fprintf(stderr, "%s\n",
 				"Matrix_pow_Rational: only support positive integer exponent.");
 		return (NULL);
 	}
-	if (other->numerator == 0)
+	if (mpz_cmp_ui(other->numerator, 0) == 0)	/* if equal 0 */
 		return (Matrix_eye(self->rows));
 	else
 	{
 		struct s_Matrix	*temp;
-		long			exponent = other->numerator;
+		mpz_t			exponent;
 
+		mpz_init_set(exponent, other->numerator);
 		retval = copy(self);
-		while (exponent-- > 1)
+		while (mpz_cmp_ui(exponent, 1) > 0)	/* if exponent > 1 */
 		{
+			mpz_sub_ui(exponent, exponent, 1);
 			temp = retval;
 			retval = Matrix_mmult(temp, self);
 			delete(temp);
@@ -596,7 +599,7 @@ static bool	LUP_decompose(struct s_Matrix *A, size_t *P)
 	size_t				N = A->cols;
 	struct s_Rational	*maxA = NULL;
 	struct s_Rational	*absA = NULL;
-	struct s_Rational	*Tol = new(Rational, RATIONAL, 1, (long)1e8);
+	struct s_Rational	*Tol = Rational_from_long(1, (long)1e8);
 
 	/* Unit permutation matrix, P[N] initialized with N */
 	for (i = 0; i <= N; ++i)
@@ -605,15 +608,15 @@ static bool	LUP_decompose(struct s_Matrix *A, size_t *P)
 	for (i = 0; i < N; i++)
 	{
 		delete(maxA);
-		maxA = new(Rational, RATIONAL, 0, 1);
+		maxA = Rational_from_long(0, 1);
 		imax = i;
 
 		for (k = i; k < N; k++)
 		{
 			delete(absA);
 			absA = copy(Matrix_at(A, k, i));
-			if (absA->numerator < 0)
-				absA->numerator *= -1;
+			if (mpz_cmp_ui(absA->numerator, 0) < 0)
+				mpz_neg(absA->numerator, absA->numerator);
 			if (Rational_gt(absA, maxA))
 			{
 				delete(maxA);

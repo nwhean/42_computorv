@@ -13,8 +13,8 @@ void tearDown(void) {
 }
 
 void test_iadd(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*b = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*a = Rational_from_long(1, 2);
+	struct s_Rational	*b = Rational_from_long(1, 1);
 	numeric_iadd((void **)&a, a);
 	TEST_ASSERT_EQUAL(a->numerator, b->numerator);
 	TEST_ASSERT_EQUAL(a->denominator, b->denominator);
@@ -23,8 +23,8 @@ void test_iadd(void) {
 }
 
 void test_isub(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*b = new(Rational, RATIONAL, 0, 1);
+	struct s_Rational	*a = Rational_from_long(1, 2);
+	struct s_Rational	*b = Rational_from_long(0, 1);
 	numeric_isub((void **)&a, a);
 	TEST_ASSERT_EQUAL(a->numerator, b->numerator);
 	TEST_ASSERT_EQUAL(a->denominator, b->denominator);
@@ -33,8 +33,8 @@ void test_isub(void) {
 }
 
 void test_imul(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*b = new(Rational, RATIONAL, 1, 4);
+	struct s_Rational	*a = Rational_from_long(1, 2);
+	struct s_Rational	*b = Rational_from_long(1, 4);
 	numeric_imul((void **)&a, a);
 	TEST_ASSERT_EQUAL(a->numerator, b->numerator);
 	TEST_ASSERT_EQUAL(a->denominator, b->denominator);
@@ -43,8 +43,8 @@ void test_imul(void) {
 }
 
 void test_idiv(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*b = new(Rational, RATIONAL, 1, 1);
+	struct s_Rational	*a = Rational_from_long(1, 2);
+	struct s_Rational	*b = Rational_from_long(1, 1);
 	numeric_idiv((void **)&a, a);
 	TEST_ASSERT_EQUAL(a->numerator, b->numerator);
 	TEST_ASSERT_EQUAL(a->denominator, b->denominator);
@@ -53,8 +53,8 @@ void test_idiv(void) {
 }
 
 void test_imod(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
-	struct s_Rational	*b = new(Rational, RATIONAL, 0, 1);
+	struct s_Rational	*a = Rational_from_long(22, 7);
+	struct s_Rational	*b = Rational_from_long(0, 1);
 	numeric_imod((void **)&a, a);
 	TEST_ASSERT_EQUAL(a->numerator, b->numerator);
 	TEST_ASSERT_EQUAL(a->denominator, b->denominator);
@@ -63,8 +63,8 @@ void test_imod(void) {
 }
 
 void test_ineg(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, 22, 7);
-	struct s_Rational	*b = new(Rational, RATIONAL, (long)-22, 7);
+	struct s_Rational	*a = Rational_from_long(22, 7);
+	struct s_Rational	*b = Rational_from_long((long)-22, 7);
 	numeric_ineg((void **)&a);
 	TEST_ASSERT_EQUAL(a->numerator, b->numerator);
 	TEST_ASSERT_EQUAL(a->denominator, b->denominator);
@@ -73,8 +73,8 @@ void test_ineg(void) {
 }
 
 void test_ipow(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, 3, 1);
-	struct s_Rational	*b = new(Rational, RATIONAL, 27, 1);
+	struct s_Rational	*a = Rational_from_long(3, 1);
+	struct s_Rational	*b = Rational_from_long(27, 1);
 	numeric_ipow((void **)&a, a);
 	TEST_ASSERT_EQUAL(a->numerator, b->numerator);
 	TEST_ASSERT_EQUAL(a->denominator, b->denominator);
@@ -83,10 +83,10 @@ void test_ipow(void) {
 }
 
 void test_ipromote(void) {
-	struct s_Rational	*a = new(Rational, RATIONAL, 3, 1);
+	struct s_Rational	*a = Rational_from_long(3, 1);
 	struct s_Complex	*b = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, 3, 1),
-								new(Rational, RATIONAL, 0, 1));
+								Rational_from_long(3, 1),
+								Rational_from_long(0, 1));
 	numeric_ipromote((void **)&a, COMPLEX);
 	TEST_ASSERT_TRUE(equal(a, b));
 	delete(a);

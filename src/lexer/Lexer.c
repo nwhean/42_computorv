@@ -2,6 +2,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <string.h>
+#include <gmp.h>
 
 /* container */
 #include "Str.h"
@@ -52,7 +53,7 @@ static void	readch(void *_self)
 }
 
 /* Return a Rational or a Complex token */
-static struct s_Token	*generate_numeric(void *_self, long n, long d)
+static struct s_Token	*generate_numeric(void *_self, mpz_t n, mpz_t d)
 {
 	struct s_Lexer	*self = _self;
 
@@ -60,7 +61,7 @@ static struct s_Token	*generate_numeric(void *_self, long n, long d)
 	{
 		readch(_self);
 		return (new(Complex, COMPLEX,
-				new(Rational, RATIONAL, 0, 1),
+				Rational_from_long(0, 1),
 				new(Rational, RATIONAL, n, d)));
 	}
 	else
@@ -84,24 +85,34 @@ struct s_Token	*Lexer_scan(void *_self)
 	/* handle numbers */
 	if (isdigit(self->peek))
 	{
-		long	val = 0;
-		long	d = 1;
+		mpz_t			val;
+		mpz_t			d;
+		struct s_Token	*numeric;
+
+		mpz_init(val);
+		mpz_init_set_ui(d, 1);
 		do
 		{
-			val = 10 * val + self->peek - '0';
+			mpz_mul_ui(val, val, 10);
+			mpz_add_ui(val, val, self->peek - '0');
 			readch(_self);
 		} while (isdigit(self->peek));
-		if (self->peek != '.')
-			return generate_numeric(self, val, d);
-		while (true)
+		if (self->peek == '.')
 		{
-			readch(_self);
-			if (!isdigit(self->peek))
-				break ;
-			val = 10 * val + self->peek - '0';
-			d *= 10;
+			while (true)
+			{
+				readch(_self);
+				if (!isdigit(self->peek))
+					break ;
+				mpz_mul_ui(val, val, 10);
+				mpz_add_ui(val, val, self->peek - '0');
+				mpz_mul_ui(d, d, 10);
+			}
 		}
-		return generate_numeric(self, val, d);
+		numeric = generate_numeric(self, val, d);
+		mpz_clear(val);
+		mpz_clear(d);
+		return numeric;
 	}
 
 	/* handle words */

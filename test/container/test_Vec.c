@@ -25,8 +25,8 @@ void test_ctor(void) {
 }
 
 void test_copy(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
 	struct s_Vec		*v = new(Vec);
 	struct s_Vec		*v_copy;
 	size_t				i;
@@ -46,8 +46,8 @@ void test_copy(void) {
 }
 
 void test_str(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 2, 1);
+	struct s_Rational	*r0 = Rational_from_long(1, 1);
+	struct s_Rational	*r1 = Rational_from_long(2, 1);
 	struct s_Vec		*v = new(Vec);
 	char				*s;
 
@@ -60,8 +60,8 @@ void test_str(void) {
 }
 
 void test_equal_true(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
 	struct s_Vec		*v = new(Vec);
 
 	Vec_push_back(v, r0);
@@ -71,11 +71,11 @@ void test_equal_true(void) {
 }
 
 void test_equal_false(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
 	struct s_Vec		*v0 = new(Vec);
-	struct s_Rational	*r2 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r3 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r2 = Rational_from_long(5, 6);
+	struct s_Rational	*r3 = Rational_from_long(7, 8);
 	struct s_Vec		*v1 = new(Vec);
 
 	Vec_push_back(v0, r0);
@@ -88,8 +88,8 @@ void test_equal_false(void) {
 }
 
 void test_size(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
 	struct s_Vec		*v = new(Vec);
 
 	Vec_push_back(v, r0);
@@ -99,8 +99,8 @@ void test_size(void) {
 }
 
 void test_capacity(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
 	struct s_Vec		*v = new(Vec);
 
 	TEST_ASSERT_GREATER_OR_EQUAL(Vec_capacity(v), 0);
@@ -111,8 +111,8 @@ void test_capacity(void) {
 }
 
 void test_empty(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
 	struct s_Vec		*v = new(Vec);
 
 	TEST_ASSERT_TRUE(Vec_empty(v));
@@ -123,8 +123,8 @@ void test_empty(void) {
 }
 
 void test_reserve(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
 	struct s_Vec		*v = new(Vec);
 
 	TEST_ASSERT_GREATER_OR_EQUAL(Vec_capacity(v), 0);
@@ -137,8 +137,8 @@ void test_reserve(void) {
 }
 
 void test_at(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
 	struct s_Vec		*v = new(Vec);
 
 	Vec_push_back(v, r0);
@@ -149,9 +149,9 @@ void test_at(void) {
 }
 
 void test_front(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r2 = new(Rational, RATIONAL, 5, 6);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
+	struct s_Rational	*r2 = Rational_from_long(5, 6);
 	struct s_Vec		*v = new(Vec);
 
 	Vec_push_back(v, r0);
@@ -162,9 +162,9 @@ void test_front(void) {
 }
 
 void test_back(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r2 = new(Rational, RATIONAL, 5, 6);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
+	struct s_Rational	*r2 = Rational_from_long(5, 6);
 	struct s_Vec		*v = new(Vec);
 
 	Vec_push_back(v, r0);
@@ -175,9 +175,9 @@ void test_back(void) {
 }
 
 void test_data(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r2 = new(Rational, RATIONAL, 5, 6);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
+	struct s_Rational	*r2 = Rational_from_long(5, 6);
 	struct s_Vec		*v = new(Vec);
 
 	Vec_push_back(v, r0);
@@ -188,7 +188,7 @@ void test_data(void) {
 }
 
 void test_push_back(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
 	struct s_Vec		*v = new(Vec);
 
 	TEST_ASSERT_EQUAL(v->size, 0);
@@ -199,8 +199,8 @@ void test_push_back(void) {
 }
 
 void test_pop_back(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
 	struct s_Vec		*v = new(Vec);
 
 	TEST_ASSERT_EQUAL(v->size, 0);
@@ -214,9 +214,9 @@ void test_pop_back(void) {
 }
 
 void test_erase(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
-	struct s_Rational	*r2 = new(Rational, RATIONAL, 5, 6);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
+	struct s_Rational	*r2 = Rational_from_long(5, 6);
 	struct s_Vec		*v = new(Vec);
 
 	TEST_ASSERT_EQUAL(v->size, 0);
@@ -233,8 +233,8 @@ void test_erase(void) {
 }
 
 void test_clear(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
 	struct s_Vec		*v = new(Vec);
 
 	TEST_ASSERT_EQUAL(v->size, 0);
@@ -247,13 +247,13 @@ void test_clear(void) {
 }
 
 void test_swap(void) {
-	struct s_Rational	*r0 = new(Rational, RATIONAL, 1, 2);
-	struct s_Rational	*r1 = new(Rational, RATIONAL, 3, 4);
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
 	struct s_Vec		*v0 = new(Vec);
 	struct s_Vec		*v0_copy;
 
-	struct s_Rational	*r2 = new(Rational, RATIONAL, 5, 6);
-	struct s_Rational	*r3 = new(Rational, RATIONAL, 7, 8);
+	struct s_Rational	*r2 = Rational_from_long(5, 6);
+	struct s_Rational	*r3 = Rational_from_long(7, 8);
 	struct s_Vec		*v1 = new(Vec);
 	struct s_Vec		*v1_copy;
 

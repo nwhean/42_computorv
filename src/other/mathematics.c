@@ -19,49 +19,77 @@ size_t	max(size_t a, size_t b)
 	return (a > b ? a : b);
 }
 
-/* Return the exponentiation of a Rational number */
+/* Return the exponentiation of a Rational number
+ * In order to preserve the precision of the algorithm, floating point
+ * number is used in the algorithm.
+ */
 struct s_Rational	*ft_exp_Rational(struct s_Rational *_x)
 {
-	struct s_Rational	*x = copy(_x);
-	struct s_Rational	*one = new(Rational, RATIONAL, 1, 1);
-	struct s_Rational	*n = new(Rational, RATIONAL, 0, 1);
-	struct s_Rational	*sum;
-	struct s_Rational	*x1;
-	struct s_Rational	*term = NULL;
-	int					i = 0;
+	mpf_t			x;
+	mpf_t			x_den;
+	mpf_t			sum;
+	mpf_t			reldiff;
+	mpf_t			x1;
+	mpq_t			rational;
+	mpz_t			num;
+	mpz_t			den;
+	void			*retval;
+	int				i = 0;
+	unsigned long	n;
+
+	/* initialise values */
+	mpf_init(x);
+	mpf_init(x_den);
+	mpf_init(sum);
+	mpf_init(reldiff);
+	mpf_init(x1);
+	mpq_init(rational);
+	mpz_init(num);
+	mpz_init(den);
+	mpf_set_z(x, _x->numerator);
+	mpf_set_z(x_den, _x->denominator);
+	mpf_div(x, x, x_den);
 
 	/* scale until -1 < x < 1 */
-	while (x->numerator > x->denominator
-			|| (x->numerator < 0 && -x->numerator > x->denominator))
+	while (mpf_cmp_si(x, -1) < 0 || mpf_cmp_si(x, 1) > 0)
 	{
-		if (x->denominator > 1e9)
-			x->numerator >>= 1;
-		else
-			x->denominator <<= 1;
-		++i;
+		mpf_div_ui(x, x, 2);
+		i++;
 	}
 
 	/* exp(x) = 1 + x + x^2 / 2! + x^3 / 3! + x^4 / 4! + ... */
-	sum = new(Rational, RATIONAL, 0, 1);	/* sum = 0 */
-	x1 = new(Rational, RATIONAL, 1, 1);		/* x1 = 1 */
+	n = 0;
+	mpf_set_ui(sum, 0);					/* sum = 0 */
+	mpf_set_ui(x1, 1);					/* x1 = 1 */
 	do {
-		delete(term);
-		numeric_iadd((void **)&sum, x1);	/* sum += x1 */
-		numeric_iadd((void **)&n, one);		/* n += 1*/
-		term = numeric_div(x, n);			/* term = x / n */
-		numeric_imul((void **)&x1, term);	/* x1 = x1 * x/n */
-	} while (x1->numerator != 0);
-	delete(term);
+		mpf_set(reldiff, sum);			/* save a copy of sum */
+		mpf_add(sum, sum, x1);			/* sum += x1 */
+		mpf_mul(x1, x1, x);				/* x1 = x1 * x/n */
+		mpf_div_ui(x1, x1, ++n);
+		mpf_reldiff(reldiff, sum, reldiff);	/* calculate relative difference */
+	} while (mpf_cmp_d(reldiff, 1e-15) > 0);
 
 	/* square until i = 0 */
-	for (; i > 0; --i)
-		numeric_imul((void **)&sum, sum);
+	while (i--)
+		mpf_mul(sum, sum, sum);
 
-	delete(one);
-	delete(n);
-	delete(x);
-	delete(x1);
-	return (sum);
+	/* convert value to rational */
+	mpq_set_f(rational, sum);
+	mpq_get_num(num, rational);
+	mpq_get_den(den, rational);
+	retval = new(Rational, RATIONAL, num, den);
+
+	/* clear values */
+	mpf_clear(x);
+	mpf_clear(x_den);
+	mpf_clear(sum);
+	mpf_clear(reldiff);
+	mpf_clear(x1);
+	mpq_clear(rational);
+	mpz_clear(num);
+	mpz_clear(den);
+
+	return (retval);
 }
 
 /* Return the exponentiation of a Complex number */
@@ -120,65 +148,86 @@ void	*ft_exp(const void *params, void *env)
 /* Return the natural logarithm of a Rational number */
 struct s_Rational	*ft_ln_Rational(struct s_Rational *_x)
 {
-	struct s_Rational	*one;
-	struct s_Rational	*n;
-	struct s_Rational	*sum;
-	struct s_Rational	*x;
-	struct s_Rational	*x1;
-	struct s_Rational	*term = NULL;
-	struct s_Rational	*ln2;
-	struct s_Rational	*multiplier;
-	long				i = 0;
+	mpf_t			x;
+	mpf_t			x_den;
+	mpf_t			sum;
+	mpf_t			reldiff;
+	mpf_t			term;
+	mpf_t			x1;
+	mpf_t			ln2;
+	mpq_t			rational;
+	mpz_t			num;
+	mpz_t			den;
+	void			*retval;
+	int				i = 0;
+	unsigned long	n;
 
-	if (_x->numerator <= 0)
+	if (mpz_cmp_ui(_x->numerator, 0) <= 0)
 	{
 		fprintf(stderr, "ft_ln_Rational: domain error.\n");
 		return (NULL);
 	}
 
+	/* initialise values */
+	mpf_init(x);
+	mpf_init(x_den);
+	mpf_init(sum);
+	mpf_init(reldiff);
+	mpf_init(term);
+	mpf_init(x1);
+	mpq_init(rational);
+	mpz_init(num);
+	mpz_init(den);
+	mpf_set_z(x, _x->numerator);
+	mpf_set_z(x_den, _x->denominator);
+	mpf_div(x, x, x_den);
+
 	/* scale until 0 < x < 1 */
-	x = copy(_x);
-	while (x->numerator / x->denominator > 1)
+	while (mpf_cmp_si(x, 1) > 0)
 	{
-		if (x->denominator > 1e9)
-			x->numerator >>= 1;
-		else
-			x->denominator <<= 1;
-		++i;
+		mpf_div_ui(x, x, 2);
+		i++;
 	}
 
-	one = new(Rational, RATIONAL, 1, 1);
-	n = new(Rational, RATIONAL, 1, 1);
-
-	/* ln(x) = -(x-1) - (x-1)^2 / 2 - (x-1)^3 / 3 - (x-1)^4 / 4 + ... */
-	sum = new(Rational, RATIONAL, 0, 1);	/* sum = 0 */
-	numeric_isub((void **)&x, one);			/* x = -(x - 1) */
-	numeric_ineg((void **)&x);
-	x1 = copy(x);							/* x1 = x  */
+	/* ln(x) = -(1-x) - (1-x)^2 / 2 - (1-x)^3 / 3 - (1-x)^4 / 4 + ... */
+	n = 1;
+	mpf_set_ui(sum, 0);					/* sum = 0 */
+	mpf_sub_ui(x, x, 1);				/* x = 1 - x */
+	mpf_neg(x, x);
+	mpf_set(x1, x);						/* x1 = x */
 	do {
-		delete(term);
-		term = numeric_div(x1, n);			/* term = x1 / n */
-		numeric_isub((void **)&sum, term);	/* sum -= term */
-		numeric_iadd((void **)&n, one);		/* n += 1*/
-		numeric_imul((void **)&x1, x);		/* x1 = x1 * x  */
-	} while (x1->numerator != 0
-			&& term->denominator < 1e17
-			&& n->numerator < 200);		/* prevent infinite loop */
-	delete(term);
+		mpf_set(reldiff, sum);			/* save a copy of sum */
+		mpf_div_ui(term, x1, n++);		/* term = x1 / n */
+		mpf_sub(sum, sum, term);		/* sum -= term */
+		mpf_mul(x1, x1, x);				/* x1 = x1 * x */
+		mpf_reldiff(reldiff, sum, reldiff);	/* calculate relative difference */
+		mpf_abs(reldiff, reldiff);
+	} while (mpf_cmp_d(reldiff, 1e-15) > 0);
 
 	/* sum = sum + i * ln(2) */
-	ln2 = Rational_from_double(0.6931471805599453);
-	multiplier = new(Rational, RATIONAL, i, 1);
-	numeric_imul((void **)&ln2, multiplier);
-	numeric_iadd((void **)&sum, ln2);
+	mpf_init_set_d(ln2, 0.6931471805599453);
+	mpf_mul_ui(ln2, ln2, i);
+	mpf_add(sum, sum, ln2);
 
-	delete(one);
-	delete(n);
-	delete(x);
-	delete(x1);
-	delete(ln2);
-	delete(multiplier);
-	return (sum);
+	/* convert value to rational */
+	mpq_set_f(rational, sum);
+	mpq_get_num(num, rational);
+	mpq_get_den(den, rational);
+	retval = new(Rational, RATIONAL, num, den);
+
+	/* clear values */
+	mpf_clear(x);
+	mpf_clear(x_den);
+	mpf_clear(sum);
+	mpf_clear(reldiff);
+	mpf_clear(term);
+	mpf_clear(x1);
+	mpf_clear(ln2);
+	mpq_clear(rational);
+	mpz_clear(num);
+	mpz_clear(den);
+
+	return (retval);
 }
 
 /* Return the natural logarithm of a Complex number
@@ -222,65 +271,90 @@ void	*ft_ln(const void *params, void *env)
 /* Return the sin of a Rational number */
 struct s_Rational	*ft_sin_Rational(struct s_Rational *_x)
 {
-	struct s_Rational	*x = copy(_x);
-	struct s_Rational	*cos;
-	struct s_Rational	*sin;
-	struct s_Rational	*one;
-	struct s_Rational	*n;
-	struct s_Rational	*sum;
-	struct s_Rational	*x1;
-	struct s_Rational	*term;
-	int					i = 0;
+	mpf_t				x;
+	mpf_t				x_den;
+	mpf_t				sum;
+	mpf_t				reldiff;
+	mpf_t				x1;
+	mpq_t				rational;
+	mpz_t				num;
+	mpz_t				den;
+	struct s_Rational	*retval;
+	unsigned long		n;
 
-	/* scale until -1 < x < 1 */
-	if (x->numerator > x->denominator
-			|| (x->numerator < 0 && -x->numerator > x->denominator))
+	/* initialise values */
+	mpf_init(x);
+	mpf_init(x_den);
+	mpf_set_z(x, _x->numerator);
+	mpf_set_z(x_den, _x->denominator);
+	mpf_div(x, x, x_den);
+
+	/* if x < -1 or x > 1, use double angle formula */
+	while (mpf_cmp_si(x, -1) < 0 || mpf_cmp_si(x, 1) > 0)
 	{
-		if (x->denominator > 1e9)
-			x->numerator >>= 1;
+		struct s_Rational	*__x = copy(_x);
+		struct s_Rational	*cos;
+		struct s_Rational	*sin;
+
+		/* sin(2x) = 2 sin(x) cos(x) */
+		mpz_mul_ui(__x->denominator, __x->denominator, 2);
+		cos = ft_cos_Rational(__x);
+		sin = ft_sin_Rational(__x);
+		retval = numeric_mul(cos, sin);
+		if (mpz_even_p(retval->denominator))
+			mpz_div_ui(retval->denominator, retval->denominator, 2);
 		else
-			x->denominator <<= 1;
+			mpz_mul_ui(retval->numerator, retval->numerator, 2);
 
-		cos = ft_cos_Rational(x);
-		sin = ft_sin_Rational(x);
-		sum = numeric_mul(cos, sin);
-
-		if (sum->denominator > 1e9)
-			sum->numerator <<= 1;
-		else
-			sum->denominator >>= 1;
-
+		delete(__x);
 		delete(cos);
 		delete(sin);
-		delete(x);
-		return (sum);
+		mpf_clear(x);
+		mpf_clear(x_den);
+		return (retval);
 	}
 
-	one = new(Rational, RATIONAL, 1, 1);
-	n = new(Rational, RATIONAL, 0, 1);
-	/* sin(x) =  x - x^3 / 3! + x^5 / 5! - x^7 / 7! + ... */
-	sum = new(Rational, RATIONAL, 0, 1);	/* sum = 0 */
-	x1 = new(Rational, RATIONAL, 1, 1);		/* x1 = 1 */
-	do {
-		if (i % 2)
-		{
-			if ((i + 1) % 4)
-				numeric_iadd((void **)&sum, x1);	/* sum += x1 */
-			else
-				numeric_isub((void **)&sum, x1);	/* sum -= x1 */
-		}
-		numeric_iadd((void **)&n, one);		/* n += 1*/
-		term = numeric_div(x, n);			/* term = x / n */
-		numeric_imul((void **)&x1, term);	/* x1 = x1 * x/n */
-		delete(term);
-		++i;
-	} while (x1->numerator != 0);
+	/* initialise values */
+	mpf_init(sum);
+	mpf_init(reldiff);
+	mpf_init(x1);
+	mpq_init(rational);
+	mpz_init(num);
+	mpz_init(den);
 
-	delete(one);
-	delete(n);
-	delete(x);
-	delete(x1);
-	return (sum);
+	/* sin(x) =  x - x^3 / 3! + x^5 / 5! - x^7 / 7! + ... */
+	n = 1;
+	mpf_set_ui(sum, 0);					/* sum = 0 */
+	mpf_set(x1, x);						/* x1 = x */
+	do {
+		mpf_set(reldiff, sum);			/* save a copy of sum */
+		mpf_add(sum, sum, x1);			/* sum += x1 */
+		mpf_mul(x1, x1, x);				/* x1 = x1 * x/n */
+		mpf_div_ui(x1, x1, ++n);
+		mpf_mul(x1, x1, x);				/* x1 = -x1 * x/n */
+		mpf_div_ui(x1, x1, ++n);
+		mpf_neg(x1, x1);
+		mpf_reldiff(reldiff, sum, reldiff);	/* calculate relative difference */
+		mpf_abs(reldiff, reldiff);
+	} while (mpf_cmp_d(reldiff, 1e-15) > 0);
+
+	/* convert value to rational */
+	mpq_set_f(rational, sum);
+	mpq_get_num(num, rational);
+	mpq_get_den(den, rational);
+	retval = new(Rational, RATIONAL, num, den);
+
+	/* clear values */
+	mpf_clear(x);
+	mpf_clear(x_den);
+	mpf_clear(sum);
+	mpf_clear(reldiff);
+	mpf_clear(x1);
+	mpq_clear(rational);
+	mpz_clear(num);
+	mpz_clear(den);
+
+	return (retval);
 }
 
 /* Return the sin of a Complex number
@@ -333,62 +407,92 @@ void	*ft_sin(const void *params, void *env)
 /* Return the cos of a Rational number */
 struct s_Rational	*ft_cos_Rational(struct s_Rational *_x)
 {
-	struct s_Rational	*x = copy(_x);
-	struct s_Rational	*cos;
-	struct s_Rational	*sin;
-	struct s_Rational	*one;
-	struct s_Rational	*n;
-	struct s_Rational	*sum;
-	struct s_Rational	*x1;
-	struct s_Rational	*term;
-	int					i = 0;
+	mpf_t				x;
+	mpf_t				x_den;
+	mpf_t				sum;
+	mpf_t				reldiff;
+	mpf_t				x1;
+	mpq_t				rational;
+	mpz_t				num;
+	mpz_t				den;
+	struct s_Rational	*retval;
+	unsigned long		n;
 
-	/* scale until -1 < x < 1 */
-	if (x->numerator > x->denominator
-			|| (x->numerator < 0 && -x->numerator > x->denominator))
+	/* initialise values */
+	mpf_init(x);
+	mpf_init(x_den);
+	mpf_set_z(x, _x->numerator);
+	mpf_set_z(x_den, _x->denominator);
+	mpf_div(x, x, x_den);
+
+	/* if x < -1 or x > 1, use double angle formula */
+	while (mpf_cmp_si(x, -1) < 0 || mpf_cmp_si(x, 1) > 0)
 	{
-		if (x->denominator > 1e9)
-			x->numerator >>= 1;
+		struct s_Rational	*__x = copy(_x);
+		struct s_Rational	*cos;
+
+		/* cos(2x) = 2 cos(x)^2 - 1 */
+		mpz_mul_ui(__x->denominator, __x->denominator, 2);
+		cos = ft_cos_Rational(__x);
+		retval = numeric_mul(cos, cos);		/* cos(x)^2 */
+
+		/* multiply by 2 */
+		if (mpz_even_p(retval->denominator))
+			mpz_div_ui(retval->denominator, retval->denominator, 2);
 		else
-			x->denominator <<= 1;
+			mpz_mul_ui(retval->numerator, retval->numerator, 2);
 
-		cos = ft_cos_Rational(x);
-		numeric_imul((void **)&cos, cos);
-		sin = ft_sin_Rational(x);
-		numeric_imul((void **)&sin, sin);
-		sum = numeric_sub(cos, sin);
+		/* minus 1 */
+		mpz_sub(retval->numerator, retval->numerator, retval->denominator);
 
+		delete(__x);
 		delete(cos);
-		delete(sin);
-		delete(x);
-		return (sum);
+		mpf_clear(x);
+		mpf_clear(x_den);
+		return (retval);
 	}
 
-	one = new(Rational, RATIONAL, 1, 1);
-	n = new(Rational, RATIONAL, 0, 1);
-	/* sin(x) = 1 - x^2 / 2! + x^4 / 4! - x^6 / 6! + ... */
-	sum = new(Rational, RATIONAL, 0, 1);	/* sum = 0 */
-	x1 = new(Rational, RATIONAL, 1, 1);		/* x1 = 1 */
-	do {
-		if (i % 2 == 0)
-		{
-			if (i % 4)
-				numeric_isub((void **)&sum, x1);	/* sum -= x1 */
-			else
-				numeric_iadd((void **)&sum, x1);	/* sum += x1 */
-		}
-		numeric_iadd((void **)&n, one);		/* n += 1*/
-		term = numeric_div(x, n);			/* term = x / n */
-		numeric_imul((void **)&x1, term);	/* x1 = x1 * x/n */
-		delete(term);
-		++i;
-	} while (x1->numerator != 0);
+	/* initialise values */
+	mpf_init(sum);
+	mpf_init(reldiff);
+	mpf_init(x1);
+	mpq_init(rational);
+	mpz_init(num);
+	mpz_init(den);
 
-	delete(one);
-	delete(n);
-	delete(x);
-	delete(x1);
-	return (sum);
+	/* cos(x) = 1 - x^2 / 2! + x^4 / 4! - x^6 / 6! + ... */
+	n = 0;
+	mpf_set_ui(sum, 0);					/* sum = 0 */
+	mpf_set_ui(x1, 1);					/* x1 = 1 */
+	do {
+		mpf_set(reldiff, sum);			/* save a copy of sum */
+		mpf_add(sum, sum, x1);			/* sum += x1 */
+		mpf_mul(x1, x1, x);				/* x1 = x1 * x/n */
+		mpf_div_ui(x1, x1, ++n);
+		mpf_mul(x1, x1, x);				/* x1 = -x1 * x/n */
+		mpf_div_ui(x1, x1, ++n);
+		mpf_neg(x1, x1);
+		mpf_reldiff(reldiff, sum, reldiff);	/* calculate relative difference */
+		mpf_abs(reldiff, reldiff);
+	} while (mpf_cmp_d(reldiff, 1e-15) > 0);
+
+	/* convert value to rational */
+	mpq_set_f(rational, sum);
+	mpq_get_num(num, rational);
+	mpq_get_den(den, rational);
+	retval = new(Rational, RATIONAL, num, den);
+
+	/* clear values */
+	mpf_clear(x);
+	mpf_clear(x_den);
+	mpf_clear(sum);
+	mpf_clear(reldiff);
+	mpf_clear(x1);
+	mpq_clear(rational);
+	mpz_clear(num);
+	mpz_clear(den);
+
+	return (retval);
 }
 
 /* Return the cosine of a Complex number
@@ -497,37 +601,34 @@ struct s_Rational	*ft_sinh_Rational(struct s_Rational *_x)
 	void				*e_x;
 	void				*e_neg_x;
 	void				*two;
+	mpz_t				quotient;
 
+	mpz_init(quotient);
 	/* scale until -1 < x < 1 */
-	if (x->numerator > x->denominator
-			|| (x->numerator < 0 && -x->numerator > x->denominator))
+	mpz_tdiv_q(quotient, x->numerator, x->denominator);
+	if (mpz_cmp_ui(quotient, 0) != 0)
 	{
-		if (x->denominator > 1e9)
-			x->numerator >>= 1;
-		else
-			x->denominator <<= 1;
+		mpz_mul_ui(x->denominator, x->denominator, 2);
 
 		/* sinh(2x) = 2 * sinh(x) * cosh(x) */
 		cosh = ft_cosh_Rational(x);
 		sinh = ft_sinh_Rational(x);
 		sum = numeric_mul(cosh, sinh);
-
-		if (sum->denominator > 1e9)
-			sum->numerator <<= 1;
-		else
-			sum->denominator >>= 1;
+		mpz_mul_ui(sum->numerator, sum->numerator, 2);
 
 		delete(cosh);
 		delete(sinh);
 		delete(x);
+		mpz_clear(quotient);
 		return (sum);
 	}
+	mpz_clear(quotient);
 
 	neg_x = numeric_neg(x);
 	e_x = ft_exp_Rational(x);
 	e_neg_x = ft_exp_Rational(neg_x);
 	sum = numeric_sub(e_x, e_neg_x);
-	two = new(Rational, RATIONAL, 2, 1);
+	two = Rational_from_long(2, 1);
 
 	numeric_idiv((void **)&sum, two);
 	delete(x);
@@ -594,29 +695,30 @@ struct s_Rational	*ft_cosh_Rational(struct s_Rational *_x)
 	void				*e_x;
 	void				*e_neg_x;
 	void				*retval;
-	void				*one = new(Rational, RATIONAL, 1, 1);
-	void				*two = new(Rational, RATIONAL, 2, 1);
+	void				*one = Rational_from_long(1, 1);
+	void				*two = Rational_from_long(2, 1);
+	mpz_t				quotient;
 
+	mpz_init(quotient);
 	/* scale until -1 < x < 1 */
-	if (x->numerator > x->denominator
-			|| (x->numerator < 0 && -x->numerator > x->denominator))
+	mpz_tdiv_q(quotient, x->numerator, x->denominator);
+	if (mpz_cmp_ui(quotient, 0) != 0)
 	{
-		if (x->denominator > 1e9)
-			x->numerator >>= 1;
-		else
-			x->denominator <<= 1;
+		mpz_mul_ui(x->denominator, x->denominator, 2);
 
 		/* cosh(2x) = 2 (cosh(x))^2 - 1 */
 		retval = ft_cosh_Rational(x);
 		numeric_imul(&retval, retval);
 		numeric_imul(&retval, two);
 		numeric_isub(&retval, one);
+
 		delete(x);
 		delete(one);
 		delete(two);
-
+		mpz_clear(quotient);
 		return (retval);
 	}
+	mpz_clear(quotient);
 
 	/* cosh(x) = (e^x + e^(-x)) / 2 */
 	neg_x = numeric_neg(x);
@@ -792,7 +894,7 @@ void	*ft_sqrt(const void *params, void *env)
 /* Return the square root of a Rational number */
 struct s_Rational	*ft_abs_Rational(struct s_Rational *x)
 {
-	if (x->numerator < 0)
+	if (mpz_cmp_ui(x->numerator, 0) < 0)
 		return numeric_neg(x);
 	else
 		return copy(x);

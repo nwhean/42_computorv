@@ -16,8 +16,8 @@ void tearDown(void) {
 
 void test_ctor(void) {
 	struct s_Complex	*comp = new(Complex, COMPLEX,
-									new(Rational, RATIONAL, (long)22, (long)7),
-									new(Rational, RATIONAL, (long)-3, (long)5)
+									Rational_from_long((long)22, (long)7),
+									Rational_from_long((long)-3, (long)5)
 									);
 	TEST_ASSERT_EQUAL(comp->real->numerator, 22);
 	TEST_ASSERT_EQUAL(comp->real->denominator, 7);
@@ -28,8 +28,8 @@ void test_ctor(void) {
 
 void test_str(void) {
 	struct s_Complex	*comp = new(Complex, COMPLEX,
-									new(Rational, RATIONAL, (long)1, (long)1),
-									new(Rational, RATIONAL, (long)2, (long)1)
+									Rational_from_long((long)1, (long)1),
+									Rational_from_long((long)2, (long)1)
 									);
 	const char			*s = str(comp);
 	const char			*target = "1+2i";
@@ -40,11 +40,11 @@ void test_str(void) {
 
 void test_add(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)1, (long)2),
-								new(Rational, RATIONAL, (long)3, (long)4));
+								Rational_from_long((long)1, (long)2),
+								Rational_from_long((long)3, (long)4));
 	struct s_Complex	*b = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)5, (long)6),
-								new(Rational, RATIONAL, (long)7, (long)8));
+								Rational_from_long((long)5, (long)6),
+								Rational_from_long((long)7, (long)8));
 	struct s_Complex	*target = numeric_add(a, b);
 	TEST_ASSERT_EQUAL(target->real->numerator, 4);
 	TEST_ASSERT_EQUAL(target->real->denominator, 3);
@@ -57,11 +57,11 @@ void test_add(void) {
 
 void test_sub(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)1, (long)2),
-								new(Rational, RATIONAL, (long)3, (long)4));
+								Rational_from_long((long)1, (long)2),
+								Rational_from_long((long)3, (long)4));
 	struct s_Complex	*b = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)5, (long)6),
-								new(Rational, RATIONAL, (long)7, (long)8));
+								Rational_from_long((long)5, (long)6),
+								Rational_from_long((long)7, (long)8));
 	struct s_Complex	*target = numeric_sub(a, b);
 	TEST_ASSERT_EQUAL(target->real->numerator, -1);
 	TEST_ASSERT_EQUAL(target->real->denominator, 3);
@@ -74,11 +74,11 @@ void test_sub(void) {
 
 void test_mul(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)1, (long)2),
-								new(Rational, RATIONAL, (long)3, (long)4));
+								Rational_from_long((long)1, (long)2),
+								Rational_from_long((long)3, (long)4));
 	struct s_Complex	*b = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)5, (long)6),
-								new(Rational, RATIONAL, (long)7, (long)8));
+								Rational_from_long((long)5, (long)6),
+								Rational_from_long((long)7, (long)8));
 	struct s_Complex	*target = numeric_mul(a, b);
 	TEST_ASSERT_EQUAL(target->real->numerator, -23);
 	TEST_ASSERT_EQUAL(target->real->denominator, 96);
@@ -91,11 +91,11 @@ void test_mul(void) {
 
 void test_div(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)1, (long)2),
-								new(Rational, RATIONAL, (long)3, (long)4));
+								Rational_from_long((long)1, (long)2),
+								Rational_from_long((long)3, (long)4));
 	struct s_Complex	*b = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)5, (long)6),
-								new(Rational, RATIONAL, (long)7, (long)8));
+								Rational_from_long((long)5, (long)6),
+								Rational_from_long((long)7, (long)8));
 	struct s_Complex	*target = numeric_div(a, b);
 	TEST_ASSERT_EQUAL(target->real->numerator, 618);
 	TEST_ASSERT_EQUAL(target->real->denominator, 841);
@@ -108,8 +108,8 @@ void test_div(void) {
 
 void test_neg(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)1, (long)2),
-								new(Rational, RATIONAL, (long)3, (long)4));
+								Rational_from_long((long)1, (long)2),
+								Rational_from_long((long)3, (long)4));
 	struct s_Complex	*target = numeric_neg(a);
 	TEST_ASSERT_EQUAL(target->real->numerator, -1);
 	TEST_ASSERT_EQUAL(target->real->denominator, 2);
@@ -121,9 +121,9 @@ void test_neg(void) {
 
 void test_pow_rational(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)1, (long)2),
-								new(Rational, RATIONAL, (long)3, (long)4));
-	struct s_Rational	*b = new(Rational, RATIONAL, (long)5, (long)6);
+								Rational_from_long((long)1, (long)2),
+								Rational_from_long((long)3, (long)4));
+	struct s_Rational	*b = Rational_from_long((long)5, (long)6);
 	struct s_Complex	*target = numeric_pow(a, b);
 	double				real = Rational_to_double(target->real);
 	double				imag = Rational_to_double(target->imag);
@@ -137,11 +137,11 @@ void test_pow_rational(void) {
 
 void test_pow_complex(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)1, (long)2),
-								new(Rational, RATIONAL, (long)3, (long)4));
+								Rational_from_long((long)1, (long)2),
+								Rational_from_long((long)3, (long)4));
 	struct s_Complex	*b = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)5, (long)6),
-								new(Rational, RATIONAL, (long)7, (long)8));
+								Rational_from_long((long)5, (long)6),
+								Rational_from_long((long)7, (long)8));
 	struct s_Complex	*target = numeric_pow(a, b);
 	double				real = Rational_to_double(target->real);
 	double				imag = Rational_to_double(target->imag);
@@ -154,11 +154,11 @@ void test_pow_complex(void) {
 
 void test_equal_true(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)1, (long)2),
-								new(Rational, RATIONAL, (long)3, (long)4));
+								Rational_from_long((long)1, (long)2),
+								Rational_from_long((long)3, (long)4));
 	struct s_Complex	*b = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)1, (long)2),
-								new(Rational, RATIONAL, (long)3, (long)4));
+								Rational_from_long((long)1, (long)2),
+								Rational_from_long((long)3, (long)4));
 
 	TEST_ASSERT_TRUE(numeric_equal(a, b));
 	delete(a);
@@ -167,11 +167,11 @@ void test_equal_true(void) {
 
 void test_equal_false(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)1, (long)2),
-								new(Rational, RATIONAL, (long)3, (long)4));
+								Rational_from_long((long)1, (long)2),
+								Rational_from_long((long)3, (long)4));
 	struct s_Complex	*b = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, (long)5, (long)6),
-								new(Rational, RATIONAL, (long)7, (long)8));
+								Rational_from_long((long)5, (long)6),
+								Rational_from_long((long)7, (long)8));
 
 	TEST_ASSERT_FALSE(numeric_equal(a, b));
 	delete(a);
@@ -180,8 +180,8 @@ void test_equal_false(void) {
 
 void test_promote_rational(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, 1, 2),
-								new(Rational, RATIONAL, 3, 4));
+								Rational_from_long(1, 2),
+								Rational_from_long(3, 4));
 	struct s_Rational	*b = numeric_promote(a, RATIONAL);
 
 	TEST_ASSERT_NULL(b);
@@ -190,8 +190,8 @@ void test_promote_rational(void) {
 
 void test_promote_complex(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, 1, 2),
-								new(Rational, RATIONAL, 3, 4));
+								Rational_from_long(1, 2),
+								Rational_from_long(3, 4));
 	struct s_Complex	*b = numeric_promote(a, COMPLEX);
 
 	TEST_ASSERT_TRUE(numeric_equal(b, a));
@@ -201,8 +201,8 @@ void test_promote_complex(void) {
 
 void test_promote_vector(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, 1, 2),
-								new(Rational, RATIONAL, 3, 4));
+								Rational_from_long(1, 2),
+								Rational_from_long(3, 4));
 	struct s_Vector		*b = numeric_promote(a, VECTOR);
 	void				*vec = new(Vec);
 	struct s_Vector		*target;
@@ -217,8 +217,8 @@ void test_promote_vector(void) {
 
 void test_promote_matrix(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
-								new(Rational, RATIONAL, 1, 2),
-								new(Rational, RATIONAL, 3, 4));
+								Rational_from_long(1, 2),
+								Rational_from_long(3, 4));
 	struct s_Matrix		*b = numeric_promote(a, MATRIX);
 	void				*vec_v = new(Vec);
 	void				*vec_m = new(Vec);

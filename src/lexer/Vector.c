@@ -456,7 +456,7 @@ void	*Vector_sum(const void *_self)
 	size_t					i;
 	void					*sum;
 
-	sum = new(Rational, RATIONAL, 0, 1);
+	sum = Rational_from_long(0, 1);
 	for (i = 0; i < size; ++i)
 		numeric_iadd(&sum, Vector_at(self, i));
 	return (sum);

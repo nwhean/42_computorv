@@ -9,7 +9,7 @@ INCLUDE	=	-Iinclude \
 			-Iinclude/symbols \
 			-Iliboop/include
 LDFLAGS	=	-L. -Lliboop
-LDLIBS	=	-lcomputorv -loop -lm
+LDLIBS	=	-lcomputorv -loop -lm -lgmp
 MAIN	=	main.c
 NAME	=	a.out
 LIBCOMP	=	libcomputorv.a

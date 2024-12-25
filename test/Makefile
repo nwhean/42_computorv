@@ -9,7 +9,7 @@ INCLUDE	=	-Iunity \
 			-I../include/parser \
 			-I../liboop/include
 LDFLAGS	=	-L.. -L../liboop
-LDLIBS	=	-lcomputorv -loop -lm
+LDLIBS	=	-lcomputorv -loop -lm -lgmp
 
 # source and object files
 CONTAINER_DIR	=	container
