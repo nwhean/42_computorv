@@ -272,10 +272,12 @@ static void	*Complex_pow_Rational(const void *_self, const void *_other)
 {
 	const struct s_Complex	*self = _self;
 	const struct s_Rational	*other = _other;
-	void					*modulus = Complex_modulus(self);
-	void					*argument = Complex_argument(self);
+	void					*modulus;
+	void					*argument;
 	void					*retval;
 
+	modulus = Complex_modulus(self);
+	argument = Complex_argument(self);
 	modulus = numeric_ipow(&modulus, other);
 	argument = numeric_imul(&argument, other);
 	retval = Complex_from_polar(modulus, argument);

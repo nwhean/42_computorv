@@ -1,3 +1,5 @@
+#include <math.h>
+
 /* container */
 #include "Vec.h"
 
@@ -707,10 +709,10 @@ struct s_Rational	*ft_cosh_Rational(struct s_Rational *_x)
 		mpz_mul_ui(x->denominator, x->denominator, 2);
 
 		/* cosh(2x) = 2 (cosh(x))^2 - 1 */
-		retval = ft_cosh_Rational(x);
-		numeric_imul(&retval, retval);
-		numeric_imul(&retval, two);
-		numeric_isub(&retval, one);
+		retval = ft_cosh_Rational(x);	/* cosh(x) */
+		numeric_imul(&retval, retval);	/* cosh(x)^2 */
+		numeric_imul(&retval, two);		/* 2 cosh(x)^2 */
+		numeric_isub(&retval, one);		/* 2 cosh(x)^2 - 1 */
 
 		delete(x);
 		delete(one);
@@ -836,8 +838,9 @@ void	*ft_sqrt_Rational(struct s_Rational *x)
 	struct s_Rational	*half = Rational_from_double(0.5);
 	struct s_Rational	*retval;
 
-	if (x->numerator == 0)
-		retval = copy(x);
+	/* if (mpz_cmp_si(x->numerator, 0) == 0) */
+	if(fabs(Rational_to_double(x)) <= __FLT_EPSILON__)
+		retval = Rational_from_long(0, 1);
 	else
 		retval = numeric_pow(x, half);
 	delete(half);
@@ -853,7 +856,7 @@ struct s_Complex	*ft_sqrt_Complex(struct s_Complex *_x)
 	void				*x = NULL;
 	void				*retval;
 
-	if (imag->numerator == 0)	/* real number */
+	if (fabs(Rational_to_double(imag)) <= __FLT_EPSILON__)	/* real number */
 	{
 		x = Complex_real(_x);
 		retval = ft_sqrt_Rational(x);

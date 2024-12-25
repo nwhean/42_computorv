@@ -376,14 +376,14 @@ static void	*Matrix_pow_Rational(const void *_self, const void *_other)
 				"Matrix_pow_Rational: only support integer exponent.");
 		return (NULL);
 	}
+	if (fabs(Rational_to_double(other)) <= FLT_EPSILON)	/* if equal 0 */
+		return (Matrix_eye(self->rows));
 	if (mpz_cmp_ui(other->numerator, 0) < 0)	/* if less than 0 */
 	{
 		fprintf(stderr, "%s\n",
 				"Matrix_pow_Rational: only support positive integer exponent.");
 		return (NULL);
 	}
-	if (mpz_cmp_ui(other->numerator, 0) == 0)	/* if equal 0 */
-		return (Matrix_eye(self->rows));
 	else
 	{
 		struct s_Matrix	*temp;
