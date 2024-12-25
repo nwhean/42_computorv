@@ -55,13 +55,13 @@ static char	*VecExpr_str(const void *_self)
 static struct s_Token	*VecExpr_eval(const void *_self, void *env)
 {
 	const struct s_VecExpr	*self = _self;
-	void					*vec = new(Vec);
 	size_t					size = Vec_size(self->vec);
+	void					*retval = new(Vector, VECTOR, size);
 	size_t					i;
 
 	for (i = 0; i < size; ++i)
-		Vec_push_back(vec, eval(Vec_at(self->vec, i), env));
-	return (new(Vector, VECTOR, vec));
+		Vector_update(retval, i, eval(Vec_at(self->vec, i), env));
+	return (retval);
 }
 
 void	initVecExpr(void)

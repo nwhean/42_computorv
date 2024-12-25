@@ -228,6 +228,7 @@ classDiagram
 		+Vec~Numeric~ vec
 		+Vector_size() size_t
 		+Vector_at(size_t n) Numeric
+		+Vector_update(size_t n, Numeric val)
 		+Vector_conjugate() Vector
 		+Vector_cross(Vector other) Vector
 		+Vector_dot(Vocter other) Rational

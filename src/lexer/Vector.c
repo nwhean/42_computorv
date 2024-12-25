@@ -24,24 +24,21 @@ const void	*Vector;
 static void	*Vector_ctor(void *_self, va_list *app)
 {
 	struct s_Vector	*self;
-	void			*vec;
-	void			**data;
 	size_t			i;
 
 	self = super_ctor(Vector, _self, app);
-	vec = va_arg(*app, void *);
-	data = Vec_data(vec);
-	self->size = Vec_size(vec);
+	self->size = va_arg(*app, size_t);
 	self->data = calloc(sizeof(void *), self->size);
 	if (!self->data)
 	{
-		delete(vec);
 		delete(self);
 		return (NULL);
 	}
+
+	/* by default, initalize values to Rational 0 */
 	for (i = 0; i < self->size; ++i)
-		swap_ptr(&self->data[i], &data[i]);
-	delete(vec);
+		self->data[i] = Rational_from_long(0, 1);
+
 	return (self);
 }
 
@@ -106,12 +103,12 @@ static void	*Vector_op_Scalar(const void *_self,
 							void *(*func)(const void *, const void *))
 {
 	const struct s_Vector	*self = _self;
-	void					*vec = new(Vec);
+	void					*retval = new(Vector, VECTOR, self->size);
 	size_t					i;
 
 	for (i = 0; i < self->size; ++i)
-		Vec_push_back(vec, func(self->data[i], _other));
-	return (new(Vector, VECTOR, vec));
+		Vector_update(retval, i, func(self->data[i], _other));
+	return (retval);
 }
 
 /* Element-by-element operation between two Vectors.*/
@@ -121,19 +118,19 @@ static void	*Vector_op_Vector(const void *_self,
 {
 	const struct s_Vector	*self = _self;
 	const struct s_Vector	*other = _other;
+	void					*retval;
 	size_t					size = Vector_size(self);
 	size_t					i;
-	void					*vec;
 
 	if (size != Vector_size(other))
 	{
 		fprintf(stderr, "%s\n", "Vector_op_Vector: unequal sizes.");
 		return (NULL);
 	}
-	vec = new(Vec);
+	retval = new(Vector, VECTOR, size);
 	for (i = 0; i < size; ++i)
-		Vec_push_back(vec, func((self->data[i]), other->data[i]));
-	return (new(Vector, VECTOR, vec));
+		Vector_update(retval, i, func((self->data[i]), other->data[i]));
+	return (retval);
 }
 
 /* Return the addition of two Numerics. */
@@ -349,29 +346,36 @@ void	*Vector_at(const void *_self, size_t n)
 	return (self->data[n]);
 }
 
+/* Update the value of element n with value val. */
+void	Vector_update(void *_self, size_t n, const void *val)
+{
+	const struct s_Vector	*self = _self;
+
+	delete(self->data[n]);
+	self->data[n] = (void *)val;
+}
+
 /* Return the vector containing the conjugate of each of its elements. */
 struct s_Vector	*Vector_conjugate(const void *_self)
 {
 	const struct s_Vector	*self = _self;
-	void					*vec = new(Vec);
-	struct s_Vector			*retval;
+	struct s_Vector			*retval = new(Vector, VECTOR, self->size);
 	size_t					i;
 
 	for (i = 0; i < self->size; ++i)
 	{
 		void	*elem = self->data[i];
 		if (Token_get_tag(elem) == RATIONAL)
-			Vec_push_back(vec, copy(elem));
+			Vector_update(retval, i, copy(elem));
 		else if (Token_get_tag(elem) == COMPLEX)
-			Vec_push_back(vec, Complex_conjugate(elem));
+			Vector_update(retval, i, Complex_conjugate(elem));
 		else
 		{
 			fprintf(stderr, "%s\n", "Vector_conjugate: Unexpected input type");
-			delete(vec);
+			delete(retval);
 			return (NULL);
 		}
 	}
-	retval = new(Vector, VECTOR, vec);
 	return (retval);
 }
 
@@ -380,7 +384,6 @@ struct s_Vector	*Vector_cross(const void *_self, const void *_other)
 {
 	const struct s_Vector	*self = _self;
 	const struct s_Vector	*other = _other;
-	void					*conj;
 	struct s_Vector			*retval;
 	size_t					i;
 	size_t					j;
@@ -394,7 +397,7 @@ struct s_Vector	*Vector_cross(const void *_self, const void *_other)
 		fprintf(stderr, "%s\n", "Vector_cross: vectors must be of len 3.");
 		return (NULL);
 	}
-	conj = new(Vec);
+	retval = new(Vector, VECTOR, self->size);
 	for (i = 0; i < self->size; ++i)
 	{
 		j = (i + 1) % 3;
@@ -402,12 +405,11 @@ struct s_Vector	*Vector_cross(const void *_self, const void *_other)
 		temp0 = numeric_mul(Vector_at(self, j), Vector_at(other, k));
 		temp1 = numeric_mul(Vector_at(self, k), Vector_at(other, j));
 		temp2 = numeric_sub(temp0, temp1);
-		Vec_push_back(conj, Complex_conjugate(temp2));
+		Vector_update(retval, i, Complex_conjugate(temp2));
 		delete(temp0);
 		delete(temp1);
 		delete(temp2);
 	}
-	retval = new(Vector, VECTOR, conj);
 	return (retval);
 }
 

@@ -353,6 +353,7 @@ static bool	Complex_equal(
 static void	*Complex_promote(const void *_self, enum e_Tag tag)
 {
 	const struct s_Complex	*self = _self;
+	void					*retval;
 	void					*vec_v;
 	void					*vec_m;
 
@@ -370,7 +371,12 @@ static void	*Complex_promote(const void *_self, enum e_Tag tag)
 			vec_v = new(Vec);
 			Vec_push_back(vec_v, Complex_copy(self));
 			if (tag == VECTOR)
-				return (new(Vector, VECTOR, vec_v));
+			{
+				retval = new(Vector, VECTOR, 1);
+				Vector_update(retval, 0, Complex_copy(self));
+				delete(vec_v);
+				return (retval);
+			}
 
 			/* create the matrix */
 			vec_m = new(Vec);

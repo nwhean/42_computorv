@@ -886,13 +886,11 @@ void test_solve(void) {
 	struct s_Rational	*r10 = Rational_from_long(2, 1);
 	struct s_Rational	*r11 = Rational_from_long(4, 1);
 	struct s_Rational	*r12 = Rational_from_long(6, 1);
-	void				*v1 = new(Vec);
 	struct s_Vector		*b;
 
 	struct s_Rational	*r20 = Rational_from_long((long)-2, 3);
 	struct s_Rational	*r21 = Rational_from_long(4, 3);
 	struct s_Rational	*r22 = Rational_from_long(0, 1);
-	void				*v2 = new(Vec);
 	struct s_Vector		*target;
 
 	struct s_Vector		*x;
@@ -911,15 +909,15 @@ void test_solve(void) {
 	Vec_push_back(v0, v02);
 	m0 = new(Matrix, MATRIX, v0);
 
-	Vec_push_back(v1, r10);
-	Vec_push_back(v1, r11);
-	Vec_push_back(v1, r12);
-	b = new(Vector, VECTOR, v1);
+	b = new(Vector, VECTOR, 3);
+	Vector_update(b, 0, r10);
+	Vector_update(b, 1, r11);
+	Vector_update(b, 2, r12);
 
-	Vec_push_back(v2, r20);
-	Vec_push_back(v2, r21);
-	Vec_push_back(v2, r22);
-	target = new(Vector, VECTOR, v2);
+	target = new(Vector, VECTOR, 3);
+	Vector_update(target, 0, r20);
+	Vector_update(target, 1, r21);
+	Vector_update(target, 2, r22);
 
 	x = Matrix_solve(m0, b);
 	TEST_ASSERT_TRUE(numeric_equal(x, target));

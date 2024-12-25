@@ -276,11 +276,9 @@ void test_promote_complex(void) {
 void test_promote_vector(void) {
 	struct s_Rational	*a = Rational_from_long(22, 7);
 	struct s_Vector		*b = numeric_promote(a, VECTOR);
-	void				*vec = new(Vec);
-	struct s_Vector		*target;
+	struct s_Vector		*target = new(Vector, VECTOR, 1);
 
-	Vec_push_back(vec, copy(a));
-	target = new(Vector, VECTOR, vec);
+	Vector_update(target, 0, copy(a));
 	TEST_ASSERT_TRUE(numeric_equal(b, target));
 	delete(a);
 	delete(b);

@@ -11,7 +11,7 @@ struct s_Vector	/* Vector: Numeric */
 	void					**data;
 };
 
-extern const void	*Vector;	/* new(Vector, VECTOR, Vec); */
+extern const void	*Vector;	/* new(Vector, VECTOR, size); */
 
 void	initVector(void);
 
@@ -20,6 +20,7 @@ size_t	Vector_size(const void *self);
 
 /* element access */
 void	*Vector_at(const void *self, size_t n);
+void	Vector_update(void *self, size_t n, const void *val);
 
 /* vector operations */
 struct s_Vector		*Vector_conjugate(const void *self);

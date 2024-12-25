@@ -557,6 +557,7 @@ bool	Rational_ge(const struct s_Rational *a, const struct s_Rational *b)
 static void	*Rational_promote(const void *_self, enum e_Tag tag)
 {
 	const struct s_Rational	*self = _self;
+	void					*retval;
 	void					*vec_v;
 	void					*vec_m;
 
@@ -574,8 +575,12 @@ static void	*Rational_promote(const void *_self, enum e_Tag tag)
 			vec_v = new(Vec);
 			Vec_push_back(vec_v, Rational_copy(self));
 			if (tag == VECTOR)
-				return (new(Vector, VECTOR, vec_v));
-
+			{
+				retval = new(Vector, VECTOR, 1);
+				Vector_update(retval, 0, Rational_copy(self));
+				delete(vec_v);
+				return (retval);
+			}
 			/* create the matrix */
 			vec_m = new(Vec);
 			Vec_push_back(vec_m, vec_v);

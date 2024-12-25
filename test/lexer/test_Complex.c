@@ -204,11 +204,9 @@ void test_promote_vector(void) {
 								Rational_from_long(1, 2),
 								Rational_from_long(3, 4));
 	struct s_Vector		*b = numeric_promote(a, VECTOR);
-	void				*vec = new(Vec);
-	struct s_Vector		*target;
+	struct s_Vector		*target = new(Vector, VECTOR, 1);
 
-	Vec_push_back(vec, copy(a));
-	target = new(Vector, VECTOR, vec);
+	Vector_update(target, 0, copy(a));
 	TEST_ASSERT_TRUE(numeric_equal(b, target));
 	delete(a);
 	delete(b);
