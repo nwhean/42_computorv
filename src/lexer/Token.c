@@ -30,7 +30,7 @@ static struct s_Token	*Token_copy(const void *_self)
 static char	*Token_str(const void *_self)
 {
 	const struct s_Token	*self = _self;
-	char 					*retval;
+	char					*retval;
 
 	retval = calloc(sizeof(char), 2);
 	if (retval)

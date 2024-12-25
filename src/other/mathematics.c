@@ -128,7 +128,7 @@ struct s_Complex	*ft_exp_Complex(struct s_Complex *x)
 void	*ft_exp(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -251,7 +251,7 @@ struct s_Complex	*ft_ln_Complex(struct s_Complex *x)
 void	*ft_ln(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -387,7 +387,7 @@ struct s_Complex	*ft_sin_Complex(struct s_Complex *x)
 void	*ft_sin(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -526,7 +526,7 @@ struct s_Complex	*ft_cos_Complex(struct s_Complex *x)
 void	*ft_cos(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -573,7 +573,7 @@ struct s_Complex	*ft_tan_Complex(struct s_Complex *x)
 void	*ft_tan(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -670,7 +670,7 @@ struct s_Complex	*ft_sinh_Complex(struct s_Complex *x)
 void	*ft_sinh(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -766,7 +766,7 @@ struct s_Complex	*ft_cosh_Complex(struct s_Complex *x)
 void	*ft_cosh(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -813,7 +813,7 @@ struct s_Complex	*ft_tanh_Complex(struct s_Complex *x)
 void	*ft_tanh(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -839,7 +839,7 @@ void	*ft_sqrt_Rational(struct s_Rational *x)
 	struct s_Rational	*retval;
 
 	/* if (mpz_cmp_si(x->numerator, 0) == 0) */
-	if(fabs(Rational_to_double(x)) <= __FLT_EPSILON__)
+	if (fabs(Rational_to_double(x)) <= __FLT_EPSILON__)
 		retval = Rational_from_long(0, 1);
 	else
 		retval = numeric_pow(x, half);
@@ -875,7 +875,7 @@ struct s_Complex	*ft_sqrt_Complex(struct s_Complex *_x)
 void	*ft_sqrt(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -907,7 +907,7 @@ struct s_Rational	*ft_abs_Rational(struct s_Rational *x)
 void	*ft_abs(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -949,7 +949,7 @@ struct s_Rational	*ft_radians_Rational(struct s_Rational *x)
 void	*ft_radians(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -982,7 +982,7 @@ struct s_Rational	*ft_degrees_Rational(struct s_Rational *x)
 void	*ft_degrees(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -1067,7 +1067,7 @@ struct s_Rational	*ft_norm_Vector(struct s_Vector *x)
 void	*ft_norm(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)
@@ -1094,7 +1094,7 @@ void	*ft_norm(const void *params, void *env)
 void	*ft_inv(const void *params, void *env)
 {
 	void		*x = eval(Vec_at(params, 0), env);
-	enum e_Tag	tag= Token_get_tag(x);
+	enum e_Tag	tag = Token_get_tag(x);
 	void		*retval = NULL;
 
 	switch (tag)

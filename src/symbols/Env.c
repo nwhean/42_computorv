@@ -60,7 +60,7 @@ static char	*Env_str(const void *_self)
 }
 
 /* put id and expr as key-value pair in the hash table */
-void	Env_put(void *_self, const void* id, void *expr)
+void	Env_put(void *_self, const void *id, void *expr)
 {
 	const struct s_Env	*self = _self;
 	enum e_Tag			tag = Token_get_tag(id);

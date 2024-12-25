@@ -87,7 +87,6 @@ void	*UnorderedMap_values(const void *_self)
 	return (self->value);
 }
 
-
 /* Inserts a key, value pair into the container, if the container doesn't
  * already contain an element with an equivalent key.
  */

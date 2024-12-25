@@ -191,7 +191,7 @@ void	Vec_pop_back(void *_self)
 void	Vec_erase(void *_self, size_t position)
 {
 	struct s_Vec	*self = _self;
-	size_t					size;
+	size_t			size;
 
 	/* invalid position causes undefined behavior */
 	delete(self->data[position]);
@@ -209,7 +209,7 @@ void	Vec_erase(void *_self, size_t position)
 void	Vec_clear(void *_self)
 {
 	struct s_Vec	*self = _self;
-	size_t	i;
+	size_t			i;
 
 	for (i = 0; i < self->size; ++i)
 		delete((void *)self->data[i]);

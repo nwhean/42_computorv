@@ -168,7 +168,7 @@ static struct s_Stmt	*stmt(void *_self)
 			rhs = expr(self);
 			tag = get_tag(lhs);
 			if (tag == ID)
-				retval =  new(AssignStmt, lhs, rhs);
+				retval = new(AssignStmt, lhs, rhs);
 			else
 				retval = new(FuncDef, lhs, rhs);
 			break ;

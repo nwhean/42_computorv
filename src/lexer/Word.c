@@ -13,7 +13,7 @@ const void			*Word_reserved;
 
 /* forward declaration */
 static void	reserve_add(const struct s_Word *word);
-static const struct s_Word *reserve_find(const void *str);
+static const struct s_Word	*reserve_find(const void *str);
 
 /* Word constructor method.
  * If a Word is reserved, the original is returned instead, i.e. Singleton.
@@ -55,7 +55,7 @@ static void	*Word_dtor(void *_self)
 static struct s_Word	*Word_copy(const void *_self)
 {
 	const struct s_Word	*self = _self;
-	struct s_Word	*retval;
+	struct s_Word		*retval;
 
 	retval = (struct s_Word *)reserve_find(self->lexeme);
 	if (!retval)
@@ -94,7 +94,7 @@ static void	reserve_add(const struct s_Word *word)
 }
 
 /* Find a Word regestered in the the reserve. */
-static const struct s_Word *reserve_find(const void *str)
+static const struct s_Word	*reserve_find(const void *str)
 {
 	return (UnorderedMap_find((void *)Word_reserved, str));
 }

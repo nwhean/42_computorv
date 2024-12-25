@@ -31,10 +31,9 @@ static void	*Seq_dtor(void *_self)
 static char	*Seq_str(const void *_self)
 {
 	const struct s_Seq	*self = _self;
-
-	void	*s = new(Str, "");
-	char	*str_append;
-	char	*retval;
+	void				*s = new(Str, "");
+	char				*str_append;
+	char				*retval;
 
 	if (self->stmt1)
 	{

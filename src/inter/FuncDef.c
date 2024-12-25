@@ -1,6 +1,6 @@
 /* container */
 #include "Str.h"
-# include "Vec.h"
+#include "Vec.h"
 
 /* inter */
 #include "Expr.h"
@@ -49,9 +49,9 @@ static void	*FuncDef_dtor(void *_self)
 static char	*FuncDef_str(const void *_self)
 {
 	const struct s_FuncDef	*self = _self;
-	void						*s = new(Str, "");
-	char						*s_append;
-	char						*retval;
+	void					*s = new(Str, "");
+	char					*s_append;
+	char					*retval;
 
 	/* insert function */
 	s_append = str(self->func);

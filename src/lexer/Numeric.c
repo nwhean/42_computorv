@@ -341,10 +341,10 @@ void	*numeric_ipromote(void **self, enum e_Tag tag)
 /* NumericClass constructor method. */
 static void	*NumericClass_ctor(void *_self, va_list *app)
 {
-	typedef void		(*voidf)();
+	typedef void			(*voidf)();
 	struct s_NumericClass	*self;
-	voidf				selector;
-	va_list				ap;
+	voidf					selector;
+	va_list					ap;
 
 	self = super_ctor(NumericClass, _self, app);
 	#ifdef va_copy

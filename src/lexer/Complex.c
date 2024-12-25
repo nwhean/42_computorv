@@ -35,7 +35,7 @@ static void	*Complex_dtor(void *_self)
 
 	delete(self->real);
 	delete(self->imag);
-	return(super_dtor(Complex, _self));
+	return (super_dtor(Complex, _self));
 }
 
 /* Return a copy of the Complex. */
@@ -71,8 +71,8 @@ struct s_Complex	*Complex_from_polar(const void *_mod, const void *_arg)
 static char	*Complex_str(const void *_self)
 {
 	const struct s_Complex	*self = _self;
-	const char *			str_real = str(self->real);
-	const char *			str_imag = str(self->imag);
+	const char				*str_real = str(self->real);
+	const char				*str_imag = str(self->imag);
 	void					*s = new(Str, str_real);
 	char					*retval;
 
@@ -162,15 +162,15 @@ static void	*Complex_mul_Complex(const void *_self, const void *_other)
 {
 	const struct s_Complex	*self = _self;
 	const struct s_Complex	*other = _other;
-	struct s_Rational	*a = self->real;
-	struct s_Rational	*b = self->imag;
-	struct s_Rational	*c = other->real;
-	struct s_Rational	*d = other->imag;
-	struct s_Rational	*ac = numeric_mul(a, c);
-	struct s_Rational	*bd = numeric_mul(b, d);
-	struct s_Rational	*ad = numeric_mul(a, d);
-	struct s_Rational	*bc = numeric_mul(b, c);
-	struct s_Complex	*retval;
+	struct s_Rational		*a = self->real;
+	struct s_Rational		*b = self->imag;
+	struct s_Rational		*c = other->real;
+	struct s_Rational		*d = other->imag;
+	struct s_Rational		*ac = numeric_mul(a, c);
+	struct s_Rational		*bd = numeric_mul(b, d);
+	struct s_Rational		*ad = numeric_mul(a, d);
+	struct s_Rational		*bc = numeric_mul(b, c);
+	struct s_Complex		*retval;
 
 	retval = new(Complex, COMPLEX, numeric_sub(ac, bd), numeric_add(ad, bc));
 	delete(ac);

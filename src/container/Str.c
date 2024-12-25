@@ -68,7 +68,7 @@ void	Str_reserve(void *_self, size_t n)
 
 	n += 1;
 	if (self->capacity >= n)
-		return;
+		return ;
 	temp = realloc(self->buffer, n);
 	if (temp)
 		self->buffer = temp;
@@ -95,7 +95,7 @@ bool	Str_empty(const void *_self)
 /* Extends the string by appending additional characters at the end of
  * its current value.
  */
-void	*Str_append(void *_self, const char* s)
+void	*Str_append(void *_self, const char *s)
 {
 	struct s_Str	*self = _self;
 	size_t			size_s = strlen(s);
@@ -152,7 +152,7 @@ void	swap_Str(void *_self, void *_other)
 
 	swap_size_t(&self->size, &other->size);
 	swap_size_t(&self->capacity, &other->capacity);
-	swap_ptr((void**)&self->buffer, (void**)&other->buffer);
+	swap_ptr((void **)&self->buffer, (void **)&other->buffer);
 }
 
 void	initStr(void)
