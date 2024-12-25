@@ -23,8 +23,8 @@ void tearDown(void) {
 }
 
 void test_ctor(void) {
-	struct s_Rational	*r0 = Rational_from_long(1, 2)
-	struct s_Rational	*r1 = Rational_from_long(3, 4)
+	struct s_Rational	*r0 = Rational_from_long(1, 2);
+	struct s_Rational	*r1 = Rational_from_long(3, 4);
 	struct s_Rational	*r2 = Rational_from_long(5, 6);
 	struct s_Rational	*r3 = Rational_from_long(7, 8);
 	void				*v0 = new(Vec);
@@ -99,8 +99,8 @@ void test_add_scalar(void) {
 
 void test_add_matrix(void) {
 	struct s_Rational	*r00 = Rational_from_long(1, 2);
-	struct s_Rational	*r01 = Rational_from_long(3, 4)
-	struct s_Rational	*r02 = Rational_from_long(5, 6)
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
 	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
@@ -109,8 +109,8 @@ void test_add_matrix(void) {
 
 	struct s_Rational	*r10 = Rational_from_long(1, 1);
 	struct s_Rational	*r11 = Rational_from_long(3, 2);
-	struct s_Rational	*r12 = Rational_from_long(5, 3)
-	struct s_Rational	*r13 = Rational_from_long(7, 4)
+	struct s_Rational	*r12 = Rational_from_long(5, 3);
+	struct s_Rational	*r13 = Rational_from_long(7, 4);
 	void				*v10 = new(Vec);
 	void				*v11 = new(Vec);
 	void				*v1 = new(Vec);
@@ -142,8 +142,8 @@ void test_add_matrix(void) {
 }
 
 void test_sub_scalar(void) {
-	struct s_Rational	*r00 = Rational_from_long(1, 2)
-	struct s_Rational	*r01 = Rational_from_long(3, 4)
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
 	struct s_Rational	*r02 = Rational_from_long(5, 6);
 	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
@@ -167,10 +167,10 @@ void test_sub_scalar(void) {
 }
 
 void test_sub_matrix(void) {
-	struct s_Rational	*r00 = Rational_from_long(1, 2)
-	struct s_Rational	*r01 = Rational_from_long(3, 4)
-	struct s_Rational	*r02 = Rational_from_long(5, 6)
-	struct s_Rational	*r03 = Rational_from_long(7, 8)
+	struct s_Rational	*r00 = Rational_from_long(1, 2);
+	struct s_Rational	*r01 = Rational_from_long(3, 4);
+	struct s_Rational	*r02 = Rational_from_long(5, 6);
+	struct s_Rational	*r03 = Rational_from_long(7, 8);
 	void				*v00 = new(Vec);
 	void				*v01 = new(Vec);
 	void				*v0 = new(Vec);

@@ -398,6 +398,7 @@ static void	*Matrix_pow_Rational(const void *_self, const void *_other)
 			retval = Matrix_mmult(temp, self);
 			delete(temp);
 		}
+		mpz_clear(exponent);
 		return (retval);
 	}
 }
@@ -541,7 +542,7 @@ void	*Matrix_eye(size_t n)
 			for (j = 0; j < n; j++)
 			{
 				retval->data[i * n + j]
-					= new(Rational, RATIONAL, i == j ? 1: 0, 1);
+					= Rational_from_long(i == j ? 1: 0, 1);
 			}
 		}
 	}
@@ -759,7 +760,7 @@ static struct s_Matrix	*LUP_invert(struct s_Matrix *A, size_t *P)
 	{
 		for (i = 0; i < N; i++)
 		{
-			IA->data[i * N + j] = new(Rational, RATIONAL, P[i] == j ? 1 : 0, 1);
+			IA->data[i * N + j] = Rational_from_long(P[i] == j ? 1 : 0, 1);
 
 			for (k = 0; k < i; k++)
 			{
