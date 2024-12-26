@@ -114,10 +114,12 @@ static void	FuncDef_exec(void *_self, void *env)
 		}
 	}
 
+	#ifdef DEBUG
 	/* print input string */
 	s = str(self);
 	printf("%s\n", s);
 	free(s);
+	#endif
 
 	/* print the expr */
 	s = str(self->expr);

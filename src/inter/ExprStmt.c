@@ -36,12 +36,15 @@ static char	*ExprStmt_str(const void *_self)
 static void	ExprStmt_exec(const void *_self, void *env)
 {
 	const struct s_ExprStmt	*self = _self;
-	char					*s = str(self->expr);
 	struct s_Token			*token;
 
+	#ifdef DEBUG
+	char					*s;
 	/* print the expression */
+	s = str(self->expr);
 	printf("%s\n", s);
 	free(s);
+	#endif
 
 	/* evaluate the expression and print result */
 	token = eval(self->expr, env);

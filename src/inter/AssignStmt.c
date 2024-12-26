@@ -67,13 +67,15 @@ static char	*AssignStmt_str(const void *_self)
 static void	AssignStmt_exec(void *_self, void *env)
 {
 	struct s_AssignStmt	*self = _self;
-	char				*s;
 	void				*token;
+	char				*s;
 
+	#ifdef DEBUG
 	/* print input string */
 	s = str(_self);
 	printf("%s\n", s);
 	free(s);
+	#endif
 
 	token = eval(self->expr, env);
 	if (token)

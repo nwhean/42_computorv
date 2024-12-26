@@ -73,6 +73,10 @@ LIBOOP_PATH	= ./liboop
 
 all: $(NAME)
 
+debug: fclean
+debug: CFLAGS += -DDEBUG
+debug: $(NAME)
+
 $(NAME): $(LIBOOP_PATH)/liboop.a $(LIBCOMP) $(MAIN)
 	$(CC) $(CFLAGS) -o $(NAME) $(MAIN) $(LDFLAGS) $(LDLIBS)
 
