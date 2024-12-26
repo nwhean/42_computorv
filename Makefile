@@ -41,7 +41,6 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 				MatExpr.c \
 				Node.c \
 				Op.c \
-				Seq.c \
 				Stmt.c \
 				Unary.c \
 				VecExpr.c \
@@ -75,7 +74,6 @@ LIBOOP_PATH	= ./liboop
 all: $(NAME)
 
 $(NAME): $(LIBOOP_PATH)/liboop.a $(LIBCOMP) $(MAIN)
-	clear
 	$(CC) $(CFLAGS) -o $(NAME) $(MAIN) $(LDFLAGS) $(LDLIBS)
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c

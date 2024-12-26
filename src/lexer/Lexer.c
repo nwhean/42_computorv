@@ -68,7 +68,7 @@ static struct s_Token	*generate_numeric(void *_self, mpz_t n, mpz_t d)
 		return (new(Rational, RATIONAL, n, d));
 }
 
-/* Scan the input in return a Tokon object. */
+/* Scan the input in return a Token object. */
 struct s_Token	*Lexer_scan(void *_self)
 {
 	struct s_Lexer	*self = _self;
@@ -112,7 +112,7 @@ struct s_Token	*Lexer_scan(void *_self)
 		numeric = generate_numeric(self, val, d);
 		mpz_clear(val);
 		mpz_clear(d);
-		return numeric;
+		return (numeric);
 	}
 
 	/* handle words */

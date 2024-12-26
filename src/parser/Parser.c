@@ -19,7 +19,6 @@
 #include "ExprStmt.h"
 #include "Id.h"
 #include "MatExpr.h"
-#include "Seq.h"
 #include "Stmt.h"
 #include "Unary.h"
 #include "VecExpr.h"
@@ -43,7 +42,6 @@ const void	*Parser;
 const void	*ParserClass;
 
 static void				move(void *_self);
-static struct s_Stmt	*stmts(void *_self);
 static struct s_Stmt	*stmt(void *_self);
 static struct s_Expr	*expr(void *_self);
 static struct s_Expr	*term(void *_self);
@@ -91,11 +89,15 @@ static void	move(void *_self)
 void	Parser_program(void *_self)
 {
 	struct s_Parser		*self = _self;
-	void				*x = stmts(self);	/* Seq */
+	void				*x;
 
-	if (x)
-		exec(x, self->top);
-	delete(x);
+	while (true)
+	{
+		x = stmt(self);
+		if (x)
+			exec(x, self->top);
+		delete(x);
+	}
 }
 
 /* Compares 't' with the lookahead symbol, and advances to the next input. */
@@ -113,27 +115,6 @@ static bool	match(void *_self, int t)
 	return (false);
 }
 
-/* <stmts>		::= <stmts_tail>
- * <stmts_tail>	::= <stmt> <stmts_tail> | epsilon
- */
-static struct s_Stmt	*stmts(void *_self)
-{
-	struct s_Parser	*self = _self;
-	struct s_Stmt	*x;
-
-	if (self->look->tag == EOF)
-		return (NULL);
-	x = stmt(self);
-	return new(Seq, x, stmts(self));
-}
-
-/* <stmt>			::= <stmt_type> '\n'
- * <stmt_type>		::= <null_stmt> | <expr_stmt> | <assign_stmt>
- * <null_stmt>		::= epsilon
- * <expr_stmt>		::= <expr> | <expr> '=' '?'
- * <assign_stmt>	::= <assign_lhs> '=' <expr>
- * <assign_lhs>		::= <id> | <func>
- */
 static struct s_Stmt	*stmt(void *_self)
 {
 	struct s_Parser	*self = _self;
@@ -144,6 +125,7 @@ static struct s_Stmt	*stmt(void *_self)
 
 	if (self->look->tag == '\n')	/* null statement */
 	{
+		/* printf("NULL statement\n"); */
 		move(self);
 		return (NULL);
 	}
@@ -153,6 +135,7 @@ static struct s_Stmt	*stmt(void *_self)
 	switch (self->look->tag)
 	{
 		case '\n':
+			/* printf("Expression statement\n"); */
 			retval = new(ExprStmt, lhs);
 			break ;
 
@@ -178,8 +161,8 @@ static struct s_Stmt	*stmt(void *_self)
 			delete(lhs);
 			delete(rhs);
 	}
-	if (retval)
-		match(self, '\n');
+	/* if (retval)
+		match(self, '\n'); */
 	return (retval);
 }
 

@@ -101,12 +101,6 @@ classDiagram
 	Expr <|-- Id
 
 	Expr <|-- Op
-	Stmt <|-- Seq
-
-	class Seq {
-		+Stmt stmt1
-		+Stmt stmt2
-	}
 
 	Node <|-- Stmt
 

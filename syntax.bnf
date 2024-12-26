@@ -1,6 +1,3 @@
-<stmts>			::= <stmts_tail>
-<stmts_tail>	::= <stmt> <stmts_tail> | epsilon
-
 <stmt>			::= <stmt_type> '\n'
 <stmt_type>		::= <null_stmt> | <expr_stmt> | <assign_stmt>
 <null_stmt>		::= epsilon

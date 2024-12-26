@@ -19,7 +19,6 @@
 #include "MatExpr.h"
 #include "Node.h"
 #include "Op.h"
-#include "Seq.h"
 #include "Stmt.h"
 #include "Unary.h"
 #include "VecExpr.h"
@@ -59,7 +58,6 @@ void	init_inter(void)
 	initMatExpr();
 	initNode();
 	initOp();
-	initSeq();
 	initStmt();
 	initUnary();
 	initVecExpr();
