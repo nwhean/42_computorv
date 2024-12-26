@@ -11,7 +11,7 @@ INCLUDE	=	-Iinclude \
 LDFLAGS	=	-L. -Lliboop
 LDLIBS	=	-lcomputorv -loop -lm -lgmp
 MAIN	=	main.c
-NAME	=	a.out
+NAME	=	computorv2
 LIBCOMP	=	libcomputorv.a
 
 # source and object files

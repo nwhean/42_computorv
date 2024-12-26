@@ -3,6 +3,7 @@
 
 # executable
 *.out
+computorv2
 
 # object files
 *.o
