@@ -169,6 +169,27 @@ void test_pow(void) {
 	delete(target);
 }
 
+void test_pow_zero(void) {
+	struct s_Rational	*a = Rational_from_long(1, 2);
+	struct s_Rational	*b = Rational_from_double(__FLT_EPSILON__);
+	struct s_Rational	*target = numeric_pow(a, b);
+	double				val = Rational_to_double(target);
+	TEST_ASSERT_FLOAT_WITHIN(1e-15, 1.0, val);
+	delete(a);
+	delete(b);
+	delete(target);
+}
+
+void test_pow_undefined(void) {
+	struct s_Rational	*a = Rational_from_long(0, 1);
+	struct s_Rational	*b = Rational_from_double(__FLT_EPSILON__);
+	struct s_Rational	*target = numeric_pow(a, b);
+	TEST_ASSERT_NULL(target);
+	delete(a);
+	delete(b);
+	delete(target);
+}
+
 void test_pow_neg_to_non_integer(void) {
 	struct s_Rational	*a = Rational_from_long((long)-1, 2);
 	struct s_Rational	*b = Rational_from_long(21, 10);
@@ -301,6 +322,26 @@ void test_promote_matrix(void) {
 	delete(target);
 }
 
+void test_iszero(void) {
+	struct s_Rational	*a = Rational_from_long(1, 1);
+	struct s_Rational	*b = Rational_from_long(0, 1);
+	struct s_Rational	*c = Rational_from_double(1.0);
+	struct s_Rational	*d = Rational_from_double(0.0);
+	struct s_Rational	*e = Rational_from_double(__FLT_EPSILON__);
+
+	TEST_ASSERT_FALSE(Rational_iszero(a));
+	TEST_ASSERT_TRUE(Rational_iszero(b));
+	TEST_ASSERT_FALSE(Rational_iszero(c));
+	TEST_ASSERT_TRUE(Rational_iszero(d));
+	TEST_ASSERT_TRUE(Rational_iszero(e));
+
+	delete(a);
+	delete(b);
+	delete(c);
+	delete(d);
+	delete(e);
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
@@ -317,6 +358,8 @@ int main(void) {
 	RUN_TEST(test_mod2);
 	RUN_TEST(test_neg);
 	RUN_TEST(test_pow);
+	RUN_TEST(test_pow_zero);
+	RUN_TEST(test_pow_undefined);
 	RUN_TEST(test_pow_neg_to_non_integer);
 	RUN_TEST(test_equal);
 	RUN_TEST(test_neq);
@@ -328,5 +371,6 @@ int main(void) {
 	RUN_TEST(test_promote_complex);
 	RUN_TEST(test_promote_vector);
 	RUN_TEST(test_promote_matrix);
+	RUN_TEST(test_iszero);
 	return UNITY_END();
 }

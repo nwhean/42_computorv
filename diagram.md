@@ -142,6 +142,7 @@ classDiagram
 		+Rational_gt(Rational a, Rational b) bool;
 		+Rational_le(Rational a, Rational b) bool;
 		+Rational_ge(Rational a, Rational b) bool;
+		+Rational_iszero() bool;
 	}
 
 	Numeric <|-- Complex

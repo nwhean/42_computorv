@@ -9,6 +9,7 @@
 struct s_Rational	/* Rational: Numeric */
 {
 	const struct s_Numeric	_;
+	void					*indeterminates;	/* Vec*/
 	mpz_t					numerator;
 	mpz_t					denominator;
 };
@@ -28,6 +29,7 @@ bool	Rational_le(const struct s_Rational *a, const struct s_Rational *b);
 bool	Rational_ge(const struct s_Rational *a, const struct s_Rational *b);
 
 /* operations */
+bool	Rational_iszero(const void *self);
 void	*Rational_invert(const void *self);
 void	*Rational_canonicalise(void *self);
 

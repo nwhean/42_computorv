@@ -136,7 +136,7 @@ static void	*Rational_add_Rational(const void *_self, const void *_other)
 	mpz_mul(den, lhs->denominator, rhs->denominator);	/* bd */
 
 	/* put a hard limit on the size of the integers */
-	while(mpz_sizeinbase(num, 2) > 512 || mpz_sizeinbase(den, 2) > 512)
+	while (mpz_sizeinbase(num, 2) > 512 || mpz_sizeinbase(den, 2) > 512)
 	{
 		mpz_div_ui(num, num, 2);
 		mpz_div_ui(den, den, 2);
@@ -183,7 +183,7 @@ static void	*Rational_sub_Rational(const void *_self, const void *_other)
 	mpz_mul(den, lhs->denominator, rhs->denominator);	/* bd */
 
 	/* put a hard limit on the size of the integers */
-	while(mpz_sizeinbase(num, 2) > 512 || mpz_sizeinbase(den, 2) > 512)
+	while (mpz_sizeinbase(num, 2) > 512 || mpz_sizeinbase(den, 2) > 512)
 	{
 		mpz_div_ui(num, num, 2);
 		mpz_div_ui(den, den, 2);
@@ -232,7 +232,7 @@ static void	*Rational_mul_Rational(const void *_self, const void *_other)
 	mpz_mul(den, lhs->denominator, rhs->denominator);	/* bd */
 
 	/* put a hard limit on the size of the integers */
-	while(mpz_sizeinbase(num, 2) > 512 || mpz_sizeinbase(den, 2) > 512)
+	while (mpz_sizeinbase(num, 2) > 512 || mpz_sizeinbase(den, 2) > 512)
 	{
 		mpz_div_ui(num, num, 2);
 		mpz_div_ui(den, den, 2);
@@ -278,7 +278,7 @@ static void	*Rational_div_Rational(const void *_self, const void *_other)
 	mpz_mul(den, lhs->denominator, rhs->numerator);		/* bc */
 
 	/* put a hard limit on the size of the integers */
-	while(mpz_sizeinbase(num, 2) > 512 || mpz_sizeinbase(den, 2) > 512)
+	while (mpz_sizeinbase(num, 2) > 512 || mpz_sizeinbase(den, 2) > 512)
 	{
 		mpz_div_ui(num, num, 2);
 		mpz_div_ui(den, den, 2);
@@ -397,6 +397,18 @@ static void	*Rational_pow_Rational(const void *_self, const void *_other)
 	void					*cpy = NULL;
 	void					*retval = NULL;
 	void					*retval_frac = NULL;
+
+	/* edge cases */
+	if (Rational_iszero(other))
+	{
+		if (Rational_iszero(self))	/* edge case: 0^0 */
+		{
+			fprintf(stderr, "%s\n", "0^0 is undefined.");
+			return (NULL);
+		}
+		else
+			return (Rational_from_long(1, 1));
+	}
 
 	/* initialise values */
 	mpz_init_set(a, self->numerator);
@@ -620,13 +632,23 @@ void	initRational(void)
 	}
 }
 
+/* Return true of Rational is nearly equal to zero */
+bool	Rational_iszero(const void *_self)
+{
+	const struct s_Rational	*self = _self;
+
+	if (mpz_cmp_ui(self->numerator, 0) == 0)
+		return (true);
+	return (fabs(Rational_to_double(self)) <= __FLT_EPSILON__);
+}
+
 /* Return the inverse of a Rational */
 void	*Rational_invert(const void *_self)
 {
 	const struct s_Rational	*self = _self;
 
-	if (mpz_cmp_ui(self->numerator, 0) == 0)
-		return (copy(self));
+	if (Rational_iszero(self))
+		return (Rational_from_long(0, 1));
 	return (new(Rational, RATIONAL, self->denominator, self->numerator));
 }
 
