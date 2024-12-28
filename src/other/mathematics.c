@@ -836,7 +836,7 @@ void	*ft_sqrt_Rational(struct s_Rational *x)
 	struct s_Rational	*half = Rational_from_double(0.5);
 	struct s_Rational	*retval;
 
-	if (Rational_iszero(x))
+	if (numeric_iszero(x))
 		retval = Rational_from_long(0, 1);
 	else
 		retval = numeric_pow(x, half);
@@ -853,7 +853,7 @@ struct s_Complex	*ft_sqrt_Complex(struct s_Complex *_x)
 	void				*x = NULL;
 	void				*retval;
 
-	if (Rational_iszero(imag))	/* real number */
+	if (numeric_iszero(imag))	/* real number */
 	{
 		x = Complex_real(_x);
 		retval = ft_sqrt_Rational(x);

@@ -142,7 +142,6 @@ classDiagram
 		+Rational_gt(Rational a, Rational b) bool;
 		+Rational_le(Rational a, Rational b) bool;
 		+Rational_ge(Rational a, Rational b) bool;
-		+Rational_iszero() bool;
 	}
 
 	Numeric <|-- Complex
@@ -190,6 +189,7 @@ classDiagram
 		+numeric_equal(Numeric) bool
 		+numeric_promote(Tag tag) Numeric
 		+numeric_ipromote(&Numeric, Tag tag) Numeric
+		+numeric_iszero() bool;
 	}
 
 	class Tag {

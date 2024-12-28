@@ -25,6 +25,7 @@ struct	s_NumericClass	/* NumericClass: TokenClass */
 	struct s_Numeric			*(*neg)(const void *self);
 	struct s_Numeric			*(*pow)(const void *self, const void *other);
 	struct s_Numeric			*(*promote)(const void *self, enum e_Tag tag);
+	bool						*(*iszero)(const void *self);
 };
 
 extern const void	*NumericClass;
@@ -47,6 +48,7 @@ void				*numeric_ipow(void **self, const void *other);
 bool				numeric_equal(const void *self, const void *other);
 void				*numeric_promote(const void *self, enum e_Tag tag);
 void				*numeric_ipromote(void **self, enum e_Tag tag);
+bool				numeric_iszero(const void *self);
 
 void				initNumeric(void);
 bool				numeric_is(enum e_Tag tag);

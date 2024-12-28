@@ -270,8 +270,8 @@ void test_iszero(void) {
 								Rational_from_long(0, 1),
 								Rational_from_long(0, 1));
 
-	TEST_ASSERT_FALSE(Complex_iszero(a));
-	TEST_ASSERT_TRUE(Complex_iszero(b));
+	TEST_ASSERT_FALSE(numeric_iszero(a));
+	TEST_ASSERT_TRUE(numeric_iszero(b));
 	delete(a);
 	delete(b);
 }

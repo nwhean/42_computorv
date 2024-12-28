@@ -338,6 +338,21 @@ void	*numeric_ipromote(void **self, enum e_Tag tag)
 	return (retval);
 }
 
+/* Return true if Numeric is zero, false otherwise. */
+bool	numeric_iszero(const void *self)
+{
+	const struct s_NumericClass *const	*cp = self;
+
+	if (self && *cp)
+	{
+		if ((*cp)->iszero)
+			return ((*cp)->iszero(self));
+		else
+			fprintf(stderr, "%s\n", "'iszero' undefined for input type");
+	}
+	return (NULL);
+}
+
 /* NumericClass constructor method. */
 static void	*NumericClass_ctor(void *_self, va_list *app)
 {
@@ -376,6 +391,8 @@ static void	*NumericClass_ctor(void *_self, va_list *app)
 			*(voidf *)&self->pow = method;
 		else if (selector == (voidf)numeric_promote)
 			*(voidf *)&self->promote = method;
+		else if (selector == (voidf)numeric_iszero)
+			*(voidf *)&self->iszero = method;
 		#pragma GCC diagnostic pop
 	}
 	return (self);

@@ -329,11 +329,11 @@ void test_iszero(void) {
 	struct s_Rational	*d = Rational_from_double(0.0);
 	struct s_Rational	*e = Rational_from_double(__FLT_EPSILON__);
 
-	TEST_ASSERT_FALSE(Rational_iszero(a));
-	TEST_ASSERT_TRUE(Rational_iszero(b));
-	TEST_ASSERT_FALSE(Rational_iszero(c));
-	TEST_ASSERT_TRUE(Rational_iszero(d));
-	TEST_ASSERT_TRUE(Rational_iszero(e));
+	TEST_ASSERT_FALSE(numeric_iszero(a));
+	TEST_ASSERT_TRUE(numeric_iszero(b));
+	TEST_ASSERT_FALSE(numeric_iszero(c));
+	TEST_ASSERT_TRUE(numeric_iszero(d));
+	TEST_ASSERT_TRUE(numeric_iszero(e));
 
 	delete(a);
 	delete(b);

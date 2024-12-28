@@ -277,9 +277,9 @@ static void	*Complex_pow_Rational(const void *_self, const void *_other)
 	void					*retval;
 
 	/* edge cases */
-	if (Rational_iszero(other))
+	if (numeric_iszero(_other))
 	{
-		if (Complex_iszero(self))	/* edge case: 0^0 */
+		if (numeric_iszero(self))	/* edge case: 0^0 */
 		{
 			fprintf(stderr, "%s\n", "0^0 is undefined.");
 			return (NULL);
@@ -321,9 +321,9 @@ static void	*Complex_pow_Complex(const void *_self, const void *_other)
 	void					*retval;
 
 	/* edge cases */
-	if (Complex_iszero(other))
+	if (numeric_iszero(_other))
 	{
-		if (Complex_iszero(self))	/* edge case: 0^0 */
+		if (numeric_iszero(self))	/* edge case: 0^0 */
 		{
 			fprintf(stderr, "%s\n", "0^0 is undefined.");
 			return (NULL);
@@ -424,6 +424,14 @@ static void	*Complex_promote(const void *_self, enum e_Tag tag)
 	};
 }
 
+/* Return true if the input is equal to zero. */
+static bool	Complex_iszero(const void *_self)
+{
+	const struct s_Complex	*self = _self;
+
+	return (numeric_iszero(self->real) && numeric_iszero(self->imag));
+}
+
 void	initComplex(void)
 {
 	initNumeric();
@@ -443,6 +451,7 @@ void	initComplex(void)
 				numeric_neg, Complex_neg,
 				numeric_pow, Complex_pow,
 				numeric_promote, Complex_promote,
+				numeric_iszero, Complex_iszero,
 				0);
 		initStr();
 		initVec();
@@ -450,14 +459,6 @@ void	initComplex(void)
 		initVector();
 		initMatrix();
 	}
-}
-
-/* Return true if the input is equal to zero. */
-bool	Complex_iszero(const void *_self)
-{
-	const struct s_Complex	*self = _self;
-
-	return (Rational_iszero(self->real) && Rational_iszero(self->imag));
 }
 
 /* Return the real part of a Complex number. */

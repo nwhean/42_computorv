@@ -16,7 +16,6 @@ extern const void	*Complex;	/* new(Complex, COMPLEX, Rational, Rational); */
 struct s_Complex	*Complex_from_polar(const void *mod, const void *arg);
 
 void	initComplex(void);
-bool				Complex_iszero(const void *self);
 struct s_Rational	*Complex_real(const struct s_Complex *self);
 struct s_Rational	*Complex_imag(const struct s_Complex *self);
 struct s_Rational	*Complex_modulus(const struct s_Complex *self);

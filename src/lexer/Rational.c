@@ -399,9 +399,9 @@ static void	*Rational_pow_Rational(const void *_self, const void *_other)
 	void					*retval_frac = NULL;
 
 	/* edge cases */
-	if (Rational_iszero(other))
+	if (numeric_iszero(other))
 	{
-		if (Rational_iszero(self))	/* edge case: 0^0 */
+		if (numeric_iszero(self))	/* edge case: 0^0 */
 		{
 			fprintf(stderr, "%s\n", "0^0 is undefined.");
 			return (NULL);
@@ -604,6 +604,17 @@ static void	*Rational_promote(const void *_self, enum e_Tag tag)
 	};
 }
 
+/* Return true of Rational is nearly equal to zero */
+static bool	Rational_iszero(const void *_self)
+{
+	const struct s_Rational	*self = _self;
+
+	if (mpz_cmp_ui(self->numerator, 0) == 0
+		|| (fabs(Rational_to_double(self)) <= __FLT_EPSILON__))
+		return (true);
+	return (false);
+}
+
 void	initRational(void)
 {
 	if (!Rational)
@@ -624,6 +635,7 @@ void	initRational(void)
 				numeric_neg, Rational_neg,
 				numeric_pow, Rational_pow,
 				numeric_promote, Rational_promote,
+				numeric_iszero, Rational_iszero,
 				0);
 		initVec();
 		initComplex();
@@ -632,22 +644,12 @@ void	initRational(void)
 	}
 }
 
-/* Return true of Rational is nearly equal to zero */
-bool	Rational_iszero(const void *_self)
-{
-	const struct s_Rational	*self = _self;
-
-	if (mpz_cmp_ui(self->numerator, 0) == 0)
-		return (true);
-	return (fabs(Rational_to_double(self)) <= __FLT_EPSILON__);
-}
-
 /* Return the inverse of a Rational */
 void	*Rational_invert(const void *_self)
 {
 	const struct s_Rational	*self = _self;
 
-	if (Rational_iszero(self))
+	if (numeric_iszero(self))
 		return (Rational_from_long(0, 1));
 	return (new(Rational, RATIONAL, self->denominator, self->numerator));
 }
