@@ -751,6 +751,40 @@ void test_promote_matrix(void) {
 	delete(target);
 }
 
+void test_iszero(void) {
+	struct s_Rational	*r0 = Rational_from_long(0, 1);
+	struct s_Rational	*r1 = Rational_from_long(1, 1);
+	void				*v00 = new(Vec);
+	void				*v01 = new(Vec);
+	void				*v0 = new(Vec);
+	struct s_Matrix		*m0;
+
+	void				*v10 = new(Vec);
+	void				*v11 = new(Vec);
+	void				*v1 = new(Vec);
+	struct s_Matrix		*m1;
+
+	Vec_push_back(v00, r0);
+	Vec_push_back(v00, copy(r0));
+	Vec_push_back(v01, r1);
+	Vec_push_back(v01, copy(r0));
+	Vec_push_back(v0, v00);
+	Vec_push_back(v0, v01);
+	m0 = new(Matrix, MATRIX, v0);
+	TEST_ASSERT_FALSE(numeric_iszero(m0));
+
+	Vec_push_back(v10, copy(r0));
+	Vec_push_back(v10, copy(r0));
+	Vec_push_back(v11, copy(r0));
+	Vec_push_back(v11, copy(r0));
+	Vec_push_back(v1, v10);
+	Vec_push_back(v1, v11);
+	m1 = new(Matrix, MATRIX, v1);
+	TEST_ASSERT_TRUE(numeric_iszero(m1));
+	delete(m0);
+	delete(m1);
+}
+
 void test_eye(void) {
 	struct s_Rational	*r00 = Rational_from_long(1, 1);
 	struct s_Rational	*r01 = Rational_from_long(0, 1);
@@ -1057,6 +1091,7 @@ int main(void) {
 	RUN_TEST(test_promote_complex);
 	RUN_TEST(test_promote_vector);
 	RUN_TEST(test_promote_matrix);
+	RUN_TEST(test_iszero);
 	RUN_TEST(test_eye);
 	RUN_TEST(test_mmul);
 	RUN_TEST(test_transpose);

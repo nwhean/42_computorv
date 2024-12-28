@@ -468,6 +468,24 @@ static void	*Matrix_promote(const void *_self, enum e_Tag tag)
 	};
 }
 
+/* Return true if all entries of the Matrix is zero. */
+static bool	Matrix_iszero(const void *_self)
+{
+	const struct s_Matrix	*self = _self;
+	size_t					i;
+	size_t					j;
+
+	for (i = 0; i < self->rows; ++i)
+	{
+		for (j = 0; j < self->cols; ++j)
+		{
+			if (!numeric_iszero(Matrix_at(self, i, j)))
+				return (false);
+		}
+	}
+	return (true);
+}
+
 void	initMatrix(void)
 {
 	initNumeric();
@@ -489,6 +507,7 @@ void	initMatrix(void)
 				numeric_neg, Matrix_neg,
 				numeric_pow, Matrix_pow,
 				numeric_promote, Matrix_promote,
+				numeric_iszero, Matrix_iszero,
 				0);
 		initStr();
 		initVec();
