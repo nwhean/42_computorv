@@ -302,6 +302,20 @@ static void	*Vector_promote(const void *_self, enum e_Tag tag)
 	};
 }
 
+/* Return true if all entries of the vector is zero. */
+static bool	Vector_iszero(const void *_self)
+{
+	const struct s_Vector	*self = _self;
+	size_t	i;
+
+	for (i = 0; i < self->size; ++i)
+	{
+		if (!numeric_iszero(Vector_at(self, i)))
+			return (false);
+	}
+	return (true);
+}
+
 void	initVector(void)
 {
 	initNumeric();
@@ -321,6 +335,7 @@ void	initVector(void)
 				numeric_mod, Vector_mod,
 				numeric_neg, Vector_neg,
 				numeric_promote, Vector_promote,
+				numeric_iszero, Vector_iszero,
 				0);
 		initStr();
 		initVec();

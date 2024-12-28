@@ -428,6 +428,38 @@ void test_promote_matrix(void) {
 	delete(target);
 }
 
+void test_iszero(void) {
+	struct s_Complex	*val1 = Rational_from_long(1, 2);
+	struct s_Complex	*val2 = Rational_from_long(0, 1);
+	void				*a;
+	void				*b;
+	void				*c;
+	void				*d;
+
+	a = new(Vector, VECTOR, 1);
+	Vector_update(a, 0, val1);
+	TEST_ASSERT_FALSE(numeric_iszero(a));
+
+	b = new(Vector, VECTOR, 1);
+	Vector_update(b, 0, val2);
+	TEST_ASSERT_TRUE(numeric_iszero(b));
+
+	c = new(Vector, VECTOR, 2);
+	Vector_update(c, 0, copy(val1));
+	Vector_update(c, 1, copy(val2));
+	TEST_ASSERT_FALSE(numeric_iszero(c));
+
+	d = new(Vector, VECTOR, 2);
+	Vector_update(d, 0, copy(val2));
+	Vector_update(d, 1, copy(val2));
+	TEST_ASSERT_TRUE(numeric_iszero(d));
+
+	delete(a);
+	delete(b);
+	delete(c);
+	delete(d);
+}
+
 void test_conjugate_rational(void) {
 	struct s_Rational	*r0 = Rational_from_long(1, 2);
 	struct s_Rational	*r1 = Rational_from_long(3, 4);
@@ -610,6 +642,7 @@ int main(void) {
 	RUN_TEST(test_promote_complex);
 	RUN_TEST(test_promote_vector);
 	RUN_TEST(test_promote_matrix);
+	RUN_TEST(test_iszero);
 	RUN_TEST(test_conjugate_rational);
 	RUN_TEST(test_conjugate_complex);
 	RUN_TEST(test_cross);
