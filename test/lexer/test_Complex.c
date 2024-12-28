@@ -152,6 +152,37 @@ void test_pow_complex(void) {
 	delete(target);
 }
 
+void test_pow_zero(void) {
+	struct s_Complex	*a = new(Complex, COMPLEX,
+								Rational_from_long((long)1, (long)2),
+								Rational_from_long((long)3, (long)4));
+	struct s_Complex	*b = new(Complex, COMPLEX,
+								Rational_from_long((long)0, (long)1),
+								Rational_from_long((long)0, (long)1));
+	struct s_Complex	*target = numeric_pow(a, b);
+	double				real = Rational_to_double(target->real);
+	double				imag = Rational_to_double(target->imag);
+	TEST_ASSERT_FLOAT_WITHIN(1e-15, 1, real);
+	TEST_ASSERT_FLOAT_WITHIN(1e-15, 0, imag);
+	delete(a);
+	delete(b);
+	delete(target);
+}
+
+void test_pow_undefined(void) {
+	struct s_Complex	*a = new(Complex, COMPLEX,
+								Rational_from_long((long)0, (long)1),
+								Rational_from_long((long)0, (long)1));
+	struct s_Complex	*b = new(Complex, COMPLEX,
+								Rational_from_long((long)0, (long)1),
+								Rational_from_long((long)0, (long)1));
+	struct s_Complex	*target = numeric_pow(a, b);
+	TEST_ASSERT_NULL(target);
+	delete(a);
+	delete(b);
+	delete(target);
+}
+
 void test_equal_true(void) {
 	struct s_Complex	*a = new(Complex, COMPLEX,
 								Rational_from_long((long)1, (long)2),
@@ -231,6 +262,20 @@ void test_promote_matrix(void) {
 	delete(target);
 }
 
+void test_iszero(void) {
+	struct s_Complex	*a = new(Complex, COMPLEX,
+								Rational_from_long(1, 2),
+								Rational_from_long(3, 4));
+	struct s_Complex	*b = new(Complex, COMPLEX,
+								Rational_from_long(0, 1),
+								Rational_from_long(0, 1));
+
+	TEST_ASSERT_FALSE(Complex_iszero(a));
+	TEST_ASSERT_TRUE(Complex_iszero(b));
+	delete(a);
+	delete(b);
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
@@ -242,11 +287,14 @@ int main(void) {
 	RUN_TEST(test_neg);
 	RUN_TEST(test_pow_rational);
 	RUN_TEST(test_pow_complex);
+	RUN_TEST(test_pow_zero);
+	RUN_TEST(test_pow_undefined);
 	RUN_TEST(test_equal_true);
 	RUN_TEST(test_equal_false);
 	RUN_TEST(test_promote_rational);
 	RUN_TEST(test_promote_complex);
 	RUN_TEST(test_promote_vector);
 	RUN_TEST(test_promote_matrix);
+	RUN_TEST(test_iszero);
 	return UNITY_END();
 }

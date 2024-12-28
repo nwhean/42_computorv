@@ -276,6 +276,21 @@ static void	*Complex_pow_Rational(const void *_self, const void *_other)
 	void					*argument;
 	void					*retval;
 
+	/* edge cases */
+	if (Rational_iszero(other))
+	{
+		if (Complex_iszero(self))	/* edge case: 0^0 */
+		{
+			fprintf(stderr, "%s\n", "0^0 is undefined.");
+			return (NULL);
+		}
+		else
+		{
+			retval = Rational_from_long(1, 1);
+			return (numeric_ipromote(&retval, COMPLEX));
+		}
+	}
+
 	modulus = Complex_modulus(self);
 	argument = Complex_argument(self);
 	modulus = numeric_ipow(&modulus, other);
@@ -298,14 +313,34 @@ static void	*Complex_pow_Complex(const void *_self, const void *_other)
 {
 	const struct s_Complex	*self = _self;
 	const struct s_Complex	*other = _other;
-	struct s_Rational		*modulus = Complex_modulus(self);		/* r */
-	struct s_Rational		*log_modulus = ft_ln_Rational(modulus); /* ln(r) */
-	struct s_Complex		*a = new(Complex, COMPLEX,
-									log_modulus,
-									Complex_argument(self));	/* ln(r) + ix */
-	struct s_Complex		*mul = numeric_mul(a, other);
-	struct s_Rational		*modulus_new = ft_exp_Rational(mul->real);
+	struct s_Rational		*modulus;
+	struct s_Rational		*log_modulus;
+	struct s_Complex		*a;
+	struct s_Complex		*mul;
+	struct s_Rational		*modulus_new;
 	void					*retval;
+
+	/* edge cases */
+	if (Complex_iszero(other))
+	{
+		if (Complex_iszero(self))	/* edge case: 0^0 */
+		{
+			fprintf(stderr, "%s\n", "0^0 is undefined.");
+			return (NULL);
+		}
+		else
+		{
+			retval = Rational_from_long(1, 1);
+			return (numeric_ipromote(&retval, COMPLEX));
+		}
+	}
+
+	modulus = Complex_modulus(self);		/* r */
+	log_modulus = ft_ln_Rational(modulus);	/* ln(r) */
+	a = new(Complex, COMPLEX,
+			log_modulus, Complex_argument(self));	/* ln(r) + ix */
+	mul = numeric_mul(a, other);
+	modulus_new = ft_exp_Rational(mul->real);
 
 	retval = Complex_from_polar(modulus_new, mul->imag);
 	delete(modulus);
@@ -415,6 +450,14 @@ void	initComplex(void)
 		initVector();
 		initMatrix();
 	}
+}
+
+/* Return true if the input is equal to zero. */
+bool	Complex_iszero(const void *_self)
+{
+	const struct s_Complex	*self = _self;
+
+	return (Rational_iszero(self->real) && Rational_iszero(self->imag));
 }
 
 /* Return the real part of a Complex number. */
