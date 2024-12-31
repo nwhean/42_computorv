@@ -14,6 +14,7 @@ enum e_Tag {
 	COMPLEX,	/* Complex number */
 	VECTOR,		/* Vector of Complex or Rational numbers */
 	MATRIX,		/* Matrix */
+	POLYNOMIAL,	/* Polynomial */
 	ID,			/* Identifier */
 	FUNCTION,	/* Function */
 	BUILTIN		/* Built-in functions*/

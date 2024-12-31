@@ -242,6 +242,16 @@ classDiagram
 		+Matrix_at(size_t m, size_t n) Numeric
 	}
 
+	Numeric <|-- Polynomial
+
+	class Polynomial {
+		+Vec~Numeric~ coeffs
+		+Polynomial_size() size_t
+		+Polynomial_at(size_t n) Numeric
+		+Polynomial_update(size_t n, Numeric val) void
+		+Polynomial_simplify() void
+	}
+
 
 	%% parser
 

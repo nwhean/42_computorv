@@ -139,9 +139,9 @@ void	*Vec_at(const void *_self, size_t n)
 {
 	const struct s_Vec	*self = _self;
 
-	if (n > self->size)
-		return (NULL);
-	return ((void *)(self->data[n]));
+	if (n < self->size)
+		return ((void *)(self->data[n]));
+	return (NULL);
 }
 
 /* Returns a reference to the first element in the vector. */

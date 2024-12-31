@@ -26,6 +26,7 @@
 /* lexer */
 #include "Complex.h"
 #include "Lexer.h"
+#include "Polynomial.h"
 #include "Rational.h"
 #include "Token.h"
 #include "Vector.h"
@@ -67,6 +68,7 @@ void	init_lexer(void)
 {
 	initComplex();
 	initLexer();
+	initPolynomial();
 	initRational();
 	initToken();
 	initVector();

@@ -50,6 +50,7 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 				Lexer.c \
 				Matrix.c \
 				Numeric.c \
+				Polynomial.c \
 				Rational.c \
 				Token.c \
 				Vector.c \
