@@ -433,7 +433,11 @@ void	initNumeric(void)
 
 bool	numeric_is(enum e_Tag tag)
 {
-	if (tag == RATIONAL || tag == COMPLEX || tag == VECTOR || tag == MATRIX)
+	if (tag == RATIONAL
+		|| tag == COMPLEX
+		|| tag == VECTOR
+		|| tag == MATRIX
+		|| tag == POLYNOMIAL)
 		return true;
 	return false;
 }

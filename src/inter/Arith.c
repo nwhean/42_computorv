@@ -120,9 +120,60 @@ static struct s_Token	*Arith_eval(const void *_self, void *env)
 }
 
 /* Convert Expr to a Polynomial */
-static struct s_Token	*Arith_to_polynomial(const void *self, void *env)
+static struct s_Token	*Arith_to_polynomial(const void *_self, void *env)
 {
-	return (super_to_polynomial(Arith, self, env));
+	const struct s_Arith	*self = _self;
+	const struct s_Token	*op = get_op(self);
+	void					*expr1;
+	void					*expr2;
+	void					*retval;
+
+	if (numeric_is(get_tag(self->expr1)))
+		expr1 = eval(self->expr1, env);
+	else
+		expr1 = to_polynomial(self->expr1, env);
+
+	if (numeric_is(get_tag(self->expr2)))
+		expr2 = eval(self->expr2, env);
+	else
+		expr2 = to_polynomial(self->expr2, env);
+
+	/* return NULL if either of the expression is NULL */
+	if (!expr1 || !expr2)
+	{
+		delete(expr1);
+		delete(expr2);
+		return (NULL);
+	}
+
+	switch (op->tag)
+	{
+		case '+':
+			retval = numeric_add(expr1, expr2);
+			break ;
+		case '-':
+			retval = numeric_sub(expr1, expr2);
+			break ;
+		case '*':
+			retval = numeric_mul(expr1, expr2);
+			break ;
+		case MMULT:
+			retval = numeric_mmult(expr1, expr2);
+			break ;
+		case '/':
+			retval = numeric_div(expr1, expr2);
+			break ;
+		case '%':
+			retval = numeric_mod(expr1, expr2);
+			break ;
+		case '^':
+			retval = numeric_pow(expr1, expr2);
+			break ;
+	}
+
+	delete(expr1);
+	delete(expr2);
+	return (retval);
 }
 
 void	initArith(void)

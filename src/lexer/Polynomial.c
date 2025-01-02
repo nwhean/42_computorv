@@ -94,13 +94,14 @@ static bool	Polynomial_equal(const void *_self, const void *_other)
 }
 
 /* Return the add / sub / mul / div of Polynomial with Scalar. */
-static void	*Polynomial_add_sub_Scalar(const void *self,
+static void	*Polynomial_add_sub_Scalar(const void *_self,
 									const void *other,
 									void *(*func)(const void *, const void *))
 {
-	struct s_Polynomial	*retval = copy(self);
+	const struct s_Polynomial	*self = _self;
+	struct s_Polynomial			*retval = copy(self);
 
-	Polynomial_update(retval, 0, func(Vec_at(retval->coeffs, 0), other));
+	Polynomial_update(retval, 0, func(Vec_at(self->coeffs, 0), other));
 	Polynomial_simplify(retval);
 	return (retval);
 }
@@ -144,9 +145,9 @@ static void	*Polynomial_add_sub_Polynomial(const void *_self,
 		if (i < size_self && i < size_other)
 			Polynomial_update(retval, i, func(lhs, rhs));
 		else if (i < size_self)
-			Polynomial_update(retval, i, lhs);
+			Polynomial_update(retval, i, copy(lhs));
 		else
-			Polynomial_update(retval, i, rhs);
+			Polynomial_update(retval, i, copy(rhs));
 	}
 	Polynomial_simplify(retval);
 	return (retval);
@@ -317,6 +318,7 @@ void	*Polynomial_pow_Rational(const void *_self, const void *_other)
 	const struct s_Polynomial	*self = _self;
 	const struct s_Rational		*other = _other;
 	struct s_Polynomial			*retval;
+	void						*val;
 	size_t						size = Polynomial_size(self);
 	size_t						i;
 
@@ -345,8 +347,10 @@ void	*Polynomial_pow_Rational(const void *_self, const void *_other)
 
 	retval = new(Polynomial, POLYNOMIAL);
 	retval->word = self->word ? copy(self->word) : NULL;
+	val = copy(Polynomial_at(self, i));
 	Polynomial_update(retval, mpz_get_ui(other->numerator) * i,
-					numeric_pow(Polynomial_at(self, i), other));
+					numeric_pow(val, other));
+	delete(val);
 	return (retval);
 }
 
@@ -500,7 +504,7 @@ void	Polynomial_update(void *_self, size_t n, const void *_val)
 void	Polynomial_simplify(void *_self)
 {
 	struct s_Polynomial	*self = _self;
-	size_t 				order = -1;
+	size_t 				order = 0;
 	size_t				i;
 
 	/* detect the highest order of a polynomial */

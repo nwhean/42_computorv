@@ -1,9 +1,13 @@
 #include <assert.h>
 #include <stdarg.h>
 
+/* inter */
 #include "Expr.h"
 #include "Expr.r"
 #include "Op.h"
+
+/* lexer */
+#include "Polynomial.h"
 
 const void	*Op;
 
@@ -47,12 +51,15 @@ static struct s_Token	*Op_eval(const void *_self, void *env)
 	return (super_eval(class, self, env));
 }
 
-static struct s_Token	*Op_to_polynomial(const void *_self, void *env)
+static struct s_Token	*Op_to_polynomial(const void *self, void *env)
 {
-	const struct s_ExprClass	*class = classOf(_self);
-	const struct s_Op			*self = _self;
+	void	*ans;
+	void	*retval;
 
-	return (super_to_polynomial(class, self, env));
+	ans = eval(self, env);
+	retval = new(Polynomial, POLYNOMIAL);
+	Polynomial_update(retval, 0, ans);
+	return (retval);
 }
 
 void	initOp(void)

@@ -19,6 +19,7 @@
 #include "ExprStmt.h"
 #include "Id.h"
 #include "MatExpr.h"
+#include "SolveStmt.h"
 #include "Stmt.h"
 #include "Unary.h"
 #include "VecExpr.h"
@@ -115,6 +116,14 @@ static bool	match(void *_self, int t)
 	return (false);
 }
 
+/* <stmt>			::= <stmt_type> '\n'
+ *  <stmt_type>		::= <null_stmt> | <expr_stmt> | <assign_stmt> | <solve_stmt>
+ *  <null_stmt>		::= epsilon
+ *  <expr_stmt>		::= <expr> | <expr> '=' '?'
+ *  <assign_stmt>	::= <assign_lhs> '=' <expr>
+ *  <assign_lhs>	::= <id> | <func>
+ *  <solve_stmt>	::= <expr> '=' <expr> '?'
+ */
 static struct s_Stmt	*stmt(void *_self)
 {
 	struct s_Parser	*self = _self;
@@ -125,7 +134,6 @@ static struct s_Stmt	*stmt(void *_self)
 
 	if (self->look->tag == '\n')	/* null statement */
 	{
-		/* printf("NULL statement\n"); */
 		move(self);
 		return (NULL);
 	}
@@ -135,7 +143,6 @@ static struct s_Stmt	*stmt(void *_self)
 	switch (self->look->tag)
 	{
 		case '\n':
-			/* printf("Expression statement\n"); */
 			retval = new(ExprStmt, lhs);
 			break ;
 
@@ -149,12 +156,21 @@ static struct s_Stmt	*stmt(void *_self)
 			}
 
 			rhs = expr(self);
-			tag = get_tag(lhs);
-			if (tag == ID)
-				retval = new(AssignStmt, lhs, rhs);
+			if (self->look->tag == '?')
+			{
+				move(self);
+				retval = new(SolveStmt, lhs, rhs);
+				break ;
+			}
 			else
-				retval = new(FuncDef, lhs, rhs);
-			break ;
+			{
+				tag = get_tag(lhs);
+				if (tag == ID)
+					retval = new(AssignStmt, lhs, rhs);
+				else
+					retval = new(FuncDef, lhs, rhs);
+				break ;
+			}
 
 		default:
 			match(self, '=');

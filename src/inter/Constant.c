@@ -52,9 +52,9 @@ static struct s_Token	*Constant_eval(const void *_self, void *env)
 }
 
 /* Convert Expr to a Polynomial */
-static struct s_Token	*Constant_to_polynomial(const void *_self, void *env)
+static struct s_Token	*Constant_to_polynomial(const void *self, void *env)
 {
-	return (super_to_polynomial(Constant, _self, env));
+	return (eval(self, env));
 }
 
 void	initConstant(void)

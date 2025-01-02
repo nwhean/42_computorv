@@ -61,7 +61,14 @@ classDiagram
 
 	class AssignStmt {
 		+Id id
-		+Expr expr;
+		+Expr expr
+	}
+
+	Stmt <|-- SolveStmt
+
+	class SolveStmt {
+		+Expr lhs
+		+Expr rhs
 	}
 
 	Expr <|-- Constant

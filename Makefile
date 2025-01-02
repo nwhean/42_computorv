@@ -41,6 +41,7 @@ SRCS	=	$(addprefix $(CONTAINER_DIR), \
 				MatExpr.c \
 				Node.c \
 				Op.c \
+				SolveStmt.c \
 				Stmt.c \
 				Unary.c \
 				VecExpr.c \

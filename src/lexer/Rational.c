@@ -160,6 +160,7 @@ static void	*Rational_add(const void *_self, const void *_other)
 		case COMPLEX:
 		case VECTOR:
 		case MATRIX:
+		case POLYNOMIAL:
 			return (numeric_add(_other, _self));
 		default:
 			fprintf(stderr, "%s\n", "Rational_add: unexpected input type.");
@@ -209,6 +210,7 @@ static void	*Rational_sub(const void *_self, const void *_other)
 		case COMPLEX:
 		case VECTOR:
 		case MATRIX:
+		case POLYNOMIAL:
 			retval = numeric_sub(_other, _self);
 			return (numeric_ineg(&retval));
 		default:
@@ -256,6 +258,7 @@ static void	*Rational_mul(const void *_self, const void *_other)
 		case COMPLEX:
 		case VECTOR:
 		case MATRIX:
+		case POLYNOMIAL:
 			return numeric_mul(_other, _self);
 		default:
 			fprintf(stderr, "%s\n", "Rational_mul: unexpected input type.");
@@ -311,6 +314,10 @@ static void	*Rational_div(const void *_self, const void *_other)
 		case MATRIX:
 			fprintf(stderr, "%s\n", "Rational_div: incompatible with Matrix.");
 			return (NULL);
+		case POLYNOMIAL:
+			fprintf(stderr, "%s\n",
+					"Rational_div: incompatible with Polynomial.");
+			return (NULL);
 		default:
 			fprintf(stderr, "%s\n", "Rational_div: unexpected input type.");
 			return (NULL);
@@ -362,6 +369,10 @@ static void	*Rational_mod(const void *_self, const void *_other)
 			return (NULL);
 		case MATRIX:
 			fprintf(stderr, "%s\n", "Rational_mod: incompatible with Matrix.");
+			return (NULL);
+		case POLYNOMIAL:
+			fprintf(stderr, "%s\n",
+					"Rational_mod: incompatible with Polynomial.");
 			return (NULL);
 		default:
 			fprintf(stderr, "%s\n", "Rational_mod: unexpected input type.");

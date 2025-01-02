@@ -101,11 +101,6 @@ struct s_Token	*super_to_polynomial(
 	return (superclass->to_polynomial(_self, env));
 }
 
-static struct s_Token	*Expr_to_polynomial(const void *self, void *env)
-{
-	return (eval(self, env));
-}
-
 /* Get the op of an Expr. */
 const struct s_Token	*get_op(const void *_self)
 {
@@ -152,6 +147,8 @@ static void	*ExprClass_ctor(void *_self, va_list *app)
 		method = va_arg(ap, voidf);
 		if (selector == (voidf)eval)
 			*(voidf *)&self->eval = method;
+		if (selector == (voidf)to_polynomial)
+			*(voidf *)&self->to_polynomial = method;
 		#pragma GCC diagnostic pop
 	}
 	return (self);
@@ -174,6 +171,5 @@ void	initExpr(void)
 				str, Expr_str,
 				equal, Expr_equal,
 				eval, Expr_eval,
-				to_polynomial, Expr_to_polynomial,
 				0);
 }
