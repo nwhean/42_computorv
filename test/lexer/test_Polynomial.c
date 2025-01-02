@@ -49,7 +49,7 @@ void test_str(void) {
 	Polynomial_update(v, 1, r1);
 	Polynomial_update(v, 2, r2);
 	s = str(v);
-	target = "Polynomial(0.500000, 0.750000, 0.833333)";
+	target = "Polynomial(, 0.500000, 0.750000, 0.833333)";
 	TEST_ASSERT_EQUAL_STRING_LEN(target, s, 30);
 	free((void *)s);
 	delete(v);
@@ -306,8 +306,8 @@ void test_pow(void) {
 	v1 = new(Polynomial, POLYNOMIAL);
 	Polynomial_update(v1, 2, r1);
 	target_1 = numeric_pow(v1, r);
-	TEST_ASSERT_TRUE(Polynomial_size(target_1) == 5);
-	TEST_ASSERT_TRUE(numeric_equal(Polynomial_at(target_1, 4), coeff_1));
+	TEST_ASSERT_TRUE(Polynomial_size(target_1) == 7);
+	TEST_ASSERT_TRUE(numeric_equal(Polynomial_at(target_1, 6), coeff_1));
 
 	delete(r);
 	delete(coeff_0);

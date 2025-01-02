@@ -57,6 +57,14 @@ static char	*Polynomial_str(const void *_self)
 	char						*retval;
 	size_t						i;
 
+	if (self->word)
+	{
+		s_append = str(self->word);
+		Str_append(s, s_append);
+		free(s_append);
+	}
+	Str_append(s, ", ");
+
 	for (i = 0; i < Polynomial_size(self); ++i)
 	{
 		s_append = str(Vec_at(self->coeffs, i));
@@ -118,6 +126,14 @@ static void	*Polynomial_add_sub_Polynomial(const void *_self,
 				"Polynomial_add_sub_Polynomial: different variables.");
 		return (NULL);
 	}
+
+	/* set the word in retval */
+	if (self->word)
+		retval->word = copy(self->word);
+	else if (other->word)
+		retval->word = copy(other->word);
+	else
+		retval->word = NULL;
 
 	n = size_self > size_other ? size_self : size_other;
 	Vec_reserve(retval->coeffs, n);
@@ -193,6 +209,7 @@ static void	*Polynomial_mul_div_Scalar(const void *_self,
 	struct s_Polynomial			*retval = new(Polynomial, POLYNOMIAL);
 	size_t						i;
 
+	retval->word = self->word ? copy(self->word) : NULL;
 	for (i = 0; i < Polynomial_size(self); i++)
 		Polynomial_update(retval, i, func(Polynomial_at(self, i), other));
 	Polynomial_simplify(retval);
@@ -285,6 +302,7 @@ static struct s_Polynomial	*Polynomial_neg(const void *_self)
 	void						*value;
 	size_t						i;
 
+	retval->word = self->word ? copy(self->word) : NULL;
 	for (i = 0; i < Polynomial_size(self); ++i)
 	{
 		value = copy(Polynomial_at(self, i));
@@ -327,7 +345,7 @@ void	*Polynomial_pow_Rational(const void *_self, const void *_other)
 
 	retval = new(Polynomial, POLYNOMIAL);
 	retval->word = self->word ? copy(self->word) : NULL;
-	Polynomial_update(retval, (size - 1)*(size - 1),
+	Polynomial_update(retval, mpz_get_ui(other->numerator) * i,
 					numeric_pow(Polynomial_at(self, i), other));
 	return (retval);
 }
