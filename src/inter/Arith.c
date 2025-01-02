@@ -12,6 +12,7 @@
 /* lexer */
 #include "Numeric.h"
 #include "Matrix.h"
+#include "Polynomial.h"
 #include "Word.h"
 
 const void	*Arith;
@@ -118,6 +119,12 @@ static struct s_Token	*Arith_eval(const void *_self, void *env)
 	return (expr1);
 }
 
+/* Convert Expr to a Polynomial */
+static struct s_Token	*Arith_to_polynomial(const void *self, void *env)
+{
+	return (super_to_polynomial(Arith, self, env));
+}
+
 void	initArith(void)
 {
 	initStr();
@@ -130,5 +137,6 @@ void	initArith(void)
 				dtor, Arith_dtor,
 				str, Arith_str,
 				eval, Arith_eval,
+				to_polynomial, Arith_to_polynomial,
 				0);
 }

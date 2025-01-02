@@ -342,6 +342,17 @@ void test_iszero(void) {
 	delete(e);
 }
 
+void test_isinteger(void) {
+	struct s_Rational	*a = Rational_from_long(1, 1);
+	struct s_Rational	*b = Rational_from_long(1, 2);
+
+	TEST_ASSERT_TRUE(numeric_isinteger(a));
+	TEST_ASSERT_FALSE(numeric_isinteger(b));
+
+	delete(a);
+	delete(b);
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
@@ -372,5 +383,6 @@ int main(void) {
 	RUN_TEST(test_promote_vector);
 	RUN_TEST(test_promote_matrix);
 	RUN_TEST(test_iszero);
+	RUN_TEST(test_isinteger);
 	return UNITY_END();
 }

@@ -1,6 +1,10 @@
 #include <assert.h>
 #include <stdarg.h>
 
+/* lexer */
+#include "Polynomial.h"
+#include "Rational.h"
+
 /* inter */
 #include "Expr.h"
 #include "Expr.r"
@@ -50,7 +54,7 @@ static bool	Id_equal(const void *self, const void *other)
 	return (super_equal(Id, self, other));
 }
 
-/* Get the value if an Id from the environment. */
+/* Get the value of an Id from the environment. */
 static struct s_Token	*Id_eval(const void *self, void *env)
 {
 	struct s_Expr	*expr = Env_get(env, get_op(self));
@@ -62,6 +66,23 @@ static struct s_Token	*Id_eval(const void *self, void *env)
 	fprintf(stderr, "'%s' is not defined.\n", s);
 	free(s);
 	return (NULL);
+}
+
+/* Convert Expr to a Polynomial */
+static struct s_Token	*Id_to_polynomial(const void *self, void *env)
+{
+	struct s_Expr		*expr = Env_get(env, get_op(self));
+	struct s_Polynomial	*retval;
+
+	/* if variable has a value, return the value */
+	if (expr)
+		return (to_polynomial(expr, env));
+
+	/* if variable is without value, return a polynomial */
+	retval = new(Polynomial, POLYNOMIAL);
+	Polynomial_update(retval, 1, Rational_from_long(1, 1));
+	retval->word = copy(get_op(self));
+	return ((struct s_Token *)retval);
 }
 
 void	initId(void)
@@ -76,5 +97,6 @@ void	initId(void)
 				str, Id_str,
 				equal, Id_equal,
 				eval, Id_eval,
+				to_polynomial, Id_to_polynomial,
 				0);
 }

@@ -7,6 +7,7 @@
 struct s_Polynomial	/* Polynomial: Numeric */
 {
 	const struct s_Numeric	_;
+	void					*word;
 	void					*coeffs;	/* Vec*/
 };
 

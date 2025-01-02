@@ -5,6 +5,9 @@
 #include "Expr.r"
 #include "Constant.h"
 
+/* lexer */
+#include "Polynomial.h"
+
 /* symbols */
 #include "Env.h"
 
@@ -48,9 +51,16 @@ static struct s_Token	*Constant_eval(const void *_self, void *env)
 	return (copy(get_op(_self)));
 }
 
+/* Convert Expr to a Polynomial */
+static struct s_Token	*Constant_to_polynomial(const void *_self, void *env)
+{
+	return (super_to_polynomial(Constant, _self, env));
+}
+
 void	initConstant(void)
 {
 	initExpr();
+	initPolynomial();
 	if (!Constant)
 		Constant = new(ExprClass, "Constant",
 				Expr, sizeof(struct s_Constant),
@@ -59,5 +69,6 @@ void	initConstant(void)
 				dtor, Constant_dtor,
 				str, Constant_str,
 				eval, Constant_eval,
+				to_polynomial, Constant_to_polynomial,
 				0);
 }

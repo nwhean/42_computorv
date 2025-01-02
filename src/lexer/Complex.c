@@ -432,6 +432,14 @@ static bool	Complex_iszero(const void *_self)
 	return (numeric_iszero(self->real) && numeric_iszero(self->imag));
 }
 
+/* Return true if the input is a Gaussian integer. */
+static bool	Complex_isinteger(const void *_self)
+{
+	const struct s_Complex	*self = _self;
+
+	return (numeric_isinteger(self->real) && numeric_isinteger(self->imag));
+}
+
 void	initComplex(void)
 {
 	initNumeric();
@@ -452,6 +460,7 @@ void	initComplex(void)
 				numeric_pow, Complex_pow,
 				numeric_promote, Complex_promote,
 				numeric_iszero, Complex_iszero,
+				numeric_isinteger, Complex_isinteger,
 				0);
 		initStr();
 		initVec();

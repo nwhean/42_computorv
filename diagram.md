@@ -71,6 +71,7 @@ classDiagram
 		+Token op
 		+Tag tag
 		+eval(Env) Token
+		+to_polynomial() Token
 		+get_op() Token
 		+set_tag(Tag) void
 		+get_tag() Tag

@@ -1,5 +1,8 @@
 #include <assert.h>
 
+/* lexer */
+#include "Polynomial.h"
+
 #include "Expr.h"
 #include "Expr.r"
 
@@ -80,6 +83,29 @@ static struct s_Token	*Expr_eval(const void *_self, void *env)
 	return copy(self->op);
 }
 
+/* Convert Expr to a Polynomial */
+struct s_Token	*to_polynomial(const void *self, void *env)
+{
+	const struct s_ExprClass *const	*cp = self;
+
+	assert(self && *cp && (*cp)->to_polynomial);
+	return ((*cp)->to_polynomial(self, env));
+}
+
+struct s_Token	*super_to_polynomial(
+	const void *_class, const void *_self, void *env)
+{
+	const struct s_ExprClass	*superclass = super(_class);
+
+	assert(_self && superclass->to_polynomial);
+	return (superclass->to_polynomial(_self, env));
+}
+
+static struct s_Token	*Expr_to_polynomial(const void *self, void *env)
+{
+	return (eval(self, env));
+}
+
 /* Get the op of an Expr. */
 const struct s_Token	*get_op(const void *_self)
 {
@@ -148,5 +174,6 @@ void	initExpr(void)
 				str, Expr_str,
 				equal, Expr_equal,
 				eval, Expr_eval,
+				to_polynomial, Expr_to_polynomial,
 				0);
 }

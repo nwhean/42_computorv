@@ -6,6 +6,7 @@
 #include "Complex.h"
 #include "Rational.h"
 #include "Polynomial.h"
+#include "Word.h"
 
 const void	*Polynomial;
 
@@ -15,6 +16,7 @@ static void	*Polynomial_ctor(void *_self, va_list *app)
 	struct s_Polynomial	*self = _self;
 
 	self = super_ctor(Polynomial, _self, app);
+	self->word = NULL;
 	self->coeffs = new(Vec);
 	return (self);
 }
@@ -26,6 +28,7 @@ static struct s_Polynomial	*Polynomial_copy(const void *_self)
 	struct s_Polynomial			*retval;
 
 	retval = super_copy(Polynomial, self);
+	retval->word = self->word ? copy(self->word) : NULL;
 	retval->coeffs = copy(self->coeffs);
 	if (retval->coeffs == NULL)
 	{
@@ -40,6 +43,7 @@ static void	*Polynomial_dtor(void *_self)
 {
 	struct s_Polynomial	*self = _self;
 
+	delete(self->word);
 	delete(self->coeffs);
 	return(super_dtor(Polynomial, _self));
 }
@@ -75,6 +79,9 @@ static bool	Polynomial_equal(const void *_self, const void *_other)
 
 	if (!super_equal(Polynomial, _self, _other))
 		return (false);
+
+	/* do not need to compare the id */
+
 	return (equal(self->coeffs, other->coeffs));
 }
 
@@ -104,6 +111,13 @@ static void	*Polynomial_add_sub_Polynomial(const void *_self,
 	size_t						i;
 	void						*lhs;
 	void						*rhs;
+
+	if (self->word && other->word && !equal(self->word, other->word))
+	{
+		fprintf(stderr, "%s\n",
+				"Polynomial_add_sub_Polynomial: different variables.");
+		return (NULL);
+	}
 
 	n = size_self > size_other ? size_self : size_other;
 	Vec_reserve(retval->coeffs, n);
@@ -280,6 +294,73 @@ static struct s_Polynomial	*Polynomial_neg(const void *_self)
 	return (retval);
 }
 
+void	*Polynomial_pow_Rational(const void *_self, const void *_other)
+{
+	const struct s_Polynomial	*self = _self;
+	const struct s_Rational		*other = _other;
+	struct s_Polynomial			*retval;
+	size_t						size = Polynomial_size(self);
+	size_t						i;
+
+	/* ensure that all degrees are 0, other than i = size - 1 */
+	for (i = 0; i < size - 1; i++)
+	{
+		if (!numeric_iszero(Polynomial_at(self, i)))
+		{
+			fprintf(stderr, "%s\n",
+					"Polynomial_pow: does not support multiple coefficients");
+			return (NULL);
+		}
+	}
+
+	if (size == 1 && numeric_iszero(other))
+	{
+		fprintf(stderr, "%s\n", "0^0 is undefined.");
+		return (NULL);
+	}
+
+	if (!numeric_isinteger(other))
+	{
+		fprintf(stderr, "%s\n", "Polynomial_pow: exponent must be integral.");
+		return (NULL);
+	}
+
+	retval = new(Polynomial, POLYNOMIAL);
+	retval->word = self->word ? copy(self->word) : NULL;
+	Polynomial_update(retval, (size - 1)*(size - 1),
+					numeric_pow(Polynomial_at(self, i), other));
+	return (retval);
+}
+
+/* Return the exponentiation of one Numeric to another. */
+static void	*Polynomial_pow(const void *_self, const void *_other)
+{
+	switch (Token_get_tag(_other))
+	{
+		case RATIONAL:
+			return (Polynomial_pow_Rational(_self, _other));
+		case COMPLEX:
+			fprintf(stderr, "%s\n",
+					"Polynomial_pow: incompatible with Complex.");
+			return (NULL);
+		case VECTOR:
+			fprintf(stderr, "%s\n",
+					"Polynomial_pow: incompatible with Vector.");
+			return (NULL);
+		case MATRIX:
+			fprintf(stderr, "%s\n",
+					"Polynomial_pow: incompatible with Matrix.");
+			return (NULL);
+		case POLYNOMIAL:
+			fprintf(stderr, "%s\n",
+					"Polynomial_pow: incompatible with Polynomial.");
+			return (NULL);
+		default:
+			fprintf(stderr, "%s\n", "Polynomial_pow: unexpected input type.");
+			return (NULL);
+	};
+}
+
 /* Promote one Numeric type to another */
 static void	*Polynomial_promote(const void *_self, enum e_Tag tag)
 {
@@ -341,6 +422,7 @@ void	initPolynomial(void)
 					numeric_div, Polynomial_div,
 					numeric_mod, Polynomial_mod,
 					numeric_neg, Polynomial_neg,
+					numeric_pow, Polynomial_pow,
 					numeric_promote, Polynomial_promote,
 					numeric_iszero, Polynomial_iszero,
 					0);
@@ -348,6 +430,7 @@ void	initPolynomial(void)
 		initVec();
 		initRational();
 		initComplex();
+		initWord();
 	}
 }
 

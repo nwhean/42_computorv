@@ -78,6 +78,12 @@ static struct s_Token	*Unary_eval(const void *_self, void *env)
 	return (expr);
 }
 
+/* Convert Expr to a Polynomial */
+static struct s_Token	*Unary_to_polynomial(const void *self, void *env)
+{
+	return (super_to_polynomial(Unary, self, env));
+}
+
 void	initUnary(void)
 {
 	initStr();
@@ -90,5 +96,6 @@ void	initUnary(void)
 				dtor, Unary_dtor,
 				str, Unary_str,
 				eval, Unary_eval,
+				to_polynomial, Unary_to_polynomial,
 				0);
 }

@@ -353,6 +353,20 @@ bool	numeric_iszero(const void *self)
 	return (NULL);
 }
 
+bool	numeric_isinteger(const void *self)
+{
+	const struct s_NumericClass *const	*cp = self;
+
+	if (self && *cp)
+	{
+		if ((*cp)->isinteger)
+			return ((*cp)->isinteger(self));
+		else
+			fprintf(stderr, "%s\n", "'isinteger' undefined for input type");
+	}
+	return (NULL);
+}
+
 /* NumericClass constructor method. */
 static void	*NumericClass_ctor(void *_self, va_list *app)
 {
@@ -393,6 +407,8 @@ static void	*NumericClass_ctor(void *_self, va_list *app)
 			*(voidf *)&self->promote = method;
 		else if (selector == (voidf)numeric_iszero)
 			*(voidf *)&self->iszero = method;
+		else if (selector == (voidf)numeric_isinteger)
+			*(voidf *)&self->isinteger = method;
 		#pragma GCC diagnostic pop
 	}
 	return (self);

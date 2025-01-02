@@ -105,7 +105,7 @@ static char	*Rational_str(const void *_self)
 	int						len;
 	char					*retval;
 
-	if (mpz_cmp_ui(self->denominator, 1) == 0)
+	if (numeric_isinteger(self))
 	{
 		len = mpz_sizeinbase(self->numerator, 10);
 		retval = malloc(len + 2);
@@ -615,6 +615,14 @@ static bool	Rational_iszero(const void *_self)
 	return (false);
 }
 
+/* Return true of Rational is an integer */
+static bool	Rational_isinteger(const void *_self)
+{
+	const struct s_Rational	*self = _self;
+
+	return (mpz_cmp_ui(self->denominator, 1) == 0);
+}
+
 void	initRational(void)
 {
 	if (!Rational)
@@ -636,6 +644,7 @@ void	initRational(void)
 				numeric_pow, Rational_pow,
 				numeric_promote, Rational_promote,
 				numeric_iszero, Rational_iszero,
+				numeric_isinteger, Rational_isinteger,
 				0);
 		initVec();
 		initComplex();

@@ -47,6 +47,14 @@ static struct s_Token	*Op_eval(const void *_self, void *env)
 	return (super_eval(class, self, env));
 }
 
+static struct s_Token	*Op_to_polynomial(const void *_self, void *env)
+{
+	const struct s_ExprClass	*class = classOf(_self);
+	const struct s_Op			*self = _self;
+
+	return (super_to_polynomial(class, self, env));
+}
+
 void	initOp(void)
 {
 	initExpr();
@@ -58,5 +66,6 @@ void	initOp(void)
 				dtor, Op_dtor,
 				str, Op_str,
 				eval, Op_eval,
+				to_polynomial, Op_to_polynomial,
 				0);
 }

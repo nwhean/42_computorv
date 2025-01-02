@@ -276,6 +276,25 @@ void test_iszero(void) {
 	delete(b);
 }
 
+void test_isinteger(void) {
+	struct s_Complex	*a = new(Complex, COMPLEX,
+								Rational_from_long(1, 1),
+								Rational_from_long(2, 1));
+	struct s_Complex	*b = new(Complex, COMPLEX,
+								Rational_from_long(1, 2),
+								Rational_from_long(1, 1));
+	struct s_Complex	*c = new(Complex, COMPLEX,
+								Rational_from_long(1, 1),
+								Rational_from_long(1, 2));
+
+	TEST_ASSERT_TRUE(numeric_isinteger(a));
+	TEST_ASSERT_FALSE(numeric_isinteger(b));
+	TEST_ASSERT_FALSE(numeric_isinteger(c));
+	delete(a);
+	delete(b);
+	delete(c);
+}
+
 int main(void) {
 	UNITY_BEGIN();
 	RUN_TEST(test_ctor);
@@ -296,5 +315,6 @@ int main(void) {
 	RUN_TEST(test_promote_vector);
 	RUN_TEST(test_promote_matrix);
 	RUN_TEST(test_iszero);
+	RUN_TEST(test_isinteger);
 	return UNITY_END();
 }

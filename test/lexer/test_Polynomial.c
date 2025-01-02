@@ -289,14 +289,33 @@ void test_neg(void) {
 void test_pow(void) {
 	struct s_Rational	*r0 = Rational_from_long(1, 2);
 	struct s_Rational	*r1 = Rational_from_long(3, 4);
-	struct s_Polynomial		*v0;
+	struct s_Rational	*r = Rational_from_long(3, 1);
+	struct s_Rational	*coeff_0 = numeric_pow(r0, r);
+	struct s_Rational	*coeff_1 = numeric_pow(r1, r);;
+	struct s_Polynomial	*v0;
+	struct s_Polynomial	*v1;
+	struct s_Polynomial	*target_0;
+	struct s_Polynomial	*target_1;
 
 	v0 = new(Polynomial, POLYNOMIAL);
 	Polynomial_update(v0, 0, r0);
-	Polynomial_update(v0, 1, r1);
+	target_0 = numeric_pow(v0, r);
+	TEST_ASSERT_TRUE(Polynomial_size(target_0) == 1);
+	TEST_ASSERT_TRUE(numeric_equal(Polynomial_at(target_0, 0), coeff_0));
 
-	TEST_ASSERT_NULL(numeric_pow(v0, v0));
+	v1 = new(Polynomial, POLYNOMIAL);
+	Polynomial_update(v1, 2, r1);
+	target_1 = numeric_pow(v1, r);
+	TEST_ASSERT_TRUE(Polynomial_size(target_1) == 5);
+	TEST_ASSERT_TRUE(numeric_equal(Polynomial_at(target_1, 4), coeff_1));
+
+	delete(r);
+	delete(coeff_0);
+	delete(coeff_1);
 	delete(v0);
+	delete(v1);
+	delete(target_0);
+	delete(target_1);
 }
 
 void test_equal_true(void) {
