@@ -152,7 +152,11 @@ static struct s_Token	*Function_to_polynomial(const void *_self, void *env)
 {
 	const struct s_Function	*self = _self;
 	const struct s_Function	*def = Env_get(env, get_op(self));
+	void					*env_new;
 	size_t					size = Vec_size(self->params);
+	size_t					i;
+	void					*val;
+	struct s_Token			*retval = NULL;
 
 	if (size > 1)
 	{
@@ -172,7 +176,35 @@ static struct s_Token	*Function_to_polynomial(const void *_self, void *env)
 		return (NULL);
 	}
 
-	return (to_polynomial(def->expr, env));
+	/* create a new environment to evaluate the function expression */
+	env_new = new(Env, env);
+	for (i = 0; i < size; ++i)
+	{
+		/* evaluate input parameter with the current environment */
+		void	*param_self = Vec_at(self->params, i);
+		void	*param_def = Vec_at(def->params, i);
+
+		val = eval(param_self, env);
+		if (!val)								/* if it is an unknown */
+		{
+			if (!equal(param_self, param_def))	/* update parame if different*/
+				Env_put(
+					env_new,
+					copy(get_op(param_def)),
+					copy(param_self)
+					);
+		}
+		else
+			Env_put(
+				env_new,
+				copy(get_op(param_def)),
+				new(Constant, val, get_tag(val))
+				);
+	}
+
+	retval = to_polynomial(def->expr, env_new);
+	delete(env_new);
+	return (retval);
 }
 
 void	initFunction(void)
