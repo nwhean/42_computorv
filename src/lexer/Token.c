@@ -96,5 +96,8 @@ enum e_Tag	Token_get_tag(const void *_self)
 {
 	const struct s_Token	*self = _self;
 
-	return (self->tag);
+	if (self)
+		return (self->tag);
+	else
+		return (0);
 }
