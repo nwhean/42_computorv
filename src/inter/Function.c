@@ -147,6 +147,34 @@ static struct s_Token	*Function_eval(const void *_self, void *env)
 	return (retval);
 }
 
+/* Convert Function to a Polynomial */
+static struct s_Token	*Function_to_polynomial(const void *_self, void *env)
+{
+	const struct s_Function	*self = _self;
+	const struct s_Function	*def = Env_get(env, get_op(self));
+	size_t					size = Vec_size(self->params);
+
+	if (size > 1)
+	{
+		fprintf(stderr, "Function_to_polynomial: too many parameters.\n");
+		return (NULL);
+	}
+
+	if (!def)
+	{
+		/* check whether there's a built-in function */
+		void	*built_in = Env_get(BuiltInFunc, get_op(self));
+
+		if (built_in)
+			return (BuiltIn_call(built_in, self->params, env));
+
+		fprintf(stderr, "Function_to_polynomial: undefined function.\n");
+		return (NULL);
+	}
+
+	return (to_polynomial(def->expr, env));
+}
+
 void	initFunction(void)
 {
 	initStr();
@@ -162,5 +190,6 @@ void	initFunction(void)
 				dtor, Function_dtor,
 				str, Function_str,
 				eval, Function_eval,
+				to_polynomial, Function_to_polynomial,
 				0);
 }
