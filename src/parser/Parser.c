@@ -177,9 +177,15 @@ static struct s_Stmt	*stmt(void *_self)
 			delete(lhs);
 			delete(rhs);
 	}
-	/* if (retval)
-		match(self, '\n'); */
-	return (retval);
+
+	/* statement must end with a '\n' character */
+	if (self->look->tag == '\n' && retval)
+		return (retval);
+	else
+	{
+		delete(retval);
+		return (NULL);
+	}
 }
 
 /* <expr>		::= <term> <expr_tail>
