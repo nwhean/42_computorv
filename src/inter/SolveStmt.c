@@ -116,7 +116,8 @@ static void	SolveStmt_exec(void *_self, void *env)
 		a = copy(Polynomial_at(net, 2));
 		b = copy(Polynomial_at(net, 1));
 		c = copy(Polynomial_at(net, 0));
-		b_2a = numeric_div(b, a);
+		b_2a = numeric_neg(b);
+		numeric_idiv(&b_2a, a);
 		numeric_idiv(&b_2a, two);
 		b2 = numeric_mul(b, b);
 		ac4 = numeric_mul(a, c);
