@@ -183,6 +183,8 @@ static struct s_Stmt	*stmt(void *_self)
 		return (retval);
 	else
 	{
+		while (self->look->tag != '\n')	/* discard characters until '\n' */
+			move(self);
 		delete(retval);
 		return (NULL);
 	}

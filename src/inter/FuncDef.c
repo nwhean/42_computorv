@@ -19,6 +19,7 @@ const void	*FuncDef;
 static void	*FuncDef_ctor(void *_self, va_list *app)
 {
 	struct s_FuncDef	*self;
+	char				*s = NULL;
 
 	self = super_ctor(FuncDef, _self, app);
 	self->func = va_arg(*app, struct s_Function *);
@@ -26,12 +27,16 @@ static void	*FuncDef_ctor(void *_self, va_list *app)
 
 	if (get_tag(self->func) == FUNCTION && self->expr)
 		return (self);
+
+	s = str(self->func);
 	if (get_tag(self->func) != FUNCTION)
-		fprintf(stderr, "FuncDef_ctor: expect Function as LHS, get '%c'.\n",
-				get_tag(self->func));
+		fprintf(stderr,
+				"FuncDef_ctor: expect Function as LHS, get '%s' instead.\n",
+				s);
 	if (!self->expr)
 		fprintf(stderr, "FuncDef_ctor: RHS is ill-defined.\n");
 	delete(self);
+	free(s);
 	return (NULL);
 }
 
